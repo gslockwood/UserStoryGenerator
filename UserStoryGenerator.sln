@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.11.35327.3
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UserStoryGenerator", "UserStoryGenerator\UserStoryGenerator.csproj", "{BCC013DE-008A-4124-931C-36E537506A7B}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{BCC013DE-008A-4124-931C-36E537506A7B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BCC013DE-008A-4124-931C-36E537506A7B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BCC013DE-008A-4124-931C-36E537506A7B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BCC013DE-008A-4124-931C-36E537506A7B}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {5FC16133-361C-477B-B287-58A3C044E598}
+	EndGlobalSection
+EndGlobal

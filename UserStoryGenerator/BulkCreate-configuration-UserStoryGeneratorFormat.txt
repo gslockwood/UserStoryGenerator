@@ -1,0 +1,47 @@
+{
+  "config.version" : "2.0",
+  "config.project.from.csv" : "false",
+  "config.encoding" : "UTF-8",
+  "config.file.id" : "e3ba5f25-9c09-4383-83b2-3da73968299e",
+  "config.email.suffix" : "@",
+  "config.file.name" : "Issues.csv",
+  "config.field.mappings" : {
+    "Summary" : {
+      "jira.field" : "summary",
+      "userChanged" : "true",
+      "manualMapping" : "false"
+    },
+    "Issue Type" : {
+      "jira.field" : "issuetype",
+      "userChanged" : "true",
+      "manualMapping" : "false"
+    },
+    "ID" : {
+      "jira.field" : "issue-id",
+      "userChanged" : "true",
+      "manualMapping" : "false"
+    },
+    "Parent ID" : {
+      "jira.field" : "parent",
+      "userChanged" : "true",
+      "manualMapping" : "false"
+    },
+    "Link" : {
+      "link.type" : "10000",
+      "userChanged" : "true",
+      "manualMapping" : "false"
+    }
+  },
+  "config.csv.file.id" : null,
+  "config.value.mappings" : { },
+  "config.delimiter" : ",",
+  "config.project" : {
+    "project.type" : null,
+    "project.key" : "RED",
+    "project.description" : null,
+    "project.url" : null,
+    "project.name" : "Red",
+    "project.lead" : "557058:0f52bdb3-fefb-4ad8-995a-aafc3d33c4e6"
+  },
+  "config.date.format" : "dd/MMM/yy h:mm a"
+}
