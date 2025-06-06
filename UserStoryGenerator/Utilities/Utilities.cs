@@ -6,7 +6,7 @@ namespace UserStoryGenerator.Utilities
     {
         public static bool RegexValidation(string inputText)
         {
-            string pattern = @"^[A-Z]{3,4}-\d{3}$";
+            string pattern = @"^[A-Z]{3,4}-\d+$";
             return Regex.IsMatch(inputText, pattern);
         }
         public static bool RegexContainsValidation(string inputText)

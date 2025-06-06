@@ -13,9 +13,9 @@
         internal static void Info(object message)
         {
 #if DEBUG
-            System.Diagnostics.Debug.WriteLine(message);
+            System.Diagnostics.Debug.WriteLine(message.ToString());
 #else
-            System.Console.WriteLine(message);
+            System.Console.WriteLine(message.ToString());
 #endif
         }
     }

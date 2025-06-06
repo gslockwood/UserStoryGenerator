@@ -1,0 +1,14 @@
+﻿
+1. Jira
+
+2. All Filters / "View All Filters".  open the filter for the project 
+
+3. "..." (upper right) / "Import work items from CSV"
+
+4.  Follow to the steps.
+
+	in the folder next to the executable is the "BulkCreate-configuration-UserStoryGeneratorFormat.txt" file.  Use this as the 'config' file.
+
+	When the mapping page comes up, you need not make changes as the config file has set the mapping.
+
+	On the subsequent page, Good idea to "Validate" before importing

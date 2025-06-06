@@ -1,0 +1,65 @@
+﻿Goal: 
+Please analyze the Product Description given below and create a rich, robust, thorough collection of Jira issues from it. 
+
+Results Format: 
+The "Issues" collection schema is: "Issues" : [] 
+The Jira Issue schema is {"Summary","IssueType","Product","Subtasks": [],"LinkedIssues": []} 
+The "IssueType" are: "Story","Task","Test","Bug" 
+The "Sub-task" schema is: {"Summary","IssueType","Product" } 
+
+Rules:
+Every Issue's "Product" field is defined by the "Product: " text given below.
+For the Summary in "Story" issues, use the standard Agile User Story format: "As a [user], I want [action], so that [benefit]." 
+For the Summary in  "Task" issues, don't use story format but use technical software jargon. 
+
+User stories are directly linked to delivering user or business value.   User stories define the "what" (the user's need) while technical tasks detail the "how" (the implementation details needed to fulfill that need). User stories are high-level descriptions of user functionality, written from the user's perspective, focusing on the value for the user. Technical tasks, on the other hand, are the breakdown of those user stories into smaller, actionable steps for the development team to implement.
+
+IMPORTANT: Therefore: Every "Story" should receive numerous "Task" issues that are placed in the Story's "LinkedIssues" collection. 
+
+Overall structure: the heirarchy issue is:  Story /  x Tasks / y Tests.  Stories have many Tasks and Tasks have many Tests. 
+
+It is rare but possible that Tasks are at the Story level.
+
+Every Story should have many, multiple Tasks linked to it regarding the technical implementaion of the user story in the software layers;
+
+Tasks shall cover the following technical software layers: Frontend, Backend, API, Database, Services layers. 
+
+
+"Sub-task" issues:
+Sub-task "IssueType" field shall be: "Sub-task"
+Sub-task issues shall be placed in their Parent issues's "Subtasks" collection.
+
+"Story" issues:
+Some "Story" issues can receive several "Sub-tasks" issues created and placed in the Story's "Sub-tasks" collection. 
+Story issues shall have Documentation sub-tasks.
+Stories can have tests in the Story's "LinkedIssues" collection as well but most Test issues are attached the Tasks. 
+
+"Task" issues:
+Task Issue "IssueType" field shall be: "Task". 
+Every "Task" should receive several "Test" issues created and placed in the Task's "LinkedIssues" collection. 
+Every "Task" should receive several  Sub-task issues created and placed in the Task's "Sub-tasks" collection. 
+
+Every "Frontend Task" should receive at least one or many "Implement UI Control x" Sub-task issue for each UI control in the implementation. Each is placed in the Task's "Sub-tasks" collection. 
+Every "Database Task" shall receive a "Implement CRUD method: x" Sub-task issue where x is of the list: {create, read, update, and delete} in the implementation. Each is placed in the Task's "Sub-tasks" collection.  There shall be a corresponding TDD test Sub-task issue for each. 
+
+Every "API Task" shall receive a "Implement HTTP method: x" Sub-task issue where x is of the list: {GET,POST,PUT,PATCH,DELETE} in the implementation. Each is placed in the Task's "Sub-tasks" collection. There shall be a corresponding TDD test Sub-task issue for each. 
+
+There shall be Backend Tasks take cover relevant Database queries and Service usage functionality. There shall be a corresponding TDD test Sub-task issues for each. 
+
+Test issues:
+Test Issue Summary field shall begin with: "QA Test". 
+Test Issue "IssueType" field shall be: "Test". 
+Test Issue Sub-tasks: 
+Sub-tasks "IssueType" field shall be: "Sub-task". 
+There shall be subtasks for all and any "Test Automation" as required by the Test Issue's Parent Task. 
+There shall be subtasks for all and any "Integration Tests" as required by the Test Issue's Parent Task. 
+There shall be subtasks for all and any Manual Workflow Validation Tests" as required by the Test Issue's Parent Task. 
+
+Coaching:
+Be creative, read between the lines to imagine robust plentiful 'inbetween' functionalities. 
+Create Stories and Tasks freely and generously.  
+Methodlically break down the product description into a long list of 20 or more user stories.  Then iterate on each user story to break down the complete tecnical implementation of the story into a long list of technical Tasks covering all software layes thoroughly.  Every Task must be thoroughly tested manually and with automated testing harnesses.
+
+Product: GSL
+
+Product Description: Implement a mobile-first, fully responsive e-commerce platform for our online store, enabling users to browse products, add them to a shopping cart, and complete secure online purchases. The platform should offer a streamlined checkout process, diverse payment options, and robust order tracking capabilities. We need to ensure that the platform is user-friendly, accessible, and highly performant, with a focus on a seamless user experience across all devices.  Please include this task: Create a Database table called "Customer".   Add the "Name" and "Phone number" and other relevant columns to the "Customer" table.

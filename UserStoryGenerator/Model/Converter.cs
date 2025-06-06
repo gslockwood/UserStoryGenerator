@@ -1,4 +1,5 @@
 ﻿using System.Text;
+using UserStoryGenerator.Utilities;
 
 namespace UserStoryGenerator.Model
 {
@@ -42,7 +43,7 @@ namespace UserStoryGenerator.Model
                     IssueData.Issue epicIssue = new()
                     {
                         Summary = epicText,
-                        IssueType = "EPIC",
+                        IssueType = JiraIssueTypes.EPIC,
                         Product = userStoryResults.HierarchyIssueList[0].Product,
                         Key = epicKey0,
                     };
@@ -63,21 +64,81 @@ namespace UserStoryGenerator.Model
             //
         }
 
+        public static long NO_EPIC_HAS_NO_PARENT = -1;
+
         private static void Recursive(List<IssueData.Issue> hierarchyIssueList, string epicKey, long issueKey, StringBuilder sbFile)
         {
             foreach( IssueData.Issue issue in hierarchyIssueList )
             {
-                string issueKeyStr;
-                if( issueKey == -1 )
-                    issueKeyStr = "";
+                string ultimateParendID;
+                // 
+                if( issueKey == NO_EPIC_HAS_NO_PARENT )
+                    ultimateParendID = "";
                 else
-                    issueKeyStr = issueKey.ToString();
+                    ultimateParendID = issueKey.ToString();
 
-                string line = CreateLine(issue, epicKey, issueKeyStr);
+                string line = CreateLine(issue, epicKey, ultimateParendID);
                 sbFile.AppendLine(line);
+
+                if( issue.Subtasks != null )
+                {
+                    foreach( IssueData.SubTask subTask in issue.Subtasks )
+                    {
+                        string subTaskLine = CreateSubTaskLine(subTask, issue.Key.ToString());
+                        Logger.Info(subTaskLine);
+                        sbFile.AppendLine(subTaskLine);
+                    }
+                }
+
                 if( issue.LinkedIssues != null )
                     Recursive(issue.LinkedIssues, epicKey, issue.Key, sbFile);
             }
+        }
+
+        private static string CreateSubTaskLine(IssueData.SubTask subTask, string issueKeyStr)
+        {
+            StringBuilder sbLine = new();
+
+            if( subTask.Product != null )
+                sbLine.Append(subTask.Product.ToString().Trim() + ",");
+            else
+                sbLine.Append(',');
+
+            // ID
+            long issueKey = subTask.Key;
+            sbLine.Append(issueKey.ToString() + ",");
+
+            // Parent ID
+            sbLine.Append(issueKeyStr + ",");
+
+            // Linked To ID
+            sbLine.Append(',');
+
+            // Summary
+            if( subTask.Summary != null )
+            {
+                string temp = subTask.Summary.ToString().Trim();
+
+                //temp = "He said, \"Special item with double quotes\" then left.";   testing only
+
+                if( temp.Contains(',') )
+                {
+                    temp = temp.Replace("\"", "\"\"");
+                    temp = $"\"{temp}\"";
+                }
+
+                sbLine.Append(temp + ",");
+            }
+            else
+                sbLine.Append(',');
+
+            // IssueType
+            sbLine.Append(subTask.IssueType + ",");
+
+            // Status
+            sbLine.Append("TODO");//OPEN
+
+            return sbLine.ToString().TrimEnd(',').Trim();
         }
 
         private static string CreateLine(IssueData.Issue issue, string parentID, string linedToId)
@@ -94,13 +155,13 @@ namespace UserStoryGenerator.Model
             sbLine.Append(issueKey.ToString() + ",");
 
             // Parent ID
-            if( issue.IssueType != null && issue.IssueType.Equals("Sub-task") )
+            if( issue.IssueType != null && issue.IssueType.Equals(JiraIssueTypes.SUBTASK) )
                 sbLine.Append(linedToId + ",");
             else
                 sbLine.Append(parentID + ",");
 
             // Linked To ID
-            if( issue.IssueType != null && issue.IssueType.Equals("Sub-task") )
+            if( issue.IssueType != null && issue.IssueType.Equals(JiraIssueTypes.SUBTASK) )
                 sbLine.Append(',');
             else
                 sbLine.Append(linedToId + ",");
@@ -130,7 +191,7 @@ namespace UserStoryGenerator.Model
                 sbLine.Append(',');
 
             // Status
-            sbLine.Append("OPEN");
+            sbLine.Append("TODO");//OPEN
 
             return sbLine.ToString().TrimEnd(',').Trim();
             //

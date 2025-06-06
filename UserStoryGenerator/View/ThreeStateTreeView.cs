@@ -10,7 +10,7 @@ namespace UserStoryGenerator.View
             public string? Summary { get; set; }
             public string? IssueType { get; set; }
             public long Key { get; set; }
-            public TreeNodeEx(IssueData.Issue issue)
+            public TreeNodeEx(IssueDataBase issue)
             {
                 Summary = issue.Summary?.Trim();
                 Product = issue.Product?.Trim();
@@ -19,16 +19,31 @@ namespace UserStoryGenerator.View
 
                 // for the TreeView
                 Text = Summary;
+                Name = issue.Key.ToString();
 
             }
 
             public TreeNodeEx()
             {
             }
+            public TreeNodeEx(string text)
+            {
+                Text = text;
+                Name = text;
+            }
         }
 
-        public delegate void CheckEventHandler(int number);
+        public class TreeNodeExSubTasks(string text) : TreeNodeEx(text) { }
+
+        public class TreeNodeExLinkedIssues(string text) : TreeNodeEx(text) { }
+
+
+        public delegate void CheckEventHandler(IssueCollector issueCollector);
         public event CheckEventHandler? Checked;
+        public delegate void ProcessEventHandler(long key, string project, string userStoryText);
+        public event ProcessEventHandler? ProcessSingleStory;
+
+
 
 
         // <remarks>
@@ -70,8 +85,10 @@ namespace UserStoryGenerator.View
         {
             this.CheckBoxes = true;
             this.DrawMode = TreeViewDrawMode.Normal;
+            TriStateStyleProperty = TriStateTreeView.TriStateStyles.Standard;
 
             ShowNodeToolTips = true;
+
 
             StateImageList = new System.Windows.Forms.ImageList();
 
@@ -136,14 +153,13 @@ namespace UserStoryGenerator.View
                 SelectNodeRecursive(node, isChecked);
         }
 
-        private void SelectNodeRecursive(TreeNode node, bool isChecked)
+        private static void SelectNodeRecursive(TreeNode node, bool isChecked)
         {
             node.Checked = isChecked;
             if( node.Nodes.Count > 0 )
                 foreach( TreeNode childNode in node.Nodes )
                     SelectNodeRecursive(childNode, isChecked);
         }
-
 
 
         protected override void OnAfterCheck(System.Windows.Forms.TreeViewEventArgs e)
@@ -175,30 +191,160 @@ namespace UserStoryGenerator.View
 
             IgnoreClickAction--;
 
-            GetCheckedNodeCount(this.Nodes);
+            //GetCheckedNodeCount(this.Nodes);
+            GetAllCheckedNodes();
             //
         }
 
-        private int GetCheckedNodeCount(TreeNodeCollection nodes)
+        public class IssueCollector
         {
-            int count = 0;
-            foreach( TreeNode node in nodes )
+            public List<TreeNodeEx> Stories { get; } = [];
+            public List<TreeNodeEx> Tasks { get; } = [];
+            public List<TreeNodeEx> Tests { get; } = [];
+            public List<TreeNodeEx> Bugs { get; } = [];
+            public List<TreeNodeEx> SubTasks { get; } = [];
+
+            public int Total { get { return Stories.Count + Tasks.Count + Tests.Count + Bugs.Count + SubTasks.Count; } }
+
+            public override string ToString()
             {
-                if( node.StateImageIndex == (int)CheckedState.Checked || node.StateImageIndex == (int)CheckedState.Mixed )
-                {
-                    count++;
-                }
-                // Recursively call for child nodes
-                if( node.Nodes.Count > 0 )
-                {
-                    count += GetCheckedNodeCount(node.Nodes);
-                }
+                return $"Stories={Stories.Count}, Tasks={Tasks.Count}, Tests={Tests.Count}, Bugs={Bugs.Count}, SubTasks={SubTasks.Count}";
             }
 
-            Checked?.Invoke(count);
+        }
 
-            return count;
-            //
+        private IssueCollector GetAllCheckedNodes()
+        {
+            List<TreeNode> checkedHierarchy = GetCheckedNodesHierarchy(true);
+
+            TreeNode dummyParent = new();
+            dummyParent.Nodes.AddRange([.. checkedHierarchy]);
+
+            IssueCollector issueCollector = new();
+            GetCheckedNodeCount(dummyParent.Nodes, issueCollector);
+
+            //Logger.Info($"issueCollector={issueCollector} Total={issueCollector.Total.ToString()}");
+
+            Checked?.Invoke(issueCollector);
+
+            return issueCollector;
+        }
+
+        private static void GetCheckedNodeCount(TreeNodeCollection nodes, IssueCollector issueCollector)
+        {
+            foreach( TreeNodeEx node in nodes )
+            {
+                if( !node.Text.Equals("LinkedIssues") && !node.Text.Equals("SubTasks") )
+                {
+                    if( node.IssueType != null && node.IssueType.Equals(JiraIssueTypes.STORY) )
+                        issueCollector.Stories.Add(node);
+                    else if( node.IssueType != null && node.IssueType.Equals(JiraIssueTypes.TASK) )
+                        issueCollector.Tasks.Add(node);
+                    else if( node.IssueType != null && node.IssueType.Equals(JiraIssueTypes.TEST) )
+                        issueCollector.Tests.Add(node);
+                    else if( node.IssueType != null && node.IssueType.Equals(JiraIssueTypes.BUG) )
+                        issueCollector.Bugs.Add(node);
+
+                    else if( node.IssueType != null && node.IssueType.Equals(JiraIssueTypes.SUBTASK) )//"SubTask"
+                        issueCollector.SubTasks.Add(node);
+                }
+
+                if( node.Nodes != null )
+                    GetCheckedNodeCount(node.Nodes, issueCollector);
+                //
+            }
+        }
+
+
+        //private int GetCheckedNodeCount(TreeNodeCollection nodes, List<TreeNodeEx> storyNodes)
+        //{
+        //    int count = 0;
+        //    foreach( TreeNode node in nodes )
+        //    {
+        //        if( node.StateImageIndex == (int)CheckedState.Checked || node.StateImageIndex == (int)CheckedState.Mixed )
+        //        {
+        //            count++;
+        //        }
+        //        // Recursively call for child nodes
+        //        if( node.Nodes.Count > 0 )
+        //        {
+        //            count += GetCheckedNodeCount(node.Nodes);
+        //        }
+        //    }
+
+        //    Checked?.Invoke(count);
+
+        //    return count;
+        //    //
+        //}
+
+        protected override void OnMouseDown(MouseEventArgs e)
+        {
+            base.OnMouseDown(e);
+
+            if( e.Button == MouseButtons.Right )
+            {
+                // Get the TreeNode at the mouse click location
+                TreeNode clickedNode = this.GetNodeAt(e.Location);
+
+                ContextMenuStrip nodeContextMenu = new();
+                this.ContextMenuStrip = nodeContextMenu;
+
+                ToolStripMenuItem itemExpandChild = new($"Expand all child nodes");
+                if( !clickedNode.IsExpanded )
+                    nodeContextMenu.Items.Add(itemExpandChild);
+                itemExpandChild.Click += (sender, eventArgs) =>
+                {
+                    clickedNode.ExpandAll();
+                    this.TopNode = clickedNode;
+                };
+
+                ToolStripMenuItem itemChildCollapse = new($"Collapse all child nodes");
+                if( clickedNode.IsExpanded )
+                    nodeContextMenu.Items.Add(itemChildCollapse);
+                itemChildCollapse.Click += (sender, eventArgs) =>
+                {
+                    clickedNode.Collapse();
+                };
+
+
+                if( clickedNode is TreeNodeEx treeNodeEx )
+                {
+                    if( clickedNode.Parent != null && clickedNode.Parent.Parent == null )
+                    {
+                        ToolStripMenuItem item1 = new($"Process Story: {treeNodeEx.Text}");
+
+                        nodeContextMenu.Items.Add(item1);
+
+                        item1.Click += (sender, eventArgs) =>
+                        {
+                            if( treeNodeEx.Product != null )
+                                ProcessSingleStory?.Invoke(treeNodeEx.Key, treeNodeEx.Product, clickedNode.Text);
+                        };
+
+
+                        // Assign the context menu strip to the TreeView itself initially.
+                        // We'll show it conditionally based on right-clicking a node.
+
+                        // Select the right-clicked node (optional, but good UX)
+                        this.SelectedNode = clickedNode;
+
+                        //// Show the context menu at the mouse pointer's location
+                        //nodeContextMenu.Show(this, e.Location);
+                    }
+                    //
+                }
+                else
+                {
+                    // If right-clicked on empty space, you might hide the menu or show a different one
+                    //nodeContextMenu.Hide(); 
+                    // Or: this.ContextMenuStrip = _emptySpaceContextMenu; this.ContextMenuStrip.Show(this, e.Location);
+                }
+
+                // Show the context menu at the mouse pointer's location
+                nodeContextMenu.Show(this, e.Location);
+
+            }
         }
 
         protected override void OnAfterExpand(System.Windows.Forms.TreeViewEventArgs e)
@@ -215,7 +361,7 @@ namespace UserStoryGenerator.View
             IgnoreClickAction--;
         }
 
-        protected void UpdateChildState(System.Windows.Forms.TreeNodeCollection Nodes,
+        protected static void UpdateChildState(System.Windows.Forms.TreeNodeCollection Nodes,
     int StateImageIndex, bool Checked, bool ChangeUninitialisedNodesOnly)
         {
             foreach( System.Windows.Forms.TreeNode tnChild in Nodes )
@@ -378,7 +524,7 @@ namespace UserStoryGenerator.View
         /// </summary>
         /// <param name="sourceNodes">The TreeNodeCollection from the original TreeView to traverse.</param>
         /// <param name="targetNodes">The TreeNodeCollection where the new hierarchical checked nodes will be added.</param>
-        private void BuildCheckedNodesHierarchyRecursive(TreeNodeCollection sourceNodes, TreeNodeCollection targetNodes)
+        private static void BuildCheckedNodesHierarchyRecursive(TreeNodeCollection sourceNodes, TreeNodeCollection targetNodes)
         {
             foreach( TreeNode sourceNode in sourceNodes )
             {
@@ -550,7 +696,7 @@ namespace UserStoryGenerator.View
         /// <param name="sourceNodes">The collection of nodes from the original TreeView to process.</param>
         /// <returns>A List of TreeNode objects representing the checked nodes and their
         /// checked descendants from the given source collection, maintaining hierarchy.</returns>
-        private List<TreeNode> GetCheckedNodesRecursiveHierarchy(TreeNodeCollection sourceNodes, bool full = false)
+        private static List<TreeNode> GetCheckedNodesRecursiveHierarchy(TreeNodeCollection sourceNodes, bool full = false)
         {
             List<TreeNode> resultNodes = [];
 
@@ -581,6 +727,8 @@ namespace UserStoryGenerator.View
                     //{
                     //    newTreeNode.Nodes.Add(child);
                     //}
+
+                    //if( sourceNode is TreeNodeExSubTasks ) continue;
 
                     TreeNodeEx treeNodeEx = (TreeNodeEx)sourceNode;
                     if( full )
@@ -652,7 +800,6 @@ namespace UserStoryGenerator.View
             List<TreeNode> checkedNodes = GetCheckedNodesRecursiveHierarchy(this.Nodes[0].Nodes);// skipp the root
             foreach( TreeNode node in checkedNodes )
             {
-                //if( node.Checked ) strings.Add(node.Text);
                 strings.Add(node.Text);
                 if( node.Nodes.Count > 0 )
                 {
@@ -661,11 +808,22 @@ namespace UserStoryGenerator.View
             }
             return strings;
         }
-        private void GetCheckedNodesRecursive(TreeNodeCollection nodes, List<string> strings)
+        private static void GetCheckedNodesRecursive(TreeNodeCollection nodes, List<string> strings)
         {
             foreach( TreeNode node in nodes )
             {
-                if( node.Checked ) strings.Add(node.Text);
+                if( node == null ) continue;
+                if( !node.Checked ) continue;
+
+                // skip to exclude these nodes' text
+                if( node is TreeNodeExSubTasks || node is TreeNodeExLinkedIssues ) continue;
+
+                var issueType = ( (TreeNodeEx)node ).IssueType;
+                if( issueType == null ) continue;
+
+                if( issueType.Equals(Model.JiraIssueTypes.SUBTASK) )
+                    strings.Add(node.Text);
+
                 if( node.Nodes.Count > 0 )
                 {
                     GetCheckedNodesRecursive(node.Nodes, strings);
@@ -674,34 +832,18 @@ namespace UserStoryGenerator.View
 
         }
 
-        //public List<string> GetCheckedNodes()
-        //{
-        //    List<string> checkedNodes = new List<string>();
-        //    // Start the recursive traversal from the top-level nodes
-        //    List<TreeNode> checkedNodes0 = GetCheckedNodesRecursiveHierarchy(this.Nodes);
-
-        //    TreeNode rootNode = new TreeNode("Hidden Root");
-        //    rootNode.Nodes.AddRange(checkedNodes0.ToArray());
-        //    GetCheckedNodesRecursive(rootNode.Nodes, checkedNodes);
-        //    return checkedNodes;
-        //}
-        //private void GetCheckedNodesRecursive(TreeNodeCollection nodes, List<string> checkedNodes)
-        //{
-        //    foreach( TreeNode node in nodes )
-        //    {
-        //        // If the current node is checked, add it to the list
-        //        if( node.Checked )
-        //        {
-        //            checkedNodes.Add(node.Text);
-        //        }
-
-        //        // If the node has child nodes, recursively call the method for its children
-        //        if( node.Nodes.Count > 0 )
-        //        {
-        //            GetCheckedNodesRecursive(node.Nodes, checkedNodes);
-        //        }
-        //    }
-        //}
+        public static void RemovePreviousCreateNodes(TreeNodeCollection nodes)
+        {
+            foreach( TreeNode node in nodes )
+            {
+                if( node == null || node.Tag == null ) continue;
+                if( node.Tag is bool v )
+                {
+                    if( v )
+                        nodes.Remove(node);
+                }
+            }
+        }
 
     }
 

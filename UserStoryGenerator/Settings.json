@@ -1,0 +1,7 @@
+{
+  "Key": "google cloud gemini ai api key",
+  "GeneralAITraining": "text to coach the ai to write jira issues",
+  "QATestsAITraining": "text to coach the ai to write jira issues",
+  "SubTaskAITraining": "text to coach the ai to write jira issues",
+  "Projects": [ "Project A", "Project B" ]
+}
