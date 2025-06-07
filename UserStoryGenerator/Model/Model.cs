@@ -2,8 +2,6 @@
 using UserStoryGenerator.Utilities;
 using UserStoryGenerator.View;
 using static UserStoryGenerator.Model.IssueData;
-using static UserStoryGenerator.Model.IssueGeneratorAllIssues;
-using static UserStoryGenerator.Model.IssueGeneratorBase;
 
 namespace UserStoryGenerator.Model
 {
@@ -78,7 +76,7 @@ namespace UserStoryGenerator.Model
             File.WriteAllText(SettingsFileName, JsonSerializer.Serialize(Settings, options));
         }
 
-        internal void SaveDataToFile(string? epicText, List<string> storyList, List<TreeNode> checkedHierarchy)
+        internal static void SaveDataToFile(string? epicText, List<string> storyList, List<TreeNode> checkedHierarchy)
         {
             List<IssueData.Issue> serializableIssues = TreeSerialization.Convert(checkedHierarchy);
             TreeSerialization.IssueResults userStoryResults = new()

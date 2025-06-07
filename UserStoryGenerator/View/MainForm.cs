@@ -34,6 +34,11 @@ namespace UserStoryGenerator.View
                 comboBoxJiraProjects.DataSource = model.Settings.Projects;
                 this.comboBoxJiraProjects.SelectedIndex = 0;
 
+                //again:
+                //    PreferencesToolStripMenuItem_Click(this, new EventArgs());
+                //    goto again;
+
+
                 if( model.Settings.Key.Equals(Model.Model.DEFAULTKEY, StringComparison.CurrentCultureIgnoreCase) )
                 {
                     MessageBox.Show($"Setting (json) file is needs to be initialized.\n\nA form will appear next, fill it out in order to use this app.\n\nYour settings will persist and you can change them later by using the \"Preferences\" menu item.\n\n", "Set up: Settings", MessageBoxButtons.OK, MessageBoxIcon.Information);
@@ -421,7 +426,7 @@ namespace UserStoryGenerator.View
                 //
             }
 
-            model.SaveDataToFile(this.textBoxEpic.Text, storyList, checkedHierarchy);
+            Model.Model.SaveDataToFile(this.textBoxEpic.Text, storyList, checkedHierarchy);
             //
         }
 
@@ -491,6 +496,7 @@ namespace UserStoryGenerator.View
                     this.comboBoxJiraProjects.SelectedIndex = index;
 
                 };
+
                 form.ShowDialog();
             }
         }

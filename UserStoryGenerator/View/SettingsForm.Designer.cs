@@ -30,20 +30,25 @@
         {
             tableLayoutPanelMain = new TableLayoutPanel();
             tableLayoutPanelForm = new TableLayoutPanel();
-            groupBoxExSubTaskAICoaching = new GroupBoxEx();
-            groupBoxExQATestAICoaching = new GroupBoxEx();
             groupBoxExGeminiKey = new GroupBoxEx();
-            groupBoxExGeneralAICoaching = new GroupBoxEx();
             groupBoxProjects = new GroupBox();
             listViewControl = new ListViewControl();
             flowLayoutPanelButtons = new FlowLayoutPanel();
             buttonClose = new Button();
             buttonUse = new Button();
             buttonSave = new Button();
+            tabControl = new TabControl();
+            tabPageUserStories = new TabPage();
+            tabPageAllIssues = new TabPage();
+            aiCoachingUserControlUserStories = new AICoachingUserControl();
+            aiCoachingUserControlAllIssues = new AICoachingUserControl();
             tableLayoutPanelMain.SuspendLayout();
             tableLayoutPanelForm.SuspendLayout();
             groupBoxProjects.SuspendLayout();
             flowLayoutPanelButtons.SuspendLayout();
+            tabControl.SuspendLayout();
+            tabPageUserStories.SuspendLayout();
+            tabPageAllIssues.SuspendLayout();
             SuspendLayout();
             // 
             // tableLayoutPanelMain
@@ -66,49 +71,21 @@
             // 
             tableLayoutPanelForm.ColumnCount = 1;
             tableLayoutPanelForm.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
-            tableLayoutPanelForm.Controls.Add(groupBoxExSubTaskAICoaching, 0, 3);
-            tableLayoutPanelForm.Controls.Add(groupBoxExQATestAICoaching, 0, 2);
             tableLayoutPanelForm.Controls.Add(groupBoxExGeminiKey, 0, 0);
-            tableLayoutPanelForm.Controls.Add(groupBoxExGeneralAICoaching, 0, 1);
-            tableLayoutPanelForm.Controls.Add(groupBoxProjects, 0, 4);
+            tableLayoutPanelForm.Controls.Add(groupBoxProjects, 0, 2);
+            tableLayoutPanelForm.Controls.Add(tabControl, 0, 1);
             tableLayoutPanelForm.Dock = DockStyle.Fill;
             tableLayoutPanelForm.Location = new Point(3, 4);
             tableLayoutPanelForm.Margin = new Padding(3, 4, 3, 4);
             tableLayoutPanelForm.Name = "tableLayoutPanelForm";
-            tableLayoutPanelForm.RowCount = 5;
+            tableLayoutPanelForm.RowCount = 3;
             tableLayoutPanelForm.RowStyles.Add(new RowStyle(SizeType.Absolute, 83F));
             tableLayoutPanelForm.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
-            tableLayoutPanelForm.RowStyles.Add(new RowStyle(SizeType.Absolute, 160F));
-            tableLayoutPanelForm.RowStyles.Add(new RowStyle(SizeType.Absolute, 160F));
             tableLayoutPanelForm.RowStyles.Add(new RowStyle(SizeType.Absolute, 250F));
+            tableLayoutPanelForm.RowStyles.Add(new RowStyle(SizeType.Absolute, 20F));
+            tableLayoutPanelForm.RowStyles.Add(new RowStyle(SizeType.Absolute, 20F));
             tableLayoutPanelForm.Size = new Size(1242, 1120);
             tableLayoutPanelForm.TabIndex = 0;
-            // 
-            // groupBoxExSubTaskAICoaching
-            // 
-            groupBoxExSubTaskAICoaching.CaptionText = "Sub-task AI Coaching";
-            groupBoxExSubTaskAICoaching.Dock = DockStyle.Fill;
-            groupBoxExSubTaskAICoaching.Location = new Point(3, 714);
-            groupBoxExSubTaskAICoaching.Margin = new Padding(3, 4, 3, 4);
-            groupBoxExSubTaskAICoaching.Multiline = true;
-            groupBoxExSubTaskAICoaching.Name = "groupBoxExSubTaskAICoaching";
-            groupBoxExSubTaskAICoaching.Size = new Size(1236, 152);
-            groupBoxExSubTaskAICoaching.TabIndex = 5;
-            groupBoxExSubTaskAICoaching.UseSystemPasswordChar = false;
-            groupBoxExSubTaskAICoaching.Value = "";
-            // 
-            // groupBoxExQATestAICoaching
-            // 
-            groupBoxExQATestAICoaching.CaptionText = "QA Test AI Coaching";
-            groupBoxExQATestAICoaching.Dock = DockStyle.Fill;
-            groupBoxExQATestAICoaching.Location = new Point(3, 554);
-            groupBoxExQATestAICoaching.Margin = new Padding(3, 4, 3, 4);
-            groupBoxExQATestAICoaching.Multiline = true;
-            groupBoxExQATestAICoaching.Name = "groupBoxExQATestAICoaching";
-            groupBoxExQATestAICoaching.Size = new Size(1236, 152);
-            groupBoxExQATestAICoaching.TabIndex = 4;
-            groupBoxExQATestAICoaching.UseSystemPasswordChar = false;
-            groupBoxExQATestAICoaching.Value = "";
             // 
             // groupBoxExGeminiKey
             // 
@@ -118,23 +95,13 @@
             groupBoxExGeminiKey.Margin = new Padding(3, 4, 3, 4);
             groupBoxExGeminiKey.Multiline = false;
             groupBoxExGeminiKey.Name = "groupBoxExGeminiKey";
+            groupBoxExGeminiKey.PlaceholderText = "";
+            groupBoxExGeminiKey.ReadOnly = false;
             groupBoxExGeminiKey.Size = new Size(1236, 75);
             groupBoxExGeminiKey.TabIndex = 2;
+            groupBoxExGeminiKey.TextAlign = HorizontalAlignment.Left;
             groupBoxExGeminiKey.UseSystemPasswordChar = false;
             groupBoxExGeminiKey.Value = "";
-            // 
-            // groupBoxExGeneralAICoaching
-            // 
-            groupBoxExGeneralAICoaching.CaptionText = "General AI Coaching";
-            groupBoxExGeneralAICoaching.Dock = DockStyle.Fill;
-            groupBoxExGeneralAICoaching.Location = new Point(3, 87);
-            groupBoxExGeneralAICoaching.Margin = new Padding(3, 4, 3, 4);
-            groupBoxExGeneralAICoaching.Multiline = true;
-            groupBoxExGeneralAICoaching.Name = "groupBoxExGeneralAICoaching";
-            groupBoxExGeneralAICoaching.Size = new Size(1236, 459);
-            groupBoxExGeneralAICoaching.TabIndex = 3;
-            groupBoxExGeneralAICoaching.UseSystemPasswordChar = false;
-            groupBoxExGeneralAICoaching.Value = "";
             // 
             // groupBoxProjects
             // 
@@ -201,6 +168,57 @@
             buttonSave.UseVisualStyleBackColor = true;
             buttonSave.Click +=  ButtonSave_Click ;
             // 
+            // tabControl
+            // 
+            tabControl.Controls.Add(tabPageUserStories);
+            tabControl.Controls.Add(tabPageAllIssues);
+            tabControl.Dock = DockStyle.Fill;
+            tabControl.Location = new Point(3, 86);
+            tabControl.Name = "tabControl";
+            tabControl.SelectedIndex = 0;
+            tabControl.Size = new Size(1236, 781);
+            tabControl.TabIndex = 7;
+            // 
+            // tabPageUserStories
+            // 
+            tabPageUserStories.Controls.Add(aiCoachingUserControlUserStories);
+            tabPageUserStories.Location = new Point(4, 29);
+            tabPageUserStories.Name = "tabPageUserStories";
+            tabPageUserStories.Padding = new Padding(3);
+            tabPageUserStories.Size = new Size(1228, 748);
+            tabPageUserStories.TabIndex = 0;
+            tabPageUserStories.Text = "User Stories";
+            tabPageUserStories.UseVisualStyleBackColor = true;
+            // 
+            // tabPageAllIssues
+            // 
+            tabPageAllIssues.Controls.Add(aiCoachingUserControlAllIssues);
+            tabPageAllIssues.Location = new Point(4, 29);
+            tabPageAllIssues.Name = "tabPageAllIssues";
+            tabPageAllIssues.Padding = new Padding(3);
+            tabPageAllIssues.Size = new Size(1228, 748);
+            tabPageAllIssues.TabIndex = 1;
+            tabPageAllIssues.Text = "All Issues";
+            tabPageAllIssues.UseVisualStyleBackColor = true;
+            // 
+            // aiCoachingUserControlUserStories
+            // 
+            aiCoachingUserControlUserStories.Dock = DockStyle.Fill;
+            aiCoachingUserControlUserStories.Location = new Point(3, 3);
+            aiCoachingUserControlUserStories.Margin = new Padding(3, 4, 3, 4);
+            aiCoachingUserControlUserStories.Name = "aiCoachingUserControlUserStories";
+            aiCoachingUserControlUserStories.Size = new Size(1222, 742);
+            aiCoachingUserControlUserStories.TabIndex = 0;
+            // 
+            // aiCoachingUserControlAllIssues
+            // 
+            aiCoachingUserControlAllIssues.Dock = DockStyle.Fill;
+            aiCoachingUserControlAllIssues.Location = new Point(3, 3);
+            aiCoachingUserControlAllIssues.Margin = new Padding(3, 4, 3, 4);
+            aiCoachingUserControlAllIssues.Name = "aiCoachingUserControlAllIssues";
+            aiCoachingUserControlAllIssues.Size = new Size(1222, 742);
+            aiCoachingUserControlAllIssues.TabIndex = 0;
+            // 
             // SettingsForm
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
@@ -217,6 +235,9 @@
             tableLayoutPanelForm.ResumeLayout(false);
             groupBoxProjects.ResumeLayout(false);
             flowLayoutPanelButtons.ResumeLayout(false);
+            tabControl.ResumeLayout(false);
+            tabPageUserStories.ResumeLayout(false);
+            tabPageAllIssues.ResumeLayout(false);
             ResumeLayout(false);
         }
 
@@ -225,14 +246,16 @@
         private TableLayoutPanel tableLayoutPanelMain;
         private TableLayoutPanel tableLayoutPanelForm;
         private GroupBoxEx groupBoxExGeminiKey;
-        private GroupBoxEx groupBoxExGeneralAICoaching;
         private FlowLayoutPanel flowLayoutPanelButtons;
         private Button buttonClose;
         private Button buttonUse;
         private Button buttonSave;
-        private GroupBoxEx groupBoxExSubTaskAICoaching;
-        private GroupBoxEx groupBoxExQATestAICoaching;
         private GroupBox groupBoxProjects;
         private ListViewControl listViewControl;
+        private TabControl tabControl;
+        private TabPage tabPageUserStories;
+        private TabPage tabPageAllIssues;
+        private AICoachingUserControl aiCoachingUserControlUserStories;
+        private AICoachingUserControl aiCoachingUserControlAllIssues;
     }
 }

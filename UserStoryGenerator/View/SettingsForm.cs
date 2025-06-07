@@ -12,6 +12,8 @@ namespace UserStoryGenerator.View
         {
             if( settings == null ) throw new NullReferenceException(nameof(settings));
             if( settings.Key == null ) throw new NullReferenceException(nameof(settings.Key));
+            if( settings.UserStoryCoaching == null ) throw new NullReferenceException(nameof(settings.UserStoryCoaching));
+            if( settings.AllIssueCoaching == null ) throw new NullReferenceException(nameof(settings.AllIssueCoaching));
 
             InitializeComponent();
 
@@ -21,37 +23,33 @@ namespace UserStoryGenerator.View
 
             //if( settings == null ) buttonUse.Enabled = false;
 
-            /*
-
 
             if( settings.Key.Equals(Model.Model.DEFAULTKEY, StringComparison.CurrentCultureIgnoreCase) )
             {
                 groupBoxExGeminiKey.UseSystemPasswordChar = false;
                 if( settings.Key != null )
                     groupBoxExGeminiKey.PlaceholderText = settings.Key;
-                if( settings.GeneralAITraining != null )
-                    groupBoxExGeneralAICoaching.PlaceholderText = settings.GeneralAITraining;
-                if( settings.QATestsAITraining != null )
-                    groupBoxExQATestAICoaching.PlaceholderText = settings.QATestsAITraining;
-                if( settings.SubTaskAITraining != null )
-                    groupBoxExSubTaskAICoaching.PlaceholderText = settings.SubTaskAITraining;
+
+                if( settings.Projects != null )
+                    this.listViewControl.SetItems(settings.Projects);
             }
             else
             {
                 groupBoxExGeminiKey.UseSystemPasswordChar = true;
 
-                //settings = settings ?? new Settings();
-
-
                 this.groupBoxExGeminiKey.Value = settings.Key;
-                this.groupBoxExGeneralAICoaching.Value = settings.GeneralAITraining;
-                groupBoxExQATestAICoaching.Value = settings.QATestsAITraining;
-                groupBoxExSubTaskAICoaching.Value = settings.SubTaskAITraining;
+
+                aiCoachingUserControlUserStories.IssueInstructions = settings.UserStoryCoaching.IssueInstructions;
+                aiCoachingUserControlUserStories.QATestInstructions = settings.UserStoryCoaching.QATestInstructions;
+                aiCoachingUserControlUserStories.SubTaskInstructions = settings.UserStoryCoaching.SubTaskInstructions;
+
+                aiCoachingUserControlAllIssues.IssueInstructions = settings.AllIssueCoaching.IssueInstructions;
+                aiCoachingUserControlAllIssues.QATestInstructions = settings.AllIssueCoaching.QATestInstructions;
+                aiCoachingUserControlAllIssues.SubTaskInstructions = settings.AllIssueCoaching.SubTaskInstructions;
 
                 if( settings.Projects != null )
                     this.listViewControl.SetItems(settings.Projects);
             }
-            */
             //
         }
 
@@ -64,34 +62,54 @@ namespace UserStoryGenerator.View
         private void ButtonSave_Click(object sender, EventArgs e)
         {
             settings ??= new Settings();
-            /*
+
             settings.Key = groupBoxExGeminiKey.Value;
-            settings.GeneralAITraining = groupBoxExGeneralAICoaching.Value;
-            settings.SubTaskAITraining = groupBoxExSubTaskAICoaching.Value;
-            settings.QATestsAITraining = groupBoxExQATestAICoaching.Value;
+
+            if( settings.UserStoryCoaching == null ) throw new NullReferenceException(nameof(settings.UserStoryCoaching));
+
+            settings.UserStoryCoaching.IssueInstructions = aiCoachingUserControlUserStories.IssueInstructions;
+            settings.UserStoryCoaching.QATestInstructions = aiCoachingUserControlUserStories.QATestInstructions;
+            settings.UserStoryCoaching.SubTaskInstructions = aiCoachingUserControlUserStories.SubTaskInstructions;
+
+
+            if( settings.AllIssueCoaching == null ) throw new NullReferenceException(nameof(settings.AllIssueCoaching));
+
+            settings.AllIssueCoaching.IssueInstructions = aiCoachingUserControlAllIssues.IssueInstructions;
+            settings.AllIssueCoaching.QATestInstructions = aiCoachingUserControlAllIssues.QATestInstructions;
+            settings.AllIssueCoaching.SubTaskInstructions = aiCoachingUserControlAllIssues.SubTaskInstructions;
+
             settings.Projects = this.listViewControl.GetItems();
 
             NewSettings?.Invoke(settings, true);
 
-            Dispose();*/
+            Dispose();
 
         }
 
         private void ButtonUse_Click(object sender, EventArgs e)
         {
-            /*
             if( settings == null ) return;
 
             settings.Key = groupBoxExGeminiKey.Value;
-            settings.GeneralAITraining = groupBoxExGeneralAICoaching.Value;
-            settings.SubTaskAITraining = groupBoxExSubTaskAICoaching.Value;
-            settings.QATestsAITraining = groupBoxExQATestAICoaching.Value;
+
+            if( settings.UserStoryCoaching == null ) throw new NullReferenceException(nameof(settings.UserStoryCoaching));
+
+            settings.UserStoryCoaching.IssueInstructions = aiCoachingUserControlUserStories.IssueInstructions;
+            settings.UserStoryCoaching.QATestInstructions = aiCoachingUserControlUserStories.QATestInstructions;
+            settings.UserStoryCoaching.SubTaskInstructions = aiCoachingUserControlUserStories.SubTaskInstructions;
+
+
+            if( settings.AllIssueCoaching == null ) throw new NullReferenceException(nameof(settings.AllIssueCoaching));
+
+            settings.AllIssueCoaching.IssueInstructions = aiCoachingUserControlAllIssues.IssueInstructions;
+            settings.AllIssueCoaching.QATestInstructions = aiCoachingUserControlAllIssues.QATestInstructions;
+            settings.AllIssueCoaching.SubTaskInstructions = aiCoachingUserControlAllIssues.SubTaskInstructions;
             settings.Projects = this.listViewControl.GetItems();
 
             NewSettings?.Invoke(settings, false);
 
             Dispose();
-            */
+
         }
 
         private void ButtonClose_Click(object sender, EventArgs e)

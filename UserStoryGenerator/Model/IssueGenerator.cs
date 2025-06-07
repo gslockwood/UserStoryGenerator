@@ -47,7 +47,6 @@ namespace UserStoryGenerator.Model
 
         }
 
-        //public async Task RequestAnswer()
         public void RequestAnswer()
         {
             try
@@ -91,7 +90,6 @@ namespace UserStoryGenerator.Model
 
             // add any QATests or Subtasks if instructed
             AddAdditionalInstructions();
-
 
             return sbCoaching.ToString();
         }
