@@ -25,11 +25,15 @@ namespace UserStoryGenerator.View
 
                 InitializeComponent();
 
+
                 ResetUI();
 
                 // for testing missing info situations
                 //model.Settings.Key = Model.Model.DEFAULTKEY;
                 //model.Settings.Key = "esdfggf9s4Ar-OsfgsgsfgCgclvaA-LitgsumL0";
+
+                comboBoxExStoryMin.DataSource = new int[] { 10, 20, 30, 40, 50, 75 };
+                comboBoxExStoryMin.SelectedIndex = 2;
 
                 comboBoxJiraProjects.DataSource = model.Settings.Projects;
                 this.comboBoxJiraProjects.SelectedIndex = 0;
@@ -45,7 +49,7 @@ namespace UserStoryGenerator.View
                     PreferencesToolStripMenuItem_Click(model.Settings, new EventArgs());
                 }
 #if DEBUG 
-                textBoxEpic.Text = "An epic Epic";
+                this.groupBoxExEpic.Value = "An epic Epic";
                 checkBoxAddQATests.Checked = true;
                 checkBoxAddSubTasks.Checked = true;
 
@@ -53,7 +57,7 @@ namespace UserStoryGenerator.View
                 string testProdDesc = "Implement a mobile-first, fully responsive e-commerce platform for our online store, enabling users to browse products, add them to a shopping cart, and complete secure online purchases. The platform should offer a streamlined checkout process, diverse payment options, and robust order tracking capabilities. We need to ensure that the platform is user-friendly, accessible, and highly performant, with a focus on a seamless user experience across all devices.  Please include this task: Create a Database table called \"Customer\".   Add the \"Name\" and \"Phone number\" and other relevant columns to the \"Customer\" table.";
 
                 textBoxPRD.Value = testProdDesc;
-                textBoxProductName.Text = "Feature X";
+                groupBoxExProductFeature.Value = "Feature X";
 
 #endif
             }
@@ -86,7 +90,9 @@ namespace UserStoryGenerator.View
 
                 stopwatchClockConvertRun.Start();
 
-                await model.ProcessSingleStory(key, product, textBoxProductName.Text, userStoryText, this.checkBoxAddQATests.Checked, this.checkBoxAddSubTasks.Checked);
+                if( groupBoxExProductFeature.Value == null ) throw new NullReferenceException(nameof(groupBoxExProductFeature));
+                if( comboBoxExStoryMin.SelectedItem == null ) throw new NullReferenceException(nameof(comboBoxExStoryMin.SelectedItem));
+                await model.ProcessSingleStory(key, product, groupBoxExProductFeature.Value, userStoryText, this.checkBoxAddQATests.Checked, this.checkBoxAddSubTasks.Checked, (int)comboBoxExStoryMin.SelectedItem);
                 buttonProcessStories.Text = "Running";
                 //Logger.Info("ProcessSingleStory");
                 //
@@ -223,8 +229,7 @@ namespace UserStoryGenerator.View
             progressBar.Visible = true;
             buttonProcessStories.Enabled = false;
 
-            if( comboBoxJiraProjects.SelectedValue == null ) throw new NullReferenceException(nameof(comboBoxJiraProjects.SelectedValue));
-            string? project = comboBoxJiraProjects.SelectedValue.ToString();
+            string? project = comboBoxJiraProjects.CurrentSelectedItem.ToString();
             if( project == null ) throw new NullReferenceException(nameof(project));
 
             //string testProdDesc = "Implement a mobile-first, fully responsive e-commerce platform for our online store, enabling users to browse products, add them to a shopping cart, and complete secure online purchases. The platform should offer a streamlined checkout process, diverse payment options, and robust order tracking capabilities. We need to ensure that the platform is user-friendly, accessible, and highly performant, with a focus on a seamless user experience across all devices.  Please include this task: Create a Database table called \"Customer\".   Add the \"Name\" and \"Phone number\" and other relevant columns to the \"Customer\" table.";
@@ -232,8 +237,12 @@ namespace UserStoryGenerator.View
             string? testProdDesc = textBoxPRD.Value;
             if( string.IsNullOrEmpty(testProdDesc) ) throw new NullReferenceException(nameof(testProdDesc));
 
+            if( groupBoxExProductFeature.Value == null ) throw new NullReferenceException(nameof(groupBoxExProductFeature));
+
             stopwatchClockConvertRun.Start();
-            await model.ProduceUserStories(project, textBoxProductName.Text, testProdDesc, this.checkBoxAddQATests.Checked, checkBoxAddSubTasks.Checked);
+
+            if( comboBoxExStoryMin.SelectedItem == null ) throw new NullReferenceException(nameof(comboBoxExStoryMin.SelectedItem));
+            await model.ProduceUserStories(project, groupBoxExProductFeature.Value, testProdDesc, this.checkBoxAddQATests.Checked, checkBoxAddSubTasks.Checked, (int)comboBoxExStoryMin.SelectedItem);
             //Logger.Info("Convert_Click: model.ProduceUserStories running");
             //
         }
@@ -310,7 +319,7 @@ namespace UserStoryGenerator.View
         {
             if( data.Issues == null ) return;
 
-            TreeNode? root = new(this.textBoxEpic.Text);
+            TreeNode? root = new(this.groupBoxExEpic.Value);
             treeView.Nodes.Add(root);
 
             Recursive(data.Issues, root);
@@ -426,22 +435,25 @@ namespace UserStoryGenerator.View
                 //
             }
 
-            Model.Model.SaveDataToFile(this.textBoxEpic.Text, storyList, checkedHierarchy);
+            Model.Model.SaveDataToFile(this.groupBoxExEpic.Value, storyList, checkedHierarchy);
             //
         }
 
 
         private void TextControls_TextChanged(object? sender, EventArgs e)
         {
-            buttonConvert.Enabled = !( textBoxProductName.TextLength == 0 || textBoxPRD.TextLength == 0 || comboBoxJiraProjects.CurrentSelectedValue.Length == 0 );
+            buttonConvert.Enabled = !( groupBoxExProductFeature.TextLength == 0 || textBoxPRD.TextLength == 0 );
+            //buttonConvert.Enabled = !( groupBoxExProductFeature.TextLength == 0 || textBoxPRD.TextLength == 0 || comboBoxJiraProjects.CurrentSelectedItem.Length == 0 || comboBoxExStoryMin.CurrentSelectedItem.Length == 0 );
         }
         private void TextBoxEpic_TextChanged(object sender, EventArgs e)
         {
-            string currentText = this.textBoxEpic.Text;
+            if( groupBoxExEpic.Value == null ) throw new NullReferenceException(nameof(groupBoxExEpic));
+
+            string currentText = this.groupBoxExEpic.Value;
 
             if( currentText.Length == 0 )//|| currentText.Length> 8
             {
-                textBoxEpic.ForeColor = SystemColors.ControlText;
+                groupBoxExEpic.TextBoxForeColor = SystemColors.ControlText;
                 TextControls_TextChanged(sender, new EventArgs());
                 return;
             }
@@ -454,27 +466,27 @@ namespace UserStoryGenerator.View
                 // Update the label based on the validation result
                 if( isValid )
                 {
-                    textBoxEpic.ForeColor = SystemColors.ControlText;
+                    groupBoxExEpic.TextBoxForeColor = SystemColors.ControlText;
                     TextControls_TextChanged(sender, new EventArgs());
                     return;
                 }
                 else
                 {
-                    textBoxEpic.ForeColor = System.Drawing.Color.Red;
+                    groupBoxExEpic.TextBoxForeColor = System.Drawing.Color.Red;
                     buttonConvert.Enabled = false;
                     return;
                 }
             }
             else
             {
-                textBoxEpic.ForeColor = SystemColors.ControlText;
+                groupBoxExEpic.TextBoxForeColor = SystemColors.ControlText;
                 TextControls_TextChanged(sender, new EventArgs());
             }
         }
 
         private void PreferencesToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            string? selectedValue = comboBoxJiraProjects.CurrentSelectedValue;
+            string? selectedValue = comboBoxJiraProjects.CurrentSelectedItem.ToString();
 
             SettingsForm? form = null;
 
@@ -556,7 +568,9 @@ namespace UserStoryGenerator.View
 
             if( list.Count > 0 )
             {
-                await model.ProcessStoryList(textBoxProductName.Text, list);//await
+                if( groupBoxExProductFeature.Value == null ) throw new NullReferenceException(nameof(groupBoxExProductFeature));
+                if( comboBoxExStoryMin.SelectedItem == null ) throw new NullReferenceException(nameof(comboBoxExStoryMin.SelectedItem));
+                await model.ProcessStoryList(groupBoxExProductFeature.Value, checkBoxAddQATests.Checked, checkBoxAddSubTasks.Checked, (int)comboBoxExStoryMin.SelectedItem, list);//await
                 //Logger.Info("ButtonProcessStories_ClickAsync");
                 buttonProcessStories.Text = "Running";
             }

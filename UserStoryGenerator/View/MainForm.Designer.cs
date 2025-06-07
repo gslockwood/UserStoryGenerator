@@ -34,21 +34,19 @@ namespace UserStoryGenerator.View
             components = new System.ComponentModel.Container();
             buttonConvert = new Button();
             tableLayoutPanelData = new TableLayoutPanel();
-            flowLayoutPanelProductName = new FlowLayoutPanel();
-            labelProductName = new Label();
-            textBoxProductName = new TextBox();
-            flowLayoutPanelEpic = new FlowLayoutPanel();
-            labelEpic = new Label();
-            textBoxEpic = new TextBox();
+            tableLayoutPanelEntryControl = new TableLayoutPanel();
+            groupBoxStoryMin = new GroupBox();
+            comboBoxExStoryMin = new ComboBoxEx();
+            groupBoxExProductFeature = new GroupBoxEx();
+            groupBoxExEpic = new GroupBoxEx();
+            groupBoxProduct = new GroupBox();
+            comboBoxJiraProjects = new ComboBoxEx();
             tableLayoutPanelControls = new TableLayoutPanel();
             progressBar = new ProgressBar();
             flowLayoutPanelCheckBoxes = new FlowLayoutPanel();
             checkBoxAddSubTasks = new CheckBox();
             checkBoxAddQATests = new CheckBox();
             textBoxPRD = new GroupBoxEx();
-            flowLayoutPanelProduct = new FlowLayoutPanel();
-            Product = new Label();
-            comboBoxJiraProjects = new ComboBoxEx();
             treeView = new TriStateTreeView();
             panelResults = new Panel();
             tableLayoutPanelResults = new TableLayoutPanel();
@@ -78,11 +76,11 @@ namespace UserStoryGenerator.View
             menuStrip1 = new MenuStrip();
             preferencesToolStripMenuItem = new ToolStripMenuItem();
             tableLayoutPanelData.SuspendLayout();
-            flowLayoutPanelProductName.SuspendLayout();
-            flowLayoutPanelEpic.SuspendLayout();
+            tableLayoutPanelEntryControl.SuspendLayout();
+            groupBoxStoryMin.SuspendLayout();
+            groupBoxProduct.SuspendLayout();
             tableLayoutPanelControls.SuspendLayout();
             flowLayoutPanelCheckBoxes.SuspendLayout();
-            flowLayoutPanelProduct.SuspendLayout();
             panelResults.SuspendLayout();
             tableLayoutPanelResults.SuspendLayout();
             tableLayoutPanelResultsBottom.SuspendLayout();
@@ -95,7 +93,7 @@ namespace UserStoryGenerator.View
             // 
             // buttonConvert
             // 
-            buttonConvert.Location = new Point(575, 4);
+            buttonConvert.Location = new Point(693, 4);
             buttonConvert.Margin = new Padding(3, 4, 3, 4);
             buttonConvert.Name = "buttonConvert";
             buttonConvert.Size = new Size(73, 29);
@@ -108,87 +106,119 @@ namespace UserStoryGenerator.View
             // 
             tableLayoutPanelData.ColumnCount = 1;
             tableLayoutPanelData.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
-            tableLayoutPanelData.Controls.Add(flowLayoutPanelProductName, 0, 2);
-            tableLayoutPanelData.Controls.Add(flowLayoutPanelEpic, 0, 1);
-            tableLayoutPanelData.Controls.Add(tableLayoutPanelControls, 0, 4);
-            tableLayoutPanelData.Controls.Add(textBoxPRD, 0, 3);
-            tableLayoutPanelData.Controls.Add(flowLayoutPanelProduct, 0, 0);
+            tableLayoutPanelData.Controls.Add(tableLayoutPanelEntryControl, 0, 0);
+            tableLayoutPanelData.Controls.Add(tableLayoutPanelControls, 0, 2);
+            tableLayoutPanelData.Controls.Add(textBoxPRD, 0, 1);
             tableLayoutPanelData.Dock = DockStyle.Fill;
             tableLayoutPanelData.Location = new Point(3, 4);
             tableLayoutPanelData.Margin = new Padding(3, 4, 3, 4);
             tableLayoutPanelData.Name = "tableLayoutPanelData";
-            tableLayoutPanelData.RowCount = 5;
-            tableLayoutPanelData.RowStyles.Add(new RowStyle(SizeType.Absolute, 49F));
-            tableLayoutPanelData.RowStyles.Add(new RowStyle(SizeType.Absolute, 49F));
-            tableLayoutPanelData.RowStyles.Add(new RowStyle(SizeType.Absolute, 49F));
+            tableLayoutPanelData.RowCount = 3;
+            tableLayoutPanelData.RowStyles.Add(new RowStyle(SizeType.Absolute, 95F));
             tableLayoutPanelData.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
             tableLayoutPanelData.RowStyles.Add(new RowStyle(SizeType.Absolute, 45F));
-            tableLayoutPanelData.Size = new Size(658, 871);
+            tableLayoutPanelData.RowStyles.Add(new RowStyle(SizeType.Absolute, 20F));
+            tableLayoutPanelData.RowStyles.Add(new RowStyle(SizeType.Absolute, 20F));
+            tableLayoutPanelData.Size = new Size(776, 871);
             tableLayoutPanelData.TabIndex = 1;
             // 
-            // flowLayoutPanelProductName
+            // tableLayoutPanelEntryControl
             // 
-            flowLayoutPanelProductName.Controls.Add(labelProductName);
-            flowLayoutPanelProductName.Controls.Add(textBoxProductName);
-            flowLayoutPanelProductName.Dock = DockStyle.Fill;
-            flowLayoutPanelProductName.Location = new Point(3, 102);
-            flowLayoutPanelProductName.Margin = new Padding(3, 4, 3, 4);
-            flowLayoutPanelProductName.Name = "flowLayoutPanelProductName";
-            flowLayoutPanelProductName.Size = new Size(652, 41);
-            flowLayoutPanelProductName.TabIndex = 4;
+            tableLayoutPanelEntryControl.ColumnCount = 4;
+            tableLayoutPanelEntryControl.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 140F));
+            tableLayoutPanelEntryControl.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50F));
+            tableLayoutPanelEntryControl.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50F));
+            tableLayoutPanelEntryControl.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 100F));
+            tableLayoutPanelEntryControl.Controls.Add(groupBoxStoryMin, 3, 0);
+            tableLayoutPanelEntryControl.Controls.Add(groupBoxExProductFeature, 2, 0);
+            tableLayoutPanelEntryControl.Controls.Add(groupBoxExEpic, 1, 0);
+            tableLayoutPanelEntryControl.Controls.Add(groupBoxProduct, 0, 0);
+            tableLayoutPanelEntryControl.Dock = DockStyle.Fill;
+            tableLayoutPanelEntryControl.Location = new Point(3, 3);
+            tableLayoutPanelEntryControl.Name = "tableLayoutPanelEntryControl";
+            tableLayoutPanelEntryControl.RowCount = 1;
+            tableLayoutPanelEntryControl.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
+            tableLayoutPanelEntryControl.Size = new Size(770, 89);
+            tableLayoutPanelEntryControl.TabIndex = 12;
             // 
-            // labelProductName
+            // groupBoxStoryMin
             // 
-            labelProductName.Location = new Point(5, 5);
-            labelProductName.Margin = new Padding(5);
-            labelProductName.Name = "labelProductName";
-            labelProductName.Size = new Size(116, 27);
-            labelProductName.TabIndex = 0;
-            labelProductName.Text = "Product/Feature";
-            labelProductName.TextAlign = ContentAlignment.MiddleLeft;
+            groupBoxStoryMin.Anchor =   AnchorStyles.Top  |  AnchorStyles.Left   |  AnchorStyles.Right ;
+            groupBoxStoryMin.Controls.Add(comboBoxExStoryMin);
+            groupBoxStoryMin.Location = new Point(673, 3);
+            groupBoxStoryMin.Name = "groupBoxStoryMin";
+            groupBoxStoryMin.Size = new Size(94, 75);
+            groupBoxStoryMin.TabIndex = 13;
+            groupBoxStoryMin.TabStop = false;
+            groupBoxStoryMin.Text = "Story Min";
             // 
-            // textBoxProductName
+            // comboBoxExStoryMin
             // 
-            textBoxProductName.Anchor =   AnchorStyles.Top  |  AnchorStyles.Left   |  AnchorStyles.Right ;
-            textBoxProductName.Location = new Point(129, 4);
-            textBoxProductName.Margin = new Padding(3, 4, 3, 4);
-            textBoxProductName.Name = "textBoxProductName";
-            textBoxProductName.PlaceholderText = "enter the product or feature name (required)";
-            textBoxProductName.Size = new Size(519, 27);
-            textBoxProductName.TabIndex = 1;
-            textBoxProductName.TextChanged +=  TextControls_TextChanged ;
+            comboBoxExStoryMin.Anchor =   AnchorStyles.Top  |  AnchorStyles.Left   |  AnchorStyles.Right ;
+            comboBoxExStoryMin.DropDownStyle = ComboBoxStyle.DropDownList;
+            comboBoxExStoryMin.FormattingEnabled = true;
+            comboBoxExStoryMin.Location = new Point(21, 37);
+            comboBoxExStoryMin.Margin = new Padding(3, 4, 3, 4);
+            comboBoxExStoryMin.Name = "comboBoxExStoryMin";
+            comboBoxExStoryMin.Size = new Size(67, 28);
+            comboBoxExStoryMin.TabIndex = 1;
             // 
-            // flowLayoutPanelEpic
+            // groupBoxExProductFeature
             // 
-            flowLayoutPanelEpic.Controls.Add(labelEpic);
-            flowLayoutPanelEpic.Controls.Add(textBoxEpic);
-            flowLayoutPanelEpic.Dock = DockStyle.Fill;
-            flowLayoutPanelEpic.Location = new Point(3, 53);
-            flowLayoutPanelEpic.Margin = new Padding(3, 4, 3, 4);
-            flowLayoutPanelEpic.Name = "flowLayoutPanelEpic";
-            flowLayoutPanelEpic.Size = new Size(652, 41);
-            flowLayoutPanelEpic.TabIndex = 3;
+            groupBoxExProductFeature.CaptionText = "Product/Feature";
+            groupBoxExProductFeature.Dock = DockStyle.Fill;
+            groupBoxExProductFeature.Location = new Point(408, 9);
+            groupBoxExProductFeature.Margin = new Padding(3, 9, 3, 9);
+            groupBoxExProductFeature.Multiline = false;
+            groupBoxExProductFeature.Name = "groupBoxExProductFeature";
+            groupBoxExProductFeature.PlaceholderText = "enter the product or feature name (required)";
+            groupBoxExProductFeature.ReadOnly = false;
+            groupBoxExProductFeature.Size = new Size(259, 71);
+            groupBoxExProductFeature.TabIndex = 11;
+            groupBoxExProductFeature.TextAlign = HorizontalAlignment.Left;
+            groupBoxExProductFeature.TextBoxForeColor = SystemColors.WindowText;
+            groupBoxExProductFeature.UseSystemPasswordChar = false;
+            groupBoxExProductFeature.Value = "";
+            groupBoxExProductFeature.ValueChanged +=  TextControls_TextChanged ;
             // 
-            // labelEpic
+            // groupBoxExEpic
             // 
-            labelEpic.Location = new Point(5, 5);
-            labelEpic.Margin = new Padding(5);
-            labelEpic.Name = "labelEpic";
-            labelEpic.Size = new Size(116, 27);
-            labelEpic.TabIndex = 0;
-            labelEpic.Text = "Epic";
-            labelEpic.TextAlign = ContentAlignment.MiddleLeft;
+            groupBoxExEpic.CaptionText = "Epic";
+            groupBoxExEpic.Dock = DockStyle.Fill;
+            groupBoxExEpic.Location = new Point(143, 7);
+            groupBoxExEpic.Margin = new Padding(3, 7, 3, 7);
+            groupBoxExEpic.Multiline = false;
+            groupBoxExEpic.Name = "groupBoxExEpic";
+            groupBoxExEpic.PlaceholderText = "enter existing epic Key, enter a title of new epic, or leave blank";
+            groupBoxExEpic.ReadOnly = false;
+            groupBoxExEpic.Size = new Size(259, 75);
+            groupBoxExEpic.TabIndex = 10;
+            groupBoxExEpic.TextAlign = HorizontalAlignment.Left;
+            groupBoxExEpic.TextBoxForeColor = SystemColors.WindowText;
+            groupBoxExEpic.UseSystemPasswordChar = false;
+            groupBoxExEpic.Value = "";
             // 
-            // textBoxEpic
+            // groupBoxProduct
             // 
-            textBoxEpic.Anchor =   AnchorStyles.Top  |  AnchorStyles.Left   |  AnchorStyles.Right ;
-            textBoxEpic.Location = new Point(129, 4);
-            textBoxEpic.Margin = new Padding(3, 4, 3, 4);
-            textBoxEpic.Name = "textBoxEpic";
-            textBoxEpic.PlaceholderText = "enter existing epic Key, enter a title of new epic, or leave blank";
-            textBoxEpic.Size = new Size(519, 27);
-            textBoxEpic.TabIndex = 1;
-            textBoxEpic.TextChanged +=  TextBoxEpic_TextChanged ;
+            groupBoxProduct.Anchor =   AnchorStyles.Top  |  AnchorStyles.Left   |  AnchorStyles.Right ;
+            groupBoxProduct.Controls.Add(comboBoxJiraProjects);
+            groupBoxProduct.Location = new Point(3, 3);
+            groupBoxProduct.Name = "groupBoxProduct";
+            groupBoxProduct.Size = new Size(134, 75);
+            groupBoxProduct.TabIndex = 12;
+            groupBoxProduct.TabStop = false;
+            groupBoxProduct.Text = "Product";
+            // 
+            // comboBoxJiraProjects
+            // 
+            comboBoxJiraProjects.Anchor =   AnchorStyles.Top  |  AnchorStyles.Left   |  AnchorStyles.Right ;
+            comboBoxJiraProjects.DropDownStyle = ComboBoxStyle.DropDownList;
+            comboBoxJiraProjects.FormattingEnabled = true;
+            comboBoxJiraProjects.Location = new Point(21, 37);
+            comboBoxJiraProjects.Margin = new Padding(3, 4, 3, 4);
+            comboBoxJiraProjects.Name = "comboBoxJiraProjects";
+            comboBoxJiraProjects.Size = new Size(107, 28);
+            comboBoxJiraProjects.TabIndex = 1;
             // 
             // tableLayoutPanelControls
             // 
@@ -205,12 +235,12 @@ namespace UserStoryGenerator.View
             tableLayoutPanelControls.Name = "tableLayoutPanelControls";
             tableLayoutPanelControls.RowCount = 1;
             tableLayoutPanelControls.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
-            tableLayoutPanelControls.Size = new Size(652, 37);
+            tableLayoutPanelControls.Size = new Size(770, 37);
             tableLayoutPanelControls.TabIndex = 2;
             // 
             // progressBar
             // 
-            progressBar.Location = new Point(463, 5);
+            progressBar.Location = new Point(581, 5);
             progressBar.Margin = new Padding(5);
             progressBar.MarqueeAnimationSpeed = 30;
             progressBar.Name = "progressBar";
@@ -227,7 +257,7 @@ namespace UserStoryGenerator.View
             flowLayoutPanelCheckBoxes.Location = new Point(3, 4);
             flowLayoutPanelCheckBoxes.Margin = new Padding(3, 4, 3, 4);
             flowLayoutPanelCheckBoxes.Name = "flowLayoutPanelCheckBoxes";
-            flowLayoutPanelCheckBoxes.Size = new Size(452, 29);
+            flowLayoutPanelCheckBoxes.Size = new Size(570, 29);
             flowLayoutPanelCheckBoxes.TabIndex = 2;
             // 
             // checkBoxAddSubTasks
@@ -257,48 +287,19 @@ namespace UserStoryGenerator.View
             textBoxPRD.AllowDrop = true;
             textBoxPRD.CaptionText = "Product Description";
             textBoxPRD.Dock = DockStyle.Fill;
-            textBoxPRD.Location = new Point(2, 150);
+            textBoxPRD.Location = new Point(2, 98);
             textBoxPRD.Margin = new Padding(2, 3, 2, 3);
             textBoxPRD.Multiline = true;
             textBoxPRD.Name = "textBoxPRD";
             textBoxPRD.PlaceholderText = "enter the product feature plain text description (required)";
             textBoxPRD.ReadOnly = false;
-            textBoxPRD.Size = new Size(654, 673);
+            textBoxPRD.Size = new Size(772, 725);
             textBoxPRD.TabIndex = 1;
             textBoxPRD.TextAlign = HorizontalAlignment.Left;
+            textBoxPRD.TextBoxForeColor = SystemColors.WindowText;
             textBoxPRD.UseSystemPasswordChar = false;
             textBoxPRD.Value = "";
             textBoxPRD.TextChanged +=  TextControls_TextChanged ;
-            // 
-            // flowLayoutPanelProduct
-            // 
-            flowLayoutPanelProduct.Controls.Add(Product);
-            flowLayoutPanelProduct.Controls.Add(comboBoxJiraProjects);
-            flowLayoutPanelProduct.Dock = DockStyle.Fill;
-            flowLayoutPanelProduct.Location = new Point(3, 4);
-            flowLayoutPanelProduct.Margin = new Padding(3, 4, 3, 4);
-            flowLayoutPanelProduct.Name = "flowLayoutPanelProduct";
-            flowLayoutPanelProduct.Size = new Size(652, 41);
-            flowLayoutPanelProduct.TabIndex = 2;
-            // 
-            // Product
-            // 
-            Product.Location = new Point(5, 5);
-            Product.Margin = new Padding(5);
-            Product.Name = "Product";
-            Product.Size = new Size(116, 27);
-            Product.TabIndex = 0;
-            Product.Text = "Jira Product";
-            Product.TextAlign = ContentAlignment.MiddleLeft;
-            // 
-            // comboBoxJiraProjects
-            // 
-            comboBoxJiraProjects.FormattingEnabled = true;
-            comboBoxJiraProjects.Location = new Point(129, 4);
-            comboBoxJiraProjects.Margin = new Padding(3, 4, 3, 4);
-            comboBoxJiraProjects.Name = "comboBoxJiraProjects";
-            comboBoxJiraProjects.Size = new Size(259, 28);
-            comboBoxJiraProjects.TabIndex = 1;
             // 
             // treeView
             // 
@@ -308,7 +309,7 @@ namespace UserStoryGenerator.View
             treeView.Margin = new Padding(3, 4, 3, 4);
             treeView.Name = "treeView";
             treeView.ShowNodeToolTips = true;
-            treeView.Size = new Size(1382, 713);
+            treeView.Size = new Size(1264, 713);
             treeView.TabIndex = 2;
             treeView.TriStateStyleProperty = TriStateTreeView.TriStateStyles.Standard;
             treeView.DragDrop +=  TreeView_DragDrop ;
@@ -318,10 +319,10 @@ namespace UserStoryGenerator.View
             // 
             panelResults.Controls.Add(tableLayoutPanelResults);
             panelResults.Dock = DockStyle.Fill;
-            panelResults.Location = new Point(667, 4);
+            panelResults.Location = new Point(785, 4);
             panelResults.Margin = new Padding(3, 4, 3, 4);
             panelResults.Name = "panelResults";
-            panelResults.Size = new Size(1388, 871);
+            panelResults.Size = new Size(1270, 871);
             panelResults.TabIndex = 2;
             // 
             // tableLayoutPanelResults
@@ -338,7 +339,7 @@ namespace UserStoryGenerator.View
             tableLayoutPanelResults.RowStyles.Add(new RowStyle(SizeType.Absolute, 75F));
             tableLayoutPanelResults.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
             tableLayoutPanelResults.RowStyles.Add(new RowStyle(SizeType.Absolute, 75F));
-            tableLayoutPanelResults.Size = new Size(1388, 871);
+            tableLayoutPanelResults.Size = new Size(1270, 871);
             tableLayoutPanelResults.TabIndex = 0;
             // 
             // tableLayoutPanelResultsBottom
@@ -364,7 +365,7 @@ namespace UserStoryGenerator.View
             tableLayoutPanelResultsBottom.Name = "tableLayoutPanelResultsBottom";
             tableLayoutPanelResultsBottom.RowCount = 1;
             tableLayoutPanelResultsBottom.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
-            tableLayoutPanelResultsBottom.Size = new Size(1382, 69);
+            tableLayoutPanelResultsBottom.Size = new Size(1264, 69);
             tableLayoutPanelResultsBottom.TabIndex = 3;
             // 
             // groupBoxExSelectedSubTasks
@@ -379,6 +380,7 @@ namespace UserStoryGenerator.View
             groupBoxExSelectedSubTasks.Size = new Size(114, 63);
             groupBoxExSelectedSubTasks.TabIndex = 7;
             groupBoxExSelectedSubTasks.TextAlign = HorizontalAlignment.Right;
+            groupBoxExSelectedSubTasks.TextBoxForeColor = SystemColors.WindowText;
             groupBoxExSelectedSubTasks.UseSystemPasswordChar = false;
             groupBoxExSelectedSubTasks.Value = "";
             // 
@@ -394,6 +396,7 @@ namespace UserStoryGenerator.View
             groupBoxExSelectedBugs.Size = new Size(114, 63);
             groupBoxExSelectedBugs.TabIndex = 6;
             groupBoxExSelectedBugs.TextAlign = HorizontalAlignment.Right;
+            groupBoxExSelectedBugs.TextBoxForeColor = SystemColors.WindowText;
             groupBoxExSelectedBugs.UseSystemPasswordChar = false;
             groupBoxExSelectedBugs.Value = "";
             // 
@@ -409,6 +412,7 @@ namespace UserStoryGenerator.View
             groupBoxExSelectedTests.Size = new Size(114, 63);
             groupBoxExSelectedTests.TabIndex = 5;
             groupBoxExSelectedTests.TextAlign = HorizontalAlignment.Right;
+            groupBoxExSelectedTests.TextBoxForeColor = SystemColors.WindowText;
             groupBoxExSelectedTests.UseSystemPasswordChar = false;
             groupBoxExSelectedTests.Value = "";
             // 
@@ -424,6 +428,7 @@ namespace UserStoryGenerator.View
             groupBoxExSelectedTasks.Size = new Size(114, 63);
             groupBoxExSelectedTasks.TabIndex = 4;
             groupBoxExSelectedTasks.TextAlign = HorizontalAlignment.Right;
+            groupBoxExSelectedTasks.TextBoxForeColor = SystemColors.WindowText;
             groupBoxExSelectedTasks.UseSystemPasswordChar = false;
             groupBoxExSelectedTasks.Value = "";
             // 
@@ -439,6 +444,7 @@ namespace UserStoryGenerator.View
             groupBoxExSelectedStories.Size = new Size(114, 63);
             groupBoxExSelectedStories.TabIndex = 3;
             groupBoxExSelectedStories.TextAlign = HorizontalAlignment.Right;
+            groupBoxExSelectedStories.TextBoxForeColor = SystemColors.WindowText;
             groupBoxExSelectedStories.UseSystemPasswordChar = false;
             groupBoxExSelectedStories.Value = "";
             // 
@@ -454,6 +460,7 @@ namespace UserStoryGenerator.View
             groupBoxExSelectedIssues.Size = new Size(114, 63);
             groupBoxExSelectedIssues.TabIndex = 1;
             groupBoxExSelectedIssues.TextAlign = HorizontalAlignment.Right;
+            groupBoxExSelectedIssues.TextBoxForeColor = SystemColors.WindowText;
             groupBoxExSelectedIssues.UseSystemPasswordChar = false;
             groupBoxExSelectedIssues.Value = "";
             // 
@@ -484,7 +491,7 @@ namespace UserStoryGenerator.View
             tableLayoutPanelResultsTop.Name = "tableLayoutPanelResultsTop";
             tableLayoutPanelResultsTop.RowCount = 1;
             tableLayoutPanelResultsTop.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
-            tableLayoutPanelResultsTop.Size = new Size(1382, 69);
+            tableLayoutPanelResultsTop.Size = new Size(1264, 69);
             tableLayoutPanelResultsTop.TabIndex = 0;
             // 
             // groupBoxExSubTask
@@ -499,6 +506,7 @@ namespace UserStoryGenerator.View
             groupBoxExSubTask.Size = new Size(114, 63);
             groupBoxExSubTask.TabIndex = 7;
             groupBoxExSubTask.TextAlign = HorizontalAlignment.Right;
+            groupBoxExSubTask.TextBoxForeColor = SystemColors.WindowText;
             groupBoxExSubTask.UseSystemPasswordChar = false;
             groupBoxExSubTask.Value = "";
             // 
@@ -514,6 +522,7 @@ namespace UserStoryGenerator.View
             groupBoxExBug.Size = new Size(114, 63);
             groupBoxExBug.TabIndex = 6;
             groupBoxExBug.TextAlign = HorizontalAlignment.Right;
+            groupBoxExBug.TextBoxForeColor = SystemColors.WindowText;
             groupBoxExBug.UseSystemPasswordChar = false;
             groupBoxExBug.Value = "";
             // 
@@ -529,6 +538,7 @@ namespace UserStoryGenerator.View
             groupBoxExTest.Size = new Size(114, 63);
             groupBoxExTest.TabIndex = 5;
             groupBoxExTest.TextAlign = HorizontalAlignment.Right;
+            groupBoxExTest.TextBoxForeColor = SystemColors.WindowText;
             groupBoxExTest.UseSystemPasswordChar = false;
             groupBoxExTest.Value = "";
             // 
@@ -544,6 +554,7 @@ namespace UserStoryGenerator.View
             groupBoxExTask.Size = new Size(114, 63);
             groupBoxExTask.TabIndex = 4;
             groupBoxExTask.TextAlign = HorizontalAlignment.Right;
+            groupBoxExTask.TextBoxForeColor = SystemColors.WindowText;
             groupBoxExTask.UseSystemPasswordChar = false;
             groupBoxExTask.Value = "";
             // 
@@ -559,6 +570,7 @@ namespace UserStoryGenerator.View
             groupBoxExStory.Size = new Size(114, 63);
             groupBoxExStory.TabIndex = 3;
             groupBoxExStory.TextAlign = HorizontalAlignment.Right;
+            groupBoxExStory.TextBoxForeColor = SystemColors.WindowText;
             groupBoxExStory.UseSystemPasswordChar = false;
             groupBoxExStory.Value = "";
             // 
@@ -589,6 +601,7 @@ namespace UserStoryGenerator.View
             groupBoxExIssueCount.Size = new Size(114, 63);
             groupBoxExIssueCount.TabIndex = 1;
             groupBoxExIssueCount.TextAlign = HorizontalAlignment.Right;
+            groupBoxExIssueCount.TextBoxForeColor = SystemColors.WindowText;
             groupBoxExIssueCount.UseSystemPasswordChar = false;
             groupBoxExIssueCount.Value = "";
             // 
@@ -604,6 +617,7 @@ namespace UserStoryGenerator.View
             groupBoxExDuration.Size = new Size(114, 63);
             groupBoxExDuration.TabIndex = 0;
             groupBoxExDuration.TextAlign = HorizontalAlignment.Right;
+            groupBoxExDuration.TextBoxForeColor = SystemColors.WindowText;
             groupBoxExDuration.UseSystemPasswordChar = false;
             groupBoxExDuration.Value = "";
             // 
@@ -661,7 +675,7 @@ namespace UserStoryGenerator.View
             // tableLayoutPanelMainData
             // 
             tableLayoutPanelMainData.ColumnCount = 2;
-            tableLayoutPanelMainData.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 664F));
+            tableLayoutPanelMainData.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 782F));
             tableLayoutPanelMainData.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
             tableLayoutPanelMainData.Controls.Add(panelResults, 1, 0);
             tableLayoutPanelMainData.Controls.Add(tableLayoutPanelData, 0, 0);
@@ -720,14 +734,12 @@ namespace UserStoryGenerator.View
             Name = "MainForm";
             Text = "Tell me a story...";
             tableLayoutPanelData.ResumeLayout(false);
-            flowLayoutPanelProductName.ResumeLayout(false);
-            flowLayoutPanelProductName.PerformLayout();
-            flowLayoutPanelEpic.ResumeLayout(false);
-            flowLayoutPanelEpic.PerformLayout();
+            tableLayoutPanelEntryControl.ResumeLayout(false);
+            groupBoxStoryMin.ResumeLayout(false);
+            groupBoxProduct.ResumeLayout(false);
             tableLayoutPanelControls.ResumeLayout(false);
             flowLayoutPanelCheckBoxes.ResumeLayout(false);
             flowLayoutPanelCheckBoxes.PerformLayout();
-            flowLayoutPanelProduct.ResumeLayout(false);
             panelResults.ResumeLayout(false);
             tableLayoutPanelResults.ResumeLayout(false);
             tableLayoutPanelResultsBottom.ResumeLayout(false);
@@ -753,11 +765,6 @@ namespace UserStoryGenerator.View
         private Button buttonSave;
         private TableLayoutPanel tableLayoutPanelMainData;
         private TableLayoutPanel tableLayoutPanelMain;
-        private FlowLayoutPanel flowLayoutPanelProduct;
-        private Label Product;
-        private FlowLayoutPanel flowLayoutPanelEpic;
-        private Label labelEpic;
-        private TextBox textBoxEpic;
         private TableLayoutPanel tableLayoutPanelControls;
         private FlowLayoutPanel flowLayoutPanelCheckBoxes;
         private CheckBox checkBoxAddSubTasks;
@@ -786,9 +793,12 @@ namespace UserStoryGenerator.View
         private TableLayoutPanelEx tableLayoutPanelResultsBottom;
         private Button buttonProcessStories;
         private Label labelStatus;
-        private FlowLayoutPanel flowLayoutPanelProductName;
-        private Label labelProductName;
-        private TextBox textBoxProductName;
+        private TableLayoutPanel tableLayoutPanelEntryControl;
+        private GroupBoxEx groupBoxExProductFeature;
+        private GroupBoxEx groupBoxExEpic;
+        private GroupBox groupBoxStoryMin;
+        private ComboBoxEx comboBoxExStoryMin;
+        private GroupBox groupBoxProduct;
     }
 
     public interface IReset
@@ -797,12 +807,13 @@ namespace UserStoryGenerator.View
     }
     public class ComboBoxEx : ComboBox
     {
-        public string CurrentSelectedValue
+        public object CurrentSelectedItem
         {
             get
             {
-                if( this.SelectedValue == null ) throw new NullReferenceException("ComboBoxEx.SelectedValue");
-                return (string)this.SelectedValue ?? throw new NullReferenceException("ComboBoxEx.SelectedValue");
+                if( this.SelectedItem == null ) throw new NullReferenceException("ComboBoxEx.SelectedItem");
+                //return (string)this.SelectedItem ?? throw new NullReferenceException("ComboBoxEx.SelectedItem");
+                return this.SelectedItem;
             }
         }
     }

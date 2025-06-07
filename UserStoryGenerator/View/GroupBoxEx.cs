@@ -60,10 +60,13 @@ namespace UserStoryGenerator.View
             set { textBox.TextAlign = value; }
         }
 
-        //public string PlaceholderText
-        //{
-        //    set { textBox.PlaceholderText = value; }
-        //}
+        [Category("Misc")]
+        public Color TextBoxForeColor
+        {
+            get { return textBox.ForeColor; }
+            set { textBox.ForeColor = value; }
+        }
+
 
         public string? Value
         {
@@ -88,9 +91,11 @@ namespace UserStoryGenerator.View
 
             textBox.TextAlign = HorizontalAlignment.Left;
 
-            textBox.TextChanged += (s, e) => { this.OnTextChanged(new EventArgs()); };
+            textBox.TextChanged += (s, e) => { ValueChanged?.Invoke(this, new EventArgs()); };//this.OnTextChanged(new EventArgs());
 
         }
+
+        public event EventHandler? ValueChanged;
 
         public void Reset()
         {

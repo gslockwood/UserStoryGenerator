@@ -2,6 +2,7 @@
 using UserStoryGenerator.Utilities;
 using UserStoryGenerator.View;
 using static UserStoryGenerator.Model.IssueData;
+using static UserStoryGenerator.Model.IssueGeneratorBase;
 
 namespace UserStoryGenerator.Model
 {
@@ -111,13 +112,27 @@ namespace UserStoryGenerator.Model
         public delegate void CompletedUserStoryEventHandler(IssueGeneratorBaseArgs answer);
         public event CompletedUserStoryEventHandler? UserStoryGeneratorCompleted;
 
-        internal async Task ProduceUserStories(string jiraProject, string productName, string target, bool addQATests, bool addSubTasks)
+        internal async Task ProduceUserStories(string jiraProject, string productName, string target, bool addQATests, bool addSubTasks, int maxStories)
         {
             if( Settings == null ) throw new NullReferenceException(nameof(Settings));
             if( Settings.Key == null ) throw new NullReferenceException(nameof(Settings.Key));
 
-            IssueGeneratorUserStories? issueGenerator =
-                new(Settings.Key, jiraProject, productName, target, addQATests, addSubTasks, Settings.UserStoryCoaching);
+            IssueGeneratorBaseInputArgs args = new()
+            {
+                Key = Settings.Key,
+                JiraProject = jiraProject,
+                ProductName = productName,
+                Target = target,
+                AddQATests = addQATests,
+                AddSubTasks = addSubTasks,
+                AICoaching = Settings.UserStoryCoaching,
+                MaxStories = maxStories
+            };
+
+            IssueGeneratorUserStories? issueGenerator = new(args);
+            //IssueGeneratorUserStories? issueGenerator =
+            //    new(Settings.Key, jiraProject, productName, target, addQATests, addSubTasks, Settings.UserStoryCoaching);
+
             issueGenerator.Completed += (args) =>
             {
                 UserStoryGeneratorCompleted?.Invoke(args);
@@ -136,35 +151,49 @@ namespace UserStoryGenerator.Model
 
 
         //IssueGenerator? issueGenerator = null;
-        internal async Task ProcessSingleStory(long userStoryKey, string jiraProject, string productName, string userStoryText, bool addQATests, bool addSubTasks)
+        internal async Task ProcessSingleStory(long userStoryKey, string jiraProject, string productName, string userStoryText, bool addQATests, bool addSubTasks, int maxStories)
         {
             if( Settings == null ) throw new NullReferenceException(nameof(Settings));
             if( Settings.Key == null ) throw new NullReferenceException(nameof(Settings.Key));
             if( jiraProject == null ) throw new NullReferenceException(nameof(jiraProject));
             if( productName == null ) throw new NullReferenceException(nameof(productName));
 
-            IssueGeneratorAllIssues? issueGeneratorAllIssues =
-                new(Settings.Key, jiraProject, productName, userStoryKey, userStoryText, addQATests, addSubTasks, Settings.AllIssueCoaching);
+            IssueGeneratorBaseInputArgs args = new()
+            {
+                Key = Settings.Key,
+                JiraProject = jiraProject,
+                ProductName = productName,
+                Target = userStoryText,
+                AddQATests = addQATests,
+                AddSubTasks = addSubTasks,
+                AICoaching = Settings.AllIssueCoaching,
+                MaxStories = maxStories
+            };
 
-            issueGeneratorAllIssues.Completed += (args) =>
+            IssueGeneratorUserStories? issueGenerator = new(args);
+
+            //IssueGeneratorAllIssues? issueGeneratorAllIssues =
+            //    new(Settings.Key, jiraProject, productName, userStoryKey, userStoryText, addQATests, addSubTasks, Settings.AllIssueCoaching);
+
+            issueGenerator.Completed += (args) =>
             {
                 IssueGeneratorBaseArgsEx issueGeneratorBaseArgsEx = new(args.Answer, 0, userStoryKey);
                 IssueGeneratorCompleted?.Invoke(issueGeneratorBaseArgsEx);
-                issueGeneratorAllIssues = null;
+                issueGenerator = null;
             };
-            issueGeneratorAllIssues.Error += () =>
+            issueGenerator.Error += () =>
             {
             };
 
             await Task.Delay(0);// this because RequestAnswer isn't really async
-            issueGeneratorAllIssues.RequestAnswer();
+            issueGenerator.RequestAnswer();
 
         }
 
         //public List<StoryPackage> successList = [];
 
 
-        internal async Task ProcessStoryList(string productName, List<StoryPackage> list)//async Task 
+        internal async Task ProcessStoryList(string productName, bool addQATests, bool addSubTasks, int maxStories, List<StoryPackage> list)//async Task 
         {
             if( Settings == null ) throw new NullReferenceException(nameof(Settings));
             if( Settings.Key == null ) throw new NullReferenceException(nameof(Settings.Key));
@@ -177,14 +206,27 @@ namespace UserStoryGenerator.Model
 
             foreach( StoryPackage storyPackage in list )
             {
-                if( storyPackage.Product == null ) continue;
+                if( storyPackage.JiraProduct == null ) continue;
 
-                IssueGeneratorAllIssues? issueGeneratorAllIssues =
-                    new(Settings.Key, storyPackage.Product, productName, storyPackage.Key, storyPackage.UserStoryText, true, true, Settings.AllIssueCoaching);
+                IssueGeneratorBaseInputArgs args = new()
+                {
+                    Key = Settings.Key,
+                    JiraProject = storyPackage.JiraProduct,
+                    ProductName = productName,
+                    Target = storyPackage.UserStoryText,
+                    AddQATests = addQATests,
+                    AddSubTasks = addSubTasks,
+                    AICoaching = Settings.AllIssueCoaching,
+                    MaxStories = maxStories
+                };
+
+                IssueGeneratorUserStories? issueGenerator = new(args);
+                //IssueGeneratorAllIssues? issueGeneratorAllIssues =
+                //    new(Settings.Key, storyPackage.Product, productName, storyPackage.Key, storyPackage.UserStoryText, true, true, Settings.AllIssueCoaching);
 
                 Logger.Info($"ProcessStoryList:Started: {index0++}");
 
-                issueGeneratorAllIssues.Completed += (args) =>
+                issueGenerator.Completed += (args) =>
                 {
                     //StoryPackage successfullItem = list[counter];
                     //successList.Add(successfullItem);
@@ -194,12 +236,12 @@ namespace UserStoryGenerator.Model
                     IssueGeneratorBaseArgsEx issueGeneratorBaseArgsEx = new(args.Answer, --counter, storyPackage.Key);
                     IssueGeneratorCompleted?.Invoke(issueGeneratorBaseArgsEx);
                 };
-                issueGeneratorAllIssues.Error += () =>
+                issueGenerator.Error += () =>
                 {
                 };
 
                 await Task.Delay(0);// this because RequestAnswer isn't really async
-                issueGeneratorAllIssues.RequestAnswer();
+                issueGenerator.RequestAnswer();
 
             }
 
@@ -213,19 +255,19 @@ namespace UserStoryGenerator.Model
         public long Key { get; }
 
         public string UserStoryText { get; }
-        public string? Product { get; }
+        public string? JiraProduct { get; }
 
         public StoryPackage(TriStateTreeView.TreeNodeEx treeNodeEx)
         {
             Key = treeNodeEx.Key;
-            Product = treeNodeEx.Product;
+            JiraProduct = treeNodeEx.Product;
             UserStoryText = treeNodeEx.Text;
         }
 
         public StoryPackage(long userStoryKey, string project, string userStoryText)
         {
             Key = userStoryKey;
-            Product = project;
+            JiraProduct = project;
             UserStoryText = userStoryText;
         }
     }

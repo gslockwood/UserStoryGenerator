@@ -11,33 +11,35 @@ namespace UserStoryGenerator.Model
         public delegate void ErrorEventHandler();
         public event ErrorEventHandler? Error;
 
-        protected readonly string jiraProject;
-        protected readonly string productName;
-
-        public Settings.AICoaching? AICoaching { get; }
-
-
         protected const string ADDITIONALINSTRUCTIONS = "Additional Instructions";
         protected const string QATESTSTRUCTIONS = "Under no circumstances generate 'Test' issues";
         protected const string NOSUBTASKINSTRUCTIONS = "Under no circumstances generate 'Sub-task' issues";
+        protected const string NUMBEROFISSUES = "NUMBEROFISSUES";
 
-        protected bool AddQATests { get; }
-        protected bool AddSubTasks { get; }
 
-        protected StringBuilder sbCoaching = new();
+        protected readonly string jiraProject;
+        protected readonly string productName;
+        protected readonly Settings.AICoaching? AICoaching;
+        protected readonly bool AddQATests;
+        protected readonly bool AddSubTasks;
+        protected readonly int maxStories;
 
+        protected readonly StringBuilder sbCoaching = new();
         protected String targetPrepend = "";
 
         protected readonly UserStoryGenerator.Model.GFSGeminiClientHost gfsGeminiClientHost;
 
-        public IssueGeneratorBase(string key, string jiraProject, string productName, string target, bool addQATests, bool addSubTasks, Settings.AICoaching? aiCoaching)
+        public IssueGeneratorBase(IssueGeneratorBaseInputArgs args)
         {
-            this.jiraProject = jiraProject ?? throw new ArgumentNullException(nameof(IssueGeneratorBase.jiraProject));
-            this.productName = productName ?? throw new ArgumentNullException(nameof(IssueGeneratorBase.productName));
+            string key = args.Key ?? throw new ArgumentNullException(nameof(args.Key));
+            string target = args.Target ?? throw new ArgumentNullException(nameof(args.Target));
+            this.jiraProject = args.JiraProject ?? throw new ArgumentNullException(nameof(args.JiraProject));
+            this.productName = args.ProductName ?? throw new ArgumentNullException(nameof(args.ProductName));
 
-            this.AICoaching = aiCoaching;
-            this.AddQATests = addQATests;
-            this.AddSubTasks = addSubTasks;
+            this.AICoaching = args.AICoaching;
+            this.AddQATests = args.AddQATests;
+            this.AddSubTasks = args.AddSubTasks;
+            this.maxStories = args.MaxStories;
 
             gfsGeminiClientHost = new(key, AIType.GenerativeAI);
             gfsGeminiClientHost.LookupCompleted += LookupCompleted;
@@ -91,7 +93,11 @@ namespace UserStoryGenerator.Model
             // add any QATests or Subtasks if instructed
             AddAdditionalInstructions();
 
-            return sbCoaching.ToString();
+            string result = sbCoaching.ToString();
+
+            result = result.Replace(NUMBEROFISSUES, maxStories.ToString());
+
+            return result;
         }
 
         protected virtual void AddAdditionalInstructions()
@@ -151,5 +157,19 @@ namespace UserStoryGenerator.Model
             }
         }
     }
+
+    public class IssueGeneratorBaseInputArgs
+    {
+        public Settings.AICoaching? AICoaching { get; internal set; }
+        public string? Key { get; internal set; }
+        public string? JiraProject { get; internal set; }
+        public string? Target { get; internal set; }
+        public string? ProductName { get; internal set; }
+        public bool AddQATests { get; internal set; }
+        public bool AddSubTasks { get; internal set; }
+        public int MaxStories { get; internal set; }
+    }
+
+
 
 }
