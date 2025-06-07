@@ -4,7 +4,7 @@ namespace UserStoryGenerator.Model
 {
     public class GFSGeminiClientHost
     {
-        public delegate void LookupCompletedEventHandler();//string text
+        public delegate void LookupCompletedEventHandler(Result result);//string text
         public event LookupCompletedEventHandler? LookupCompleted;
 
         private readonly GFSGeminiClient.IGFSGeminiClient gfsGeminiClient;
@@ -41,7 +41,7 @@ namespace UserStoryGenerator.Model
             //
         }
 
-        internal async Task RequestAnswer()
+        internal async Task RequestAnswer(object? id = null)
         {
             if( query == null ) return;
 
@@ -53,11 +53,16 @@ namespace UserStoryGenerator.Model
                     //Logger.Info(answer);
 
                     Answers?.Add(answer);
-                    LookupCompleted?.Invoke();//answer
+
+                    //string answer = answers.First();
+
+                    Result result = new(id, answer);
+                    LookupCompleted?.Invoke(result);//answer
                 }
                 else
                 {
-                    //throw new NullReferenceException(nameof(answer));
+                    //throw new NullReferenceException(query);
+                    LookupCompleted?.Invoke(new(id, null));
                 }
 
             }
@@ -68,6 +73,13 @@ namespace UserStoryGenerator.Model
                     Logger.Info(ex.StackTrace);
                 throw;
             }
+        }
+
+        public class Result(object? id, string? answer)
+        {
+            public object? Id { get; } = id;
+            public string? Answer { get; } = answer;
+            //public IList<string>? Answers { get; } = answers;
         }
     }
 

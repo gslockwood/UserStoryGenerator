@@ -1,4 +1,6 @@
-﻿namespace UserStoryGenerator.Model
+﻿using static UserStoryGenerator.Model.GFSGeminiClientHost;
+
+namespace UserStoryGenerator.Model
 {
     public class IssueGeneratorAllIssues : IssueGeneratorBase
     {
@@ -8,7 +10,7 @@
         }
     }
 
-    public class IssueGeneratorBaseArgsEx(string answer, int counter, long userStoryKey) : IssueGeneratorBaseArgs(answer)
+    public class IssueGeneratorBaseArgsEx(Result result, int counter, long userStoryKey) : IssueGeneratorBaseArgs(result)
     {
         public int Counter { get; } = counter;
         public long UserStoryKey { get; } = userStoryKey;

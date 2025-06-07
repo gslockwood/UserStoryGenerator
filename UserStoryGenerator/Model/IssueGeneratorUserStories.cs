@@ -1,4 +1,6 @@
-﻿namespace UserStoryGenerator.Model
+﻿using static UserStoryGenerator.Model.GFSGeminiClientHost;
+
+namespace UserStoryGenerator.Model
 {
     public class IssueGeneratorUserStories : IssueGeneratorBase
     {
@@ -8,9 +10,10 @@
         }
     }
 
-    public class IssueGeneratorBaseArgs(string answer)
+    public class IssueGeneratorBaseArgs(Result result)
     {
-        public string Answer { get; } = answer;
+        //public string Answer { get; } = answer;
+        public Result Result { get; } = result;
     }
 
 }

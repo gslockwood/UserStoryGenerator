@@ -122,17 +122,18 @@ namespace UserStoryGenerator.View
                 stopwatchClockConvertRun.Stop();
                 TimeSpan duration = stopwatchClockConvertRun.ElapsedTime;
                 groupBoxExDuration.Value = $"{duration.Minutes}:{duration.Seconds}.{duration.Milliseconds}";
-                progressBar.Visible = false;
+                //progressBar.Visible = false;
 
                 buttonProcessStories.Enabled = true;
 
-                if( args.Answer != null )
+
+                if( args.Result != null && args.Result.Answer != null )
                 {
-                    Logger.Info(args.Answer);
+                    //Logger.Info(args.Answer);
 
                     treeView.Nodes.Clear();
 
-                    ProcessIssues(args.Answer);
+                    ProcessIssues(args.Result.Answer);
                 }
                 else
                 {
@@ -159,46 +160,77 @@ namespace UserStoryGenerator.View
                 }
                 try
                 {
-                    if( args.Answer != null )
-                    {
-                        buttonProcessStories.Text = args.Counter.ToString();
+                    if( args.Result == null ) throw new NullReferenceException(nameof(args.Result));
 
-                        Model.IssueData? data = JsonSerializer.Deserialize<Model.IssueData>(args.Answer);
-                        //Utilities.Logger.Info(JsonSerializer.Serialize(data));
-                        if( data != null && data.Issues != null )
+                    buttonProcessStories.Text = args.Counter.ToString();
+
+                    if( args.Result.Answer == null )
+                    {
+                        TreeNode[] found = treeView.Nodes[0].Nodes.Find(args.UserStoryKey.ToString(), false);
+                        string parentText = "";
+                        if( found.Length > 0 )
                         {
-                            TreeNode[] found = treeView.Nodes[0].Nodes.Find(args.UserStoryKey.ToString(), false);
-                            if( found.Length > 0 )
+                            parentText = found.First().Text;
+                            Color temp = found.First().BackColor;
+                            found.First().BackColor = Color.Red;
+                            found.First().ForeColor = temp;
+                        }
+                        //StringTrimming stringTrimming = new()
+                        labelStatus.Text = $"Failed to build LinkedIssues for Story: {parentText} {args.Counter}";
+                        labelStatus.ForeColor = Color.Red;
+
+                    }
+                    else
+                    {
+                        try
+                        {
+                            Model.IssueData? data = JsonSerializer.Deserialize<Model.IssueData>(args.Result.Answer);
+                            Utilities.Logger.Info(JsonSerializer.Serialize(data));
+                            if( data != null && data.Issues != null )
                             {
-                                TreeNode node = found.First();
-                                found = node.Nodes.Find("LinkedIssues", false);
+                                //Logger.Info("Model_IssueGeneratorCompleted " + data.Issues.Count);
+
+                                TreeNode[] found = treeView.Nodes[0].Nodes.Find(args.UserStoryKey.ToString(), false);
                                 if( found.Length > 0 )
                                 {
-                                    //found.First().Nodes.Clear();
-                                    TriStateTreeView.RemovePreviousCreateNodes(found.First().Nodes);
+                                    TreeNode node = found.First();
 
-                                    Recursive(data.Issues, found.First(), true);
+                                    found = node.Nodes.Find("LinkedIssues", false);
+                                    if( found.Length > 0 )
+                                    {
+                                        TriStateTreeView.RemovePreviousCreateNodes(found.First().Nodes);
 
-                                    UpdateCountersUI(data);
+                                        Recursive(data.Issues, found.First(), true);
 
-                                    labelStatus.Text = $"Processed: {node.Text}";
-                                    //Logger.Info($"Processed: {node.Text}");
+                                        UpdateCountersUI(data);
 
-                                    //node.Collapse();
-                                    found.First().Expand();
-                                    //found.First().ExpandAll();
-                                    treeView.TopNode = node;
-                                    //
+                                        labelStatus.Text = $"Processed: {node.Text}";
+                                        //Logger.Info($"Processed: {node.Text}");
+
+                                        //node.Collapse();
+                                        found.First().Expand();
+                                        //found.First().ExpandAll();
+                                        treeView.TopNode = node;
+                                        //
+                                    }
+
                                 }
-
                             }
+
+                        }
+                        catch( System.Text.Json.JsonException ex )
+                        {
+                            MessageBox.Show(ex.Message, "Critical JSON Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                            if( args.Result != null && args.Result.Answer != null )
+                                Logger.Info(args.Result.Answer);
+
+                        }
+                        catch( Exception ex )
+                        {
+                            MessageBox.Show(ex.Message, "Critical Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                         }
                     }
                     //
-                }
-                catch( Exception ex )
-                {
-                    MessageBox.Show(ex.Message, "Critical Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
 
                 finally
@@ -225,8 +257,7 @@ namespace UserStoryGenerator.View
 
             treeView.Nodes.Clear();
 
-
-            progressBar.Visible = true;
+            //progressBar.Visible = true;
             buttonProcessStories.Enabled = false;
 
             string? project = comboBoxJiraProjects.CurrentSelectedItem.ToString();
@@ -255,9 +286,10 @@ namespace UserStoryGenerator.View
             this.tableLayoutPanelResultsTop.Reset();
             this.tableLayoutPanelResultsBottom.Reset();
 
-            progressBar.Visible = false;
+            //progressBar.Visible = false;
 
             labelStatus.Text = null;
+            labelStatus.ForeColor = SystemColors.ControlText;
 
         }
 
@@ -439,7 +471,6 @@ namespace UserStoryGenerator.View
             //
         }
 
-
         private void TextControls_TextChanged(object? sender, EventArgs e)
         {
             buttonConvert.Enabled = !( groupBoxExProductFeature.TextLength == 0 || textBoxPRD.TextLength == 0 );
@@ -550,6 +581,10 @@ namespace UserStoryGenerator.View
 
         private async void ButtonProcessStories_ClickAsync(object sender, EventArgs e)//async
         {
+            ResetUI();
+
+            TriStateTreeView.ResetTreeViewNodeColors(treeView.Nodes);
+
             stopwatchClockConvertRun.Start();
 
             List<StoryPackage> list = [];

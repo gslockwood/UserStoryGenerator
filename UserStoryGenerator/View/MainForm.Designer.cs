@@ -32,7 +32,6 @@ namespace UserStoryGenerator.View
         private void InitializeComponent()
         {
             components = new System.ComponentModel.Container();
-            buttonConvert = new Button();
             tableLayoutPanelData = new TableLayoutPanel();
             tableLayoutPanelEntryControl = new TableLayoutPanel();
             groupBoxStoryMin = new GroupBox();
@@ -42,7 +41,6 @@ namespace UserStoryGenerator.View
             groupBoxProduct = new GroupBox();
             comboBoxJiraProjects = new ComboBoxEx();
             tableLayoutPanelControls = new TableLayoutPanel();
-            progressBar = new ProgressBar();
             flowLayoutPanelCheckBoxes = new FlowLayoutPanel();
             checkBoxAddSubTasks = new CheckBox();
             checkBoxAddQATests = new CheckBox();
@@ -75,6 +73,7 @@ namespace UserStoryGenerator.View
             tableLayoutPanelMain = new TableLayoutPanel();
             menuStrip1 = new MenuStrip();
             preferencesToolStripMenuItem = new ToolStripMenuItem();
+            buttonConvert = new Button();
             tableLayoutPanelData.SuspendLayout();
             tableLayoutPanelEntryControl.SuspendLayout();
             groupBoxStoryMin.SuspendLayout();
@@ -90,17 +89,6 @@ namespace UserStoryGenerator.View
             tableLayoutPanelMain.SuspendLayout();
             menuStrip1.SuspendLayout();
             SuspendLayout();
-            // 
-            // buttonConvert
-            // 
-            buttonConvert.Location = new Point(693, 4);
-            buttonConvert.Margin = new Padding(3, 4, 3, 4);
-            buttonConvert.Name = "buttonConvert";
-            buttonConvert.Size = new Size(73, 29);
-            buttonConvert.TabIndex = 0;
-            buttonConvert.Text = "Convert";
-            buttonConvert.UseVisualStyleBackColor = true;
-            buttonConvert.Click +=  Convert_Click ;
             // 
             // tableLayoutPanelData
             // 
@@ -222,12 +210,11 @@ namespace UserStoryGenerator.View
             // 
             // tableLayoutPanelControls
             // 
-            tableLayoutPanelControls.ColumnCount = 3;
+            tableLayoutPanelControls.ColumnCount = 2;
             tableLayoutPanelControls.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
-            tableLayoutPanelControls.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 114F));
-            tableLayoutPanelControls.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 80F));
-            tableLayoutPanelControls.Controls.Add(buttonConvert, 2, 0);
-            tableLayoutPanelControls.Controls.Add(progressBar, 1, 0);
+            tableLayoutPanelControls.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 120F));
+            tableLayoutPanelControls.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 20F));
+            tableLayoutPanelControls.Controls.Add(buttonConvert, 1, 0);
             tableLayoutPanelControls.Controls.Add(flowLayoutPanelCheckBoxes, 0, 0);
             tableLayoutPanelControls.Dock = DockStyle.Fill;
             tableLayoutPanelControls.Location = new Point(3, 830);
@@ -238,17 +225,6 @@ namespace UserStoryGenerator.View
             tableLayoutPanelControls.Size = new Size(770, 37);
             tableLayoutPanelControls.TabIndex = 2;
             // 
-            // progressBar
-            // 
-            progressBar.Location = new Point(581, 5);
-            progressBar.Margin = new Padding(5);
-            progressBar.MarqueeAnimationSpeed = 30;
-            progressBar.Name = "progressBar";
-            progressBar.Size = new Size(104, 24);
-            progressBar.Style = ProgressBarStyle.Marquee;
-            progressBar.TabIndex = 1;
-            progressBar.Visible = false;
-            // 
             // flowLayoutPanelCheckBoxes
             // 
             flowLayoutPanelCheckBoxes.Controls.Add(checkBoxAddSubTasks);
@@ -257,7 +233,7 @@ namespace UserStoryGenerator.View
             flowLayoutPanelCheckBoxes.Location = new Point(3, 4);
             flowLayoutPanelCheckBoxes.Margin = new Padding(3, 4, 3, 4);
             flowLayoutPanelCheckBoxes.Name = "flowLayoutPanelCheckBoxes";
-            flowLayoutPanelCheckBoxes.Size = new Size(570, 29);
+            flowLayoutPanelCheckBoxes.Size = new Size(644, 29);
             flowLayoutPanelCheckBoxes.TabIndex = 2;
             // 
             // checkBoxAddSubTasks
@@ -721,6 +697,18 @@ namespace UserStoryGenerator.View
             preferencesToolStripMenuItem.Text = "&Preferences...";
             preferencesToolStripMenuItem.Click +=  PreferencesToolStripMenuItem_Click ;
             // 
+            // buttonConvert
+            // 
+            buttonConvert.Dock = DockStyle.Fill;
+            buttonConvert.Location = new Point(653, 4);
+            buttonConvert.Margin = new Padding(3, 4, 3, 4);
+            buttonConvert.Name = "buttonConvert";
+            buttonConvert.Size = new Size(114, 29);
+            buttonConvert.TabIndex = 0;
+            buttonConvert.Text = "Create Stories";
+            buttonConvert.UseVisualStyleBackColor = true;
+            buttonConvert.Click +=  Convert_Click ;
+            // 
             // MainForm
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
@@ -756,11 +744,9 @@ namespace UserStoryGenerator.View
         #endregion
 
         private TriStateTreeView treeView;
-        private Button buttonConvert;
         private TableLayoutPanel tableLayoutPanelData;
         private GroupBoxEx textBoxPRD;
         private ColumnHeader columnHeaderUserStorySubject;
-        private ProgressBar progressBar;
         private FlowLayoutPanel flowLayoutPanelMainButtons;
         private Button buttonSave;
         private TableLayoutPanel tableLayoutPanelMainData;
@@ -799,6 +785,7 @@ namespace UserStoryGenerator.View
         private GroupBox groupBoxStoryMin;
         private ComboBoxEx comboBoxExStoryMin;
         private GroupBox groupBoxProduct;
+        private Button buttonConvert;
     }
 
     public interface IReset

@@ -307,7 +307,7 @@ namespace UserStoryGenerator.View
                     clickedNode.Collapse();
                 };
 
-
+                /*
                 if( clickedNode is TreeNodeEx treeNodeEx )
                 {
                     if( clickedNode.Parent != null && clickedNode.Parent.Parent == null )
@@ -340,7 +340,7 @@ namespace UserStoryGenerator.View
                     //nodeContextMenu.Hide(); 
                     // Or: this.ContextMenuStrip = _emptySpaceContextMenu; this.ContextMenuStrip.Show(this, e.Location);
                 }
-
+                */
                 // Show the context menu at the mouse pointer's location
                 nodeContextMenu.Show(this, e.Location);
 
@@ -838,12 +838,33 @@ namespace UserStoryGenerator.View
             {
                 if( node == null || node.Tag == null ) continue;
                 if( node.Tag is bool v )
-                {
                     if( v )
                         nodes.Remove(node);
-                }
             }
         }
+
+        public static void ResetTreeViewNodeColors(TreeNodeCollection nodes)
+        {
+            foreach( TreeNode node in nodes )
+                ResetNodeColorsRecursive(node);
+        }
+        private static void ResetNodeColorsRecursive(TreeNode node)
+        {
+            // Reset the BackColor and ForeColor to their default values
+            // The default values for TreeView nodes are usually SystemColors.Window for BackColor
+            // and SystemColors.WindowText for ForeColor, but it's safer to just null them
+            // or set to default if you've explicitly set them.
+            // If you've only set them on selected nodes, and want to revert to the default
+            // TreeView appearance, setting them to Color.Empty or their default
+            // system colors is the way to go.
+            node.BackColor = SystemColors.Window; // Or Color.Empty to let the TreeView control it
+            node.ForeColor = SystemColors.WindowText; // Or Color.Empty
+
+            // Recursively call for all child nodes
+            foreach( TreeNode childNode in node.Nodes )
+                ResetNodeColorsRecursive(childNode);
+        }
+
 
     }
 

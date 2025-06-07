@@ -1,5 +1,6 @@
 ﻿using System.Text;
 using System.Text.Json;
+using UserStoryGenerator.Utilities;
 using static UserStoryGenerator.Model.GFSGeminiClientHost;
 
 namespace UserStoryGenerator.Model
@@ -55,7 +56,28 @@ namespace UserStoryGenerator.Model
             {
                 Thread thread = new(async () =>
                 {
-                    await gfsGeminiClientHost.RequestAnswer();
+                    try
+                    {
+                        await gfsGeminiClientHost.RequestAnswer();
+                        Logger.Info("after RequestAnswer");
+                    }
+                    catch( System.Net.Http.HttpRequestException ex )
+                    {
+                        string errorMsg = ex.Message.Replace("Request failed with Status Code: BadRequest", "");
+                        errorMsg = errorMsg.Replace("Request failed", "");
+
+                        BadRequestError? badRequestError = JsonSerializer.Deserialize<BadRequestError>(errorMsg);
+                    }
+                    catch( System.NullReferenceException )
+                    {
+                        Error?.Invoke();
+                    }
+                    catch( System.ArgumentException )
+                    {
+                    }
+                    catch( Exception )
+                    {
+                    }
                 });
                 thread.Start();
 
@@ -130,29 +152,31 @@ namespace UserStoryGenerator.Model
             }
         }
 
-        private void LookupCompleted()
+        private void LookupCompleted(Result result)
         {
-            IList<string>? answers = gfsGeminiClientHost.Answers;
-            if( answers == null )
-            {
-                //Completed?.Invoke(-1, null);//|| answers.Count == 0
-                OnCompleted(null);
-                return;
-            }
-            string answer = answers.First();
+            //IList<string>? answers = gfsGeminiClientHost.Answers;
+            //if( answers == null )
+            //{
+            //    //Completed?.Invoke(-1, null);//|| answers.Count == 0
+            //    OnCompleted(null);
+            //    return;
+            //}
+
+            //string answer = answers.First();
+
             //Completed?.Invoke(userStoryKey, answer);
-            OnCompleted(answer);
+            OnCompleted(result);
 
         }
 
-        protected virtual void OnCompleted(string? answer)
+        protected virtual void OnCompleted(Result result)
         {
-            if( answer == null )
-                Error?.Invoke();
+            //if( answer == null )
+            //    Error?.Invoke();
 
-            else
+            //else
             {
-                IssueGeneratorBaseArgs args = new(answer);
+                IssueGeneratorBaseArgs args = new(result);
                 Completed?.Invoke(args);
             }
         }

@@ -2,7 +2,6 @@
 using UserStoryGenerator.Utilities;
 using UserStoryGenerator.View;
 using static UserStoryGenerator.Model.IssueData;
-using static UserStoryGenerator.Model.IssueGeneratorBase;
 
 namespace UserStoryGenerator.Model
 {
@@ -130,9 +129,6 @@ namespace UserStoryGenerator.Model
             };
 
             IssueGeneratorUserStories? issueGenerator = new(args);
-            //IssueGeneratorUserStories? issueGenerator =
-            //    new(Settings.Key, jiraProject, productName, target, addQATests, addSubTasks, Settings.UserStoryCoaching);
-
             issueGenerator.Completed += (args) =>
             {
                 UserStoryGeneratorCompleted?.Invoke(args);
@@ -171,13 +167,10 @@ namespace UserStoryGenerator.Model
             };
 
             IssueGeneratorUserStories? issueGenerator = new(args);
-
-            //IssueGeneratorAllIssues? issueGeneratorAllIssues =
-            //    new(Settings.Key, jiraProject, productName, userStoryKey, userStoryText, addQATests, addSubTasks, Settings.AllIssueCoaching);
-
             issueGenerator.Completed += (args) =>
             {
-                IssueGeneratorBaseArgsEx issueGeneratorBaseArgsEx = new(args.Answer, 0, userStoryKey);
+                GFSGeminiClientHost.Result result = args.Result;
+                IssueGeneratorBaseArgsEx issueGeneratorBaseArgsEx = new(result, 0, userStoryKey);
                 IssueGeneratorCompleted?.Invoke(issueGeneratorBaseArgsEx);
                 issueGenerator = null;
             };
@@ -221,11 +214,6 @@ namespace UserStoryGenerator.Model
                 };
 
                 IssueGeneratorUserStories? issueGenerator = new(args);
-                //IssueGeneratorAllIssues? issueGeneratorAllIssues =
-                //    new(Settings.Key, storyPackage.Product, productName, storyPackage.Key, storyPackage.UserStoryText, true, true, Settings.AllIssueCoaching);
-
-                Logger.Info($"ProcessStoryList:Started: {index0++}");
-
                 issueGenerator.Completed += (args) =>
                 {
                     //StoryPackage successfullItem = list[counter];
@@ -233,19 +221,22 @@ namespace UserStoryGenerator.Model
                     Logger.Info($"ProcessStoryList: Received{index++}");
 
                     //Utilities.Logger.Info($"Model:GfsGeminiClientHost_LookupCompleted: {counter}");
-                    IssueGeneratorBaseArgsEx issueGeneratorBaseArgsEx = new(args.Answer, --counter, storyPackage.Key);
+                    IssueGeneratorBaseArgsEx issueGeneratorBaseArgsEx = new(args.Result, --counter, storyPackage.Key);
                     IssueGeneratorCompleted?.Invoke(issueGeneratorBaseArgsEx);
                 };
                 issueGenerator.Error += () =>
                 {
                 };
 
+                Logger.Info($"ProcessStoryList:issueGenerator Requesting Answer: {index0++}");
+
+
                 await Task.Delay(0);// this because RequestAnswer isn't really async
                 issueGenerator.RequestAnswer();
 
             }
 
-            Logger.Info($"ProcessStoryList:Started:complete");
+            //Logger.Info($"ProcessStoryList:Started:complete");
 
         }
     }
