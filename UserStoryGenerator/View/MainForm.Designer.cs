@@ -41,6 +41,7 @@ namespace UserStoryGenerator.View
             groupBoxProduct = new GroupBox();
             comboBoxJiraProjects = new ComboBoxEx();
             tableLayoutPanelControls = new TableLayoutPanel();
+            buttonConvert = new Button();
             flowLayoutPanelCheckBoxes = new FlowLayoutPanel();
             checkBoxAddSubTasks = new CheckBox();
             checkBoxAddQATests = new CheckBox();
@@ -72,8 +73,14 @@ namespace UserStoryGenerator.View
             tableLayoutPanelMainData = new TableLayoutPanel();
             tableLayoutPanelMain = new TableLayoutPanel();
             menuStrip1 = new MenuStrip();
+            fileToolStripMenuItem = new ToolStripMenuItem();
+            openToolStripMenuItem = new ToolStripMenuItem();
+            saveStoriesAsJsonToolStripMenuItem = new ToolStripMenuItem();
+            saveStoriesAsCSVToolStripMenuItem = new ToolStripMenuItem();
             preferencesToolStripMenuItem = new ToolStripMenuItem();
-            buttonConvert = new Button();
+            settingsToolStripMenuItem = new ToolStripMenuItem();
+            aboutToolStripMenuItem = new ToolStripMenuItem();
+            getUserStoryListToolStripMenuItem = new ToolStripMenuItem();
             tableLayoutPanelData.SuspendLayout();
             tableLayoutPanelEntryControl.SuspendLayout();
             groupBoxStoryMin.SuspendLayout();
@@ -225,6 +232,19 @@ namespace UserStoryGenerator.View
             tableLayoutPanelControls.Size = new Size(770, 37);
             tableLayoutPanelControls.TabIndex = 2;
             // 
+            // buttonConvert
+            // 
+            buttonConvert.Dock = DockStyle.Fill;
+            buttonConvert.Enabled = false;
+            buttonConvert.Location = new Point(653, 4);
+            buttonConvert.Margin = new Padding(3, 4, 3, 4);
+            buttonConvert.Name = "buttonConvert";
+            buttonConvert.Size = new Size(114, 29);
+            buttonConvert.TabIndex = 0;
+            buttonConvert.Text = "Create Stories";
+            buttonConvert.UseVisualStyleBackColor = true;
+            buttonConvert.Click +=  Convert_Click ;
+            // 
             // flowLayoutPanelCheckBoxes
             // 
             flowLayoutPanelCheckBoxes.Controls.Add(checkBoxAddSubTasks);
@@ -239,6 +259,8 @@ namespace UserStoryGenerator.View
             // checkBoxAddSubTasks
             // 
             checkBoxAddSubTasks.AutoSize = true;
+            checkBoxAddSubTasks.Checked = true;
+            checkBoxAddSubTasks.CheckState = CheckState.Checked;
             checkBoxAddSubTasks.Location = new Point(3, 4);
             checkBoxAddSubTasks.Margin = new Padding(3, 4, 3, 4);
             checkBoxAddSubTasks.Name = "checkBoxAddSubTasks";
@@ -250,6 +272,8 @@ namespace UserStoryGenerator.View
             // checkBoxAddQATests
             // 
             checkBoxAddQATests.AutoSize = true;
+            checkBoxAddQATests.Checked = true;
+            checkBoxAddQATests.CheckState = CheckState.Checked;
             checkBoxAddQATests.Location = new Point(127, 4);
             checkBoxAddQATests.Margin = new Padding(3, 4, 3, 4);
             checkBoxAddQATests.Name = "checkBoxAddQATests";
@@ -637,6 +661,7 @@ namespace UserStoryGenerator.View
             buttonSave.TabIndex = 0;
             buttonSave.Text = "Save";
             buttonSave.UseVisualStyleBackColor = true;
+            buttonSave.Visible = false;
             buttonSave.Click +=  ButtonSave_Click ;
             // 
             // labelStatus
@@ -682,7 +707,7 @@ namespace UserStoryGenerator.View
             // 
             // menuStrip1
             // 
-            menuStrip1.Items.AddRange(new ToolStripItem[] { preferencesToolStripMenuItem });
+            menuStrip1.Items.AddRange(new ToolStripItem[] { fileToolStripMenuItem, preferencesToolStripMenuItem });
             menuStrip1.Location = new Point(0, 0);
             menuStrip1.Name = "menuStrip1";
             menuStrip1.Padding = new Padding(7, 3, 0, 3);
@@ -690,24 +715,63 @@ namespace UserStoryGenerator.View
             menuStrip1.TabIndex = 6;
             menuStrip1.Text = "menuStrip1";
             // 
+            // fileToolStripMenuItem
+            // 
+            fileToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { openToolStripMenuItem, saveStoriesAsJsonToolStripMenuItem, saveStoriesAsCSVToolStripMenuItem, getUserStoryListToolStripMenuItem });
+            fileToolStripMenuItem.Name = "fileToolStripMenuItem";
+            fileToolStripMenuItem.Size = new Size(37, 19);
+            fileToolStripMenuItem.Text = "&File";
+            // 
+            // openToolStripMenuItem
+            // 
+            openToolStripMenuItem.Name = "openToolStripMenuItem";
+            openToolStripMenuItem.Size = new Size(180, 22);
+            openToolStripMenuItem.Text = "&Open...";
+            openToolStripMenuItem.Click +=  OpenToolStripMenuItem_Click ;
+            // 
+            // saveStoriesAsJsonToolStripMenuItem
+            // 
+            saveStoriesAsJsonToolStripMenuItem.Enabled = false;
+            saveStoriesAsJsonToolStripMenuItem.Name = "saveStoriesAsJsonToolStripMenuItem";
+            saveStoriesAsJsonToolStripMenuItem.Size = new Size(180, 22);
+            saveStoriesAsJsonToolStripMenuItem.Text = "&Save as Json...";
+            saveStoriesAsJsonToolStripMenuItem.Click +=  saveStoriesAsJsonToolStripMenuItem_Click ;
+            // 
+            // saveStoriesAsCSVToolStripMenuItem
+            // 
+            saveStoriesAsCSVToolStripMenuItem.Enabled = false;
+            saveStoriesAsCSVToolStripMenuItem.Name = "saveStoriesAsCSVToolStripMenuItem";
+            saveStoriesAsCSVToolStripMenuItem.Size = new Size(180, 22);
+            saveStoriesAsCSVToolStripMenuItem.Text = "Save &as CSV...";
+            saveStoriesAsCSVToolStripMenuItem.Click +=  saveStoriesAsCSVToolStripMenuItem_Click ;
+            // 
             // preferencesToolStripMenuItem
             // 
+            preferencesToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { settingsToolStripMenuItem, aboutToolStripMenuItem });
             preferencesToolStripMenuItem.Name = "preferencesToolStripMenuItem";
-            preferencesToolStripMenuItem.Size = new Size(89, 19);
-            preferencesToolStripMenuItem.Text = "&Preferences...";
-            preferencesToolStripMenuItem.Click +=  PreferencesToolStripMenuItem_Click ;
+            preferencesToolStripMenuItem.Size = new Size(80, 19);
+            preferencesToolStripMenuItem.Text = "&Preferences";
             // 
-            // buttonConvert
+            // settingsToolStripMenuItem
             // 
-            buttonConvert.Dock = DockStyle.Fill;
-            buttonConvert.Location = new Point(653, 4);
-            buttonConvert.Margin = new Padding(3, 4, 3, 4);
-            buttonConvert.Name = "buttonConvert";
-            buttonConvert.Size = new Size(114, 29);
-            buttonConvert.TabIndex = 0;
-            buttonConvert.Text = "Create Stories";
-            buttonConvert.UseVisualStyleBackColor = true;
-            buttonConvert.Click +=  Convert_Click ;
+            settingsToolStripMenuItem.Name = "settingsToolStripMenuItem";
+            settingsToolStripMenuItem.Size = new Size(125, 22);
+            settingsToolStripMenuItem.Text = "&Settings...";
+            settingsToolStripMenuItem.Click +=  PreferencesToolStripMenuItem_Click ;
+            // 
+            // aboutToolStripMenuItem
+            // 
+            aboutToolStripMenuItem.Name = "aboutToolStripMenuItem";
+            aboutToolStripMenuItem.Size = new Size(125, 22);
+            aboutToolStripMenuItem.Text = "About...";
+            aboutToolStripMenuItem.Click +=  AboutToolStripMenuItem_Click ;
+            // 
+            // getUserStoryListToolStripMenuItem
+            // 
+            getUserStoryListToolStripMenuItem.Name = "getUserStoryListToolStripMenuItem";
+            getUserStoryListToolStripMenuItem.Size = new Size(180, 22);
+            getUserStoryListToolStripMenuItem.Text = "&Get User Story List...";
+            getUserStoryListToolStripMenuItem.Click +=  GetUserStoryListToolStripMenuItem_Click ;
             // 
             // MainForm
             // 
@@ -786,6 +850,13 @@ namespace UserStoryGenerator.View
         private ComboBoxEx comboBoxExStoryMin;
         private GroupBox groupBoxProduct;
         private Button buttonConvert;
+        private ToolStripMenuItem fileToolStripMenuItem;
+        private ToolStripMenuItem settingsToolStripMenuItem;
+        private ToolStripMenuItem aboutToolStripMenuItem;
+        private ToolStripMenuItem openToolStripMenuItem;
+        private ToolStripMenuItem saveStoriesAsJsonToolStripMenuItem;
+        private ToolStripMenuItem saveStoriesAsCSVToolStripMenuItem;
+        private ToolStripMenuItem getUserStoryListToolStripMenuItem;
     }
 
     public interface IReset

@@ -832,7 +832,7 @@ namespace UserStoryGenerator.View
 
         }
 
-        public static void RemovePreviousCreateNodes(TreeNodeCollection nodes)
+        public static void RemovePreviousCreatedNodesIfTagged(TreeNodeCollection nodes)
         {
             foreach( TreeNode node in nodes )
             {

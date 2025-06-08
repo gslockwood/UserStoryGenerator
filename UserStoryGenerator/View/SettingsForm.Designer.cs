@@ -34,7 +34,7 @@
             groupBoxProjects = new GroupBox();
             listViewControl = new ListViewControl();
             flowLayoutPanelButtons = new FlowLayoutPanel();
-            buttonClose = new Button();
+            buttonCancel = new Button();
             buttonUse = new Button();
             buttonSave = new Button();
             tabControl = new TabControl();
@@ -124,7 +124,7 @@
             // 
             // flowLayoutPanelButtons
             // 
-            flowLayoutPanelButtons.Controls.Add(buttonClose);
+            flowLayoutPanelButtons.Controls.Add(buttonCancel);
             flowLayoutPanelButtons.Controls.Add(buttonUse);
             flowLayoutPanelButtons.Controls.Add(buttonSave);
             flowLayoutPanelButtons.Dock = DockStyle.Fill;
@@ -137,14 +137,14 @@
             // 
             // buttonClose
             // 
-            buttonClose.Location = new Point(1153, 4);
-            buttonClose.Margin = new Padding(3, 4, 3, 4);
-            buttonClose.Name = "buttonClose";
-            buttonClose.Size = new Size(86, 31);
-            buttonClose.TabIndex = 1;
-            buttonClose.Text = "Close";
-            buttonClose.UseVisualStyleBackColor = true;
-            buttonClose.Click +=  ButtonClose_Click ;
+            buttonCancel.Location = new Point(1153, 4);
+            buttonCancel.Margin = new Padding(3, 4, 3, 4);
+            buttonCancel.Name = "buttonCancel";
+            buttonCancel.Size = new Size(86, 31);
+            buttonCancel.TabIndex = 1;
+            buttonCancel.Text = "Cancel";
+            buttonCancel.UseVisualStyleBackColor = true;
+            buttonCancel.Click +=  ButtonClose_Click ;
             // 
             // buttonUse
             // 
@@ -223,7 +223,7 @@
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
-            CancelButton = buttonClose;
+            CancelButton = buttonCancel;
             ClientSize = new Size(1248, 1173);
             Controls.Add(tableLayoutPanelMain);
             Font = new Font("Segoe UI", 11.25F, FontStyle.Regular, GraphicsUnit.Point, 0);
@@ -247,7 +247,7 @@
         private TableLayoutPanel tableLayoutPanelForm;
         private GroupBoxEx groupBoxExGeminiKey;
         private FlowLayoutPanel flowLayoutPanelButtons;
-        private Button buttonClose;
+        private Button buttonCancel;
         private Button buttonUse;
         private Button buttonSave;
         private GroupBox groupBoxProjects;

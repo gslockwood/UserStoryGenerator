@@ -1,5 +1,4 @@
 ﻿using System.Text.Json;
-using UserStoryGenerator.Utilities;
 using UserStoryGenerator.View;
 using static UserStoryGenerator.Model.IssueData;
 
@@ -34,7 +33,7 @@ namespace UserStoryGenerator.Model
                 Settings? temp = JsonSerializer.Deserialize<Settings>(json);
                 /*
                 temp.UserStoryCoaching = new Settings.AICoaching();
-                string coachingAI = File.ReadAllText(@".\AI Coaching For User Stories.txt");
+                string coachingAI = File.ReadAllText(@".\AI Coaching For User Stories.json");
                 temp.UserStoryCoaching.IssueInstructions = coachingAI;
                 temp.UserStoryCoaching.QATestInstructions = "Every Story shall include a set of \"Integrated Test\" \"Test\" LinkedIssues with associated \"Sub-task\" issues as seemed fit unless instructed not to create subtask issues.\r\nThe \"Integrated Test \"Test\" Issues Summary field shall be prepended with \"Integrated Test: \". ";
                 temp.UserStoryCoaching.SubTaskInstructions = "Every Story shall include a set of Documentation \"Sub-task\" issues as seemed fit that are placed in the \"Subtasks\" collection. ";
@@ -76,28 +75,37 @@ namespace UserStoryGenerator.Model
             File.WriteAllText(SettingsFileName, JsonSerializer.Serialize(Settings, options));
         }
 
-        internal static void SaveDataToFile(string? epicText, List<string> storyList, List<TreeNode> checkedHierarchy)
+        TreeSerialization.IssueResults userStoryResults = new TreeSerialization.IssueResults();
+
+        internal void SaveDataToFile(string epicText, List<string> storyList, List<TreeNode> checkedHierarchy)
         {
             List<IssueData.Issue> serializableIssues = TreeSerialization.Convert(checkedHierarchy);
-            TreeSerialization.IssueResults userStoryResults = new()
+
+            userStoryResults = new TreeSerialization.IssueResults()
             {
                 IssueList = storyList,
                 HierarchyIssueList = serializableIssues
             };
 
+
+
             string result = JsonSerializer.Serialize(userStoryResults);//options
 
-            UserStoryGenerator.Utilities.Logger.Info(result);
-            File.WriteAllText(@$".\UserStores.txt", result);
+            SaveUserStoryResultsToJson(result, @$".\UserStores.json");
+
 
             // csv
             try
             {
                 //userStoryResults = null;  testing
 
-                string csv = Converter.ToCSV(epicText, userStoryResults);
-                Logger.Info(csv);
-                File.WriteAllText("./Issues.csv", csv);
+
+                //string csv = Converter.ToCSV(epicText, userStoryResults);
+                //Logger.Info(csv);
+                //File.WriteAllText("./Issues.csv", csv);
+
+                SaveUserStoryResultsToCSV("./Issues.csv", epicText);
+
             }
             catch( Exception ex )
             {
@@ -107,6 +115,33 @@ namespace UserStoryGenerator.Model
             //goto asdf;
         }
 
+        internal List<string>? GetStories()
+        {
+            //if( userStoryResults.IssueList == null || userStoryResults.IssueList.Count == 0 ) 
+            //    throw new NullReferenceException(nameof(userStoryResults.IssueList));
+
+            return userStoryResults.IssueList;
+        }
+
+        public bool SaveUserStoryResultsToCSV(string fullFilePath, string epicText)
+        {
+            if( userStoryResults.IssueList == null || userStoryResults.IssueList.Count == 0 ) return false;
+            string csv = Converter.ToCSV(epicText, userStoryResults);
+            File.WriteAllText("./Issues.csv", csv);
+            return true;
+        }
+        public bool SaveUserStoryResultsToJson(string fullFilePath)
+        {
+            if( userStoryResults.IssueList == null || userStoryResults.IssueList.Count == 0 ) return false;
+            string result = JsonSerializer.Serialize(userStoryResults, options);
+            SaveUserStoryResultsToJson(result, fullFilePath);
+            return true;
+        }
+        private void SaveUserStoryResultsToJson(string result, string fullFilePath)
+        {
+            //UserStoryGenerator.Utilities.Logger.Info(result);
+            File.WriteAllText(fullFilePath, result);
+        }
 
         public delegate void CompletedUserStoryEventHandler(IssueGeneratorBaseArgs answer);
         public event CompletedUserStoryEventHandler? UserStoryGeneratorCompleted;
@@ -216,10 +251,7 @@ namespace UserStoryGenerator.Model
                 IssueGeneratorUserStories? issueGenerator = new(args);
                 issueGenerator.Completed += (args) =>
                 {
-                    //StoryPackage successfullItem = list[counter];
-                    //successList.Add(successfullItem);
-                    Logger.Info($"ProcessStoryList: Received{index++}");
-
+                    //Logger.Info($"ProcessStoryList: Received{index++}");
                     //Utilities.Logger.Info($"Model:GfsGeminiClientHost_LookupCompleted: {counter}");
                     IssueGeneratorBaseArgsEx issueGeneratorBaseArgsEx = new(args.Result, --counter, storyPackage.Key);
                     IssueGeneratorCompleted?.Invoke(issueGeneratorBaseArgsEx);
@@ -228,7 +260,7 @@ namespace UserStoryGenerator.Model
                 {
                 };
 
-                Logger.Info($"ProcessStoryList:issueGenerator Requesting Answer: {index0++}");
+                //Logger.Info($"ProcessStoryList:issueGenerator Requesting Answer: {index0++}");
 
 
                 await Task.Delay(0);// this because RequestAnswer isn't really async
@@ -239,6 +271,8 @@ namespace UserStoryGenerator.Model
             //Logger.Info($"ProcessStoryList:Started:complete");
 
         }
+
+
     }
 
     public class StoryPackage

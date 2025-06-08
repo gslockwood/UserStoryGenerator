@@ -1,6 +1,5 @@
 ﻿using System.Text;
 using System.Text.Json;
-using UserStoryGenerator.Utilities;
 using static UserStoryGenerator.Model.GFSGeminiClientHost;
 
 namespace UserStoryGenerator.Model
@@ -59,7 +58,7 @@ namespace UserStoryGenerator.Model
                     try
                     {
                         await gfsGeminiClientHost.RequestAnswer();
-                        Logger.Info("after RequestAnswer");
+                        //Logger.Info("after RequestAnswer");
                     }
                     catch( System.Net.Http.HttpRequestException ex )
                     {
@@ -117,7 +116,8 @@ namespace UserStoryGenerator.Model
 
             string result = sbCoaching.ToString();
 
-            result = result.Replace(NUMBEROFISSUES, maxStories.ToString());
+            if( result.Contains(NUMBEROFISSUES) )
+                result = result.Replace(NUMBEROFISSUES, maxStories.ToString());
 
             return result;
         }

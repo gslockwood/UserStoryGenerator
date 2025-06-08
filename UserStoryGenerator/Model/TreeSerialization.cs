@@ -9,7 +9,7 @@ namespace UserStoryGenerator.Model
             List<IssueData.Issue> serializableIssues = [];
             foreach( TreeNode node in treeNodes )
             {
-                if( node.Text.Equals("LinkedIssues") ) continue;
+                //if( node.Text.Equals("LinkedIssues") ) continue;
 
                 serializableIssues = ConvertTreeNodesToJsonStructure(treeNodes);
 
@@ -29,11 +29,12 @@ namespace UserStoryGenerator.Model
                     IssueType = node.IssueType,
                     Product = node.Product
                 };
+
+                serializableIssues.Add(issue);
+
                 if( node.Nodes.Count > 0 )
                 {
-
-
-                    serializableIssues.Add(issue);
+                    //serializableIssues.Add(issue);
                     foreach( TriStateTreeView.TreeNodeEx xxxx in node.Nodes )
                     {
                         if( xxxx.Text.Equals("Subtasks") )
