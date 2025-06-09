@@ -7,11 +7,9 @@ namespace UserStoryGenerator.Model
     {
         internal static string ToCSV(string? epicText, TreeSerialization.IssueResults? userStoryResults)
         {
-            //return "";
-
             if( userStoryResults == null ) throw new NullReferenceException(nameof(userStoryResults));
-            if( userStoryResults.HierarchyIssueList == null ) throw new NullReferenceException(nameof(userStoryResults.HierarchyIssueList));
-            if( userStoryResults.HierarchyIssueList.Count == 0 ) throw new ArgumentNullException(nameof(userStoryResults.HierarchyIssueList));
+            if( userStoryResults.Issues == null ) throw new NullReferenceException(nameof(userStoryResults.Issues));
+            if( userStoryResults.Issues.Count == 0 ) throw new ArgumentNullException(nameof(userStoryResults.Issues));
 
             //string headerLine = "Project Key,ID,Parent ID,Summary,Issue Type,Description,Status, Reporter,Assignee";
             string headerLine = "Project Key,ID,Parent ID,Link,Summary,Issue Type,Status";
@@ -44,7 +42,7 @@ namespace UserStoryGenerator.Model
                     {
                         Summary = epicText,
                         IssueType = JiraIssueTypes.EPIC,
-                        Product = userStoryResults.HierarchyIssueList[0].Product,
+                        Product = userStoryResults.Issues[0].Product,
                         Key = epicKey0,
                     };
 
@@ -54,11 +52,11 @@ namespace UserStoryGenerator.Model
                 }
             }
             else
-                epicKey = "";
+                epicKey = string.Empty;
 
 
             //////////  Story Level  //////////
-            Recursive(userStoryResults.HierarchyIssueList, epicKey, -1, sbFile);
+            Recursive(userStoryResults.Issues, epicKey, -1, sbFile);
 
             return sbFile.ToString();
             //

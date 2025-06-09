@@ -12,8 +12,10 @@ namespace UserStoryGenerator.Model
 
     public class IssueGeneratorBaseArgs(Result result)
     {
-        //public string Answer { get; } = answer;
         public Result Result { get; } = result;
+        public List<IssueData.Issue>? Issues { get; internal set; }
+
+
     }
 
 }

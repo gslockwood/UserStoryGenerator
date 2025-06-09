@@ -9,7 +9,7 @@
             if( stories != null )
             {
                 foreach( var story in stories )
-                    richTextBox.Text = story;
+                    richTextBox.Text += $"{story}\n";
             }
         }
     }

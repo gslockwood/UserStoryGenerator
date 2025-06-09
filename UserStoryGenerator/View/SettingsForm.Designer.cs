@@ -222,6 +222,7 @@
             // SettingsForm
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
+            StartPosition = FormStartPosition.CenterParent;
             AutoScaleMode = AutoScaleMode.Font;
             CancelButton = buttonCancel;
             ClientSize = new Size(1248, 1173);
@@ -229,7 +230,6 @@
             Font = new Font("Segoe UI", 11.25F, FontStyle.Regular, GraphicsUnit.Point, 0);
             Margin = new Padding(3, 4, 3, 4);
             Name = "SettingsForm";
-            StartPosition = FormStartPosition.CenterParent;
             Text = "SettingsForm";
             tableLayoutPanelMain.ResumeLayout(false);
             tableLayoutPanelForm.ResumeLayout(false);

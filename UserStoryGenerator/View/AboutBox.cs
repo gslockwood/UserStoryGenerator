@@ -1,11 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Drawing;
-using System.Linq;
-using System.Reflection;
-using System.Threading.Tasks;
-using System.Windows.Forms;
+﻿using System.Reflection;
 
 namespace UserStoryGenerator.View
 {
@@ -19,12 +12,13 @@ namespace UserStoryGenerator.View
             this.labelVersion.Text = String.Format("Version {0}", AssemblyVersion);
             this.labelCopyright.Text = AssemblyCopyright;
             this.labelCompanyName.Text = AssemblyCompany;
-            this.textBoxDescription.Text = AssemblyDescription;
+            if( !string.IsNullOrEmpty(AssemblyDescription) )
+                this.textBoxDescription.Text = AssemblyDescription.Replace(@"\n", Environment.NewLine);
         }
 
         #region Assembly Attribute Accessors
 
-        public string AssemblyTitle
+        public static string? AssemblyTitle
         {
             get
             {
@@ -37,19 +31,24 @@ namespace UserStoryGenerator.View
                         return titleAttribute.Title;
                     }
                 }
-                return System.IO.Path.GetFileNameWithoutExtension(Assembly.GetExecutingAssembly().CodeBase);
+                return System.IO.Path.GetFileNameWithoutExtension(Assembly.GetExecutingAssembly().Location);
             }
         }
 
-        public string AssemblyVersion
+        public static string? AssemblyVersion
         {
             get
             {
-                return Assembly.GetExecutingAssembly().GetName().Version.ToString();
+                Version? temp = Assembly.GetExecutingAssembly().GetName().Version;
+                if( temp == null )
+                    return "";
+                else
+                    return temp.ToString();
+
             }
         }
 
-        public string AssemblyDescription
+        public static string? AssemblyDescription
         {
             get
             {
@@ -62,7 +61,7 @@ namespace UserStoryGenerator.View
             }
         }
 
-        public string AssemblyProduct
+        public static string? AssemblyProduct
         {
             get
             {
@@ -75,7 +74,7 @@ namespace UserStoryGenerator.View
             }
         }
 
-        public string AssemblyCopyright
+        public static string? AssemblyCopyright
         {
             get
             {
@@ -88,7 +87,7 @@ namespace UserStoryGenerator.View
             }
         }
 
-        public string AssemblyCompany
+        public static string? AssemblyCompany
         {
             get
             {

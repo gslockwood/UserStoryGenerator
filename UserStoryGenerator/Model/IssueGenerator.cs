@@ -192,6 +192,7 @@ namespace UserStoryGenerator.Model
         public bool AddQATests { get; internal set; }
         public bool AddSubTasks { get; internal set; }
         public int MaxStories { get; internal set; }
+
     }
 
 

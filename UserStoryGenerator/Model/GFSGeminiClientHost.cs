@@ -79,7 +79,8 @@ namespace UserStoryGenerator.Model
         {
             public object? Id { get; } = id;
             public string? Answer { get; } = answer;
-            //public IList<string>? Answers { get; } = answers;
+            //public List<IssueData.Issue>? Issues { get; internal set; }
+
         }
     }
 

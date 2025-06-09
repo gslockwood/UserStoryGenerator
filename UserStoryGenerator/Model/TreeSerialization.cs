@@ -20,9 +20,8 @@ namespace UserStoryGenerator.Model
         public static List<IssueData.Issue> ConvertTreeNodesToJsonStructure(List<TreeNode> treeNodes)
         {
             List<IssueData.Issue> serializableIssues = [];
-            foreach( TriStateTreeView.TreeNodeEx node in treeNodes )
+            foreach( TriStateTreeView.TreeNodeEx node in treeNodes.Cast<TriStateTreeView.TreeNodeEx>() )
             {
-                //View.TriStateTreeView.TreeNodeEx treeNodeEx = (View.TriStateTreeView.TreeNodeEx)node;
                 IssueData.Issue issue = new()
                 {
                     Summary = node.Summary,
@@ -34,7 +33,6 @@ namespace UserStoryGenerator.Model
 
                 if( node.Nodes.Count > 0 )
                 {
-                    //serializableIssues.Add(issue);
                     foreach( TriStateTreeView.TreeNodeEx xxxx in node.Nodes )
                     {
                         if( xxxx.Text.Equals("Subtasks") )
@@ -94,8 +92,8 @@ namespace UserStoryGenerator.Model
 
         public class IssueResults
         {
-            public List<string>? IssueList { get; set; }
-            public List<IssueData.Issue>? HierarchyIssueList { get; set; }
+            public List<string>? UserStoryList { get; set; }
+            public List<IssueData.Issue>? Issues { get; set; }
         }
     }
 

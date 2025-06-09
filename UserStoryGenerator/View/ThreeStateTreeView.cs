@@ -40,10 +40,6 @@ namespace UserStoryGenerator.View
 
         public delegate void CheckEventHandler(IssueCollector issueCollector);
         public event CheckEventHandler? Checked;
-        public delegate void ProcessEventHandler(long key, string project, string userStoryText);
-        public event ProcessEventHandler? ProcessSingleStory;
-
-
 
 
         // <remarks>
@@ -307,40 +303,6 @@ namespace UserStoryGenerator.View
                     clickedNode.Collapse();
                 };
 
-                /*
-                if( clickedNode is TreeNodeEx treeNodeEx )
-                {
-                    if( clickedNode.Parent != null && clickedNode.Parent.Parent == null )
-                    {
-                        ToolStripMenuItem item1 = new($"Process Story: {treeNodeEx.Text}");
-
-                        nodeContextMenu.Items.Add(item1);
-
-                        item1.Click += (sender, eventArgs) =>
-                        {
-                            if( treeNodeEx.Product != null )
-                                ProcessSingleStory?.Invoke(treeNodeEx.Key, treeNodeEx.Product, clickedNode.Text);
-                        };
-
-
-                        // Assign the context menu strip to the TreeView itself initially.
-                        // We'll show it conditionally based on right-clicking a node.
-
-                        // Select the right-clicked node (optional, but good UX)
-                        this.SelectedNode = clickedNode;
-
-                        //// Show the context menu at the mouse pointer's location
-                        //nodeContextMenu.Show(this, e.Location);
-                    }
-                    //
-                }
-                else
-                {
-                    // If right-clicked on empty space, you might hide the menu or show a different one
-                    //nodeContextMenu.Hide(); 
-                    // Or: this.ContextMenuStrip = _emptySpaceContextMenu; this.ContextMenuStrip.Show(this, e.Location);
-                }
-                */
                 // Show the context menu at the mouse pointer's location
                 nodeContextMenu.Show(this, e.Location);
 
@@ -794,7 +756,7 @@ namespace UserStoryGenerator.View
             //return resultNodes;
         }
 
-        public List<string> GetCheckedNodes()
+        public List<string> GetStorySummaries()
         {
             List<string> strings = [];
             List<TreeNode> checkedNodes = GetCheckedNodesRecursiveHierarchy(this.Nodes[0].Nodes);// skipp the root

@@ -1,49 +1,54 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-    <OutputType>WinExe</OutputType>
-    <TargetFramework>net8.0-windows</TargetFramework>
-    <Nullable>enable</Nullable>
-    <UseWindowsForms>true</UseWindowsForms>
-    <ImplicitUsings>enable</ImplicitUsings>
-    <AssemblyVersion>2.2.3.0</AssemblyVersion>
-  </PropertyGroup>
+	<PropertyGroup>
+		<OutputType>WinExe</OutputType>
+		<TargetFramework>net8.0-windows</TargetFramework>
+		<Nullable>enable</Nullable>
+		<UseWindowsForms>true</UseWindowsForms>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<ProductName>Jira Issue Generator</ProductName>
+		<Description>Tell me a story...\n\nThis app will generate user stories and associated issues and sub-task for importation into Jira.</Description>
+		<Copyright>© 2025</Copyright>
+		<Authors>G.S. Lockwood</Authors>
+		<AssemblyVersion>2.2.4.0</AssemblyVersion>
 
-  <ItemGroup>
-    <PackageReference Include="Mscc.GenerativeAI.Google" Version="2.6.1" />
-  </ItemGroup>
+	</PropertyGroup>
 
-  <ItemGroup>
-    <Reference Include="GFSGeminiClient">
-      <HintPath>..\lib\GFSGeminiClient.dll</HintPath>
-    </Reference>
-  </ItemGroup>
+	<ItemGroup>
+		<PackageReference Include="Mscc.GenerativeAI.Google" Version="2.6.1" />
+	</ItemGroup>
 
-  <ItemGroup>
-    <Compile Update="Properties\Resources.Designer.cs">
-      <DesignTime>True</DesignTime>
-      <AutoGen>True</AutoGen>
-      <DependentUpon>Resources.resx</DependentUpon>
-    </Compile>
-  </ItemGroup>
+	<ItemGroup>
+		<Reference Include="GFSGeminiClient">
+			<HintPath>..\lib\GFSGeminiClient.dll</HintPath>
+		</Reference>
+	</ItemGroup>
 
-  <ItemGroup>
-    <EmbeddedResource Update="Properties\Resources.resx">
-      <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
-    </EmbeddedResource>
-  </ItemGroup>
+	<ItemGroup>
+		<Compile Update="Properties\Resources.Designer.cs">
+			<DesignTime>True</DesignTime>
+			<AutoGen>True</AutoGen>
+			<DependentUpon>Resources.resx</DependentUpon>
+		</Compile>
+	</ItemGroup>
 
-  <ItemGroup>
-    <None Update="AI Coaching For All issues.txt">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="AI Coaching.txt">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="BulkCreate-configuration-UserStoryGeneratorFormat.txt">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-  </ItemGroup>
+	<ItemGroup>
+		<EmbeddedResource Update="Properties\Resources.resx">
+			<Generator>ResXFileCodeGenerator</Generator>
+			<LastGenOutput>Resources.Designer.cs</LastGenOutput>
+		</EmbeddedResource>
+	</ItemGroup>
+
+	<ItemGroup>
+		<None Update="AI Coaching For All issues.txt">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
+		<None Update="AI Coaching.txt">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
+		<None Update="BulkCreate-configuration-UserStoryGeneratorFormat.txt">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
+	</ItemGroup>
 
 </Project>

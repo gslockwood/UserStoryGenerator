@@ -37,7 +37,6 @@ namespace UserStoryGenerator.View
             groupBoxStoryMin = new GroupBox();
             comboBoxExStoryMin = new ComboBoxEx();
             groupBoxExProductFeature = new GroupBoxEx();
-            groupBoxExEpic = new GroupBoxEx();
             groupBoxProduct = new GroupBox();
             comboBoxJiraProjects = new ComboBoxEx();
             tableLayoutPanelControls = new TableLayoutPanel();
@@ -46,6 +45,7 @@ namespace UserStoryGenerator.View
             checkBoxAddSubTasks = new CheckBox();
             checkBoxAddQATests = new CheckBox();
             textBoxPRD = new GroupBoxEx();
+            epicSelector = new EpicSelector();
             treeView = new TriStateTreeView();
             panelResults = new Panel();
             tableLayoutPanelResults = new TableLayoutPanel();
@@ -77,10 +77,10 @@ namespace UserStoryGenerator.View
             openToolStripMenuItem = new ToolStripMenuItem();
             saveStoriesAsJsonToolStripMenuItem = new ToolStripMenuItem();
             saveStoriesAsCSVToolStripMenuItem = new ToolStripMenuItem();
+            getUserStoryListToolStripMenuItem = new ToolStripMenuItem();
             preferencesToolStripMenuItem = new ToolStripMenuItem();
             settingsToolStripMenuItem = new ToolStripMenuItem();
             aboutToolStripMenuItem = new ToolStripMenuItem();
-            getUserStoryListToolStripMenuItem = new ToolStripMenuItem();
             tableLayoutPanelData.SuspendLayout();
             tableLayoutPanelEntryControl.SuspendLayout();
             groupBoxStoryMin.SuspendLayout();
@@ -102,31 +102,30 @@ namespace UserStoryGenerator.View
             tableLayoutPanelData.ColumnCount = 1;
             tableLayoutPanelData.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
             tableLayoutPanelData.Controls.Add(tableLayoutPanelEntryControl, 0, 0);
-            tableLayoutPanelData.Controls.Add(tableLayoutPanelControls, 0, 2);
-            tableLayoutPanelData.Controls.Add(textBoxPRD, 0, 1);
+            tableLayoutPanelData.Controls.Add(tableLayoutPanelControls, 0, 3);
+            tableLayoutPanelData.Controls.Add(textBoxPRD, 0, 2);
+            tableLayoutPanelData.Controls.Add(epicSelector, 0, 1);
             tableLayoutPanelData.Dock = DockStyle.Fill;
             tableLayoutPanelData.Location = new Point(3, 4);
             tableLayoutPanelData.Margin = new Padding(3, 4, 3, 4);
             tableLayoutPanelData.Name = "tableLayoutPanelData";
-            tableLayoutPanelData.RowCount = 3;
+            tableLayoutPanelData.RowCount = 4;
             tableLayoutPanelData.RowStyles.Add(new RowStyle(SizeType.Absolute, 95F));
+            tableLayoutPanelData.RowStyles.Add(new RowStyle(SizeType.Absolute, 83F));
             tableLayoutPanelData.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
             tableLayoutPanelData.RowStyles.Add(new RowStyle(SizeType.Absolute, 45F));
-            tableLayoutPanelData.RowStyles.Add(new RowStyle(SizeType.Absolute, 20F));
-            tableLayoutPanelData.RowStyles.Add(new RowStyle(SizeType.Absolute, 20F));
             tableLayoutPanelData.Size = new Size(776, 871);
             tableLayoutPanelData.TabIndex = 1;
             // 
             // tableLayoutPanelEntryControl
             // 
-            tableLayoutPanelEntryControl.ColumnCount = 4;
+            tableLayoutPanelEntryControl.ColumnCount = 3;
             tableLayoutPanelEntryControl.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 140F));
-            tableLayoutPanelEntryControl.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50F));
-            tableLayoutPanelEntryControl.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50F));
+            tableLayoutPanelEntryControl.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
             tableLayoutPanelEntryControl.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 100F));
-            tableLayoutPanelEntryControl.Controls.Add(groupBoxStoryMin, 3, 0);
-            tableLayoutPanelEntryControl.Controls.Add(groupBoxExProductFeature, 2, 0);
-            tableLayoutPanelEntryControl.Controls.Add(groupBoxExEpic, 1, 0);
+            tableLayoutPanelEntryControl.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 20F));
+            tableLayoutPanelEntryControl.Controls.Add(groupBoxStoryMin, 2, 0);
+            tableLayoutPanelEntryControl.Controls.Add(groupBoxExProductFeature, 1, 0);
             tableLayoutPanelEntryControl.Controls.Add(groupBoxProduct, 0, 0);
             tableLayoutPanelEntryControl.Dock = DockStyle.Fill;
             tableLayoutPanelEntryControl.Location = new Point(3, 3);
@@ -162,36 +161,19 @@ namespace UserStoryGenerator.View
             // 
             groupBoxExProductFeature.CaptionText = "Product/Feature";
             groupBoxExProductFeature.Dock = DockStyle.Fill;
-            groupBoxExProductFeature.Location = new Point(408, 9);
+            groupBoxExProductFeature.Location = new Point(143, 9);
             groupBoxExProductFeature.Margin = new Padding(3, 9, 3, 9);
             groupBoxExProductFeature.Multiline = false;
             groupBoxExProductFeature.Name = "groupBoxExProductFeature";
             groupBoxExProductFeature.PlaceholderText = "enter the product or feature name (required)";
             groupBoxExProductFeature.ReadOnly = false;
-            groupBoxExProductFeature.Size = new Size(259, 71);
+            groupBoxExProductFeature.Size = new Size(524, 71);
             groupBoxExProductFeature.TabIndex = 11;
             groupBoxExProductFeature.TextAlign = HorizontalAlignment.Left;
             groupBoxExProductFeature.TextBoxForeColor = SystemColors.WindowText;
             groupBoxExProductFeature.UseSystemPasswordChar = false;
             groupBoxExProductFeature.Value = "";
             groupBoxExProductFeature.ValueChanged +=  TextControls_TextChanged ;
-            // 
-            // groupBoxExEpic
-            // 
-            groupBoxExEpic.CaptionText = "Epic";
-            groupBoxExEpic.Dock = DockStyle.Fill;
-            groupBoxExEpic.Location = new Point(143, 7);
-            groupBoxExEpic.Margin = new Padding(3, 7, 3, 7);
-            groupBoxExEpic.Multiline = false;
-            groupBoxExEpic.Name = "groupBoxExEpic";
-            groupBoxExEpic.PlaceholderText = "enter existing epic Key, enter a title of new epic, or leave blank";
-            groupBoxExEpic.ReadOnly = false;
-            groupBoxExEpic.Size = new Size(259, 75);
-            groupBoxExEpic.TabIndex = 10;
-            groupBoxExEpic.TextAlign = HorizontalAlignment.Left;
-            groupBoxExEpic.TextBoxForeColor = SystemColors.WindowText;
-            groupBoxExEpic.UseSystemPasswordChar = false;
-            groupBoxExEpic.Value = "";
             // 
             // groupBoxProduct
             // 
@@ -287,19 +269,29 @@ namespace UserStoryGenerator.View
             textBoxPRD.AllowDrop = true;
             textBoxPRD.CaptionText = "Product Description";
             textBoxPRD.Dock = DockStyle.Fill;
-            textBoxPRD.Location = new Point(2, 98);
+            textBoxPRD.Location = new Point(2, 181);
             textBoxPRD.Margin = new Padding(2, 3, 2, 3);
             textBoxPRD.Multiline = true;
             textBoxPRD.Name = "textBoxPRD";
             textBoxPRD.PlaceholderText = "enter the product feature plain text description (required)";
             textBoxPRD.ReadOnly = false;
-            textBoxPRD.Size = new Size(772, 725);
+            textBoxPRD.Size = new Size(772, 642);
             textBoxPRD.TabIndex = 1;
             textBoxPRD.TextAlign = HorizontalAlignment.Left;
             textBoxPRD.TextBoxForeColor = SystemColors.WindowText;
             textBoxPRD.UseSystemPasswordChar = false;
             textBoxPRD.Value = "";
             textBoxPRD.TextChanged +=  TextControls_TextChanged ;
+            // 
+            // epicSelector
+            // 
+            epicSelector.Dock = DockStyle.Fill;
+            epicSelector.Font = new Font("Segoe UI", 11.25F);
+            epicSelector.Location = new Point(3, 99);
+            epicSelector.Margin = new Padding(3, 4, 3, 4);
+            epicSelector.Name = "epicSelector";
+            epicSelector.Size = new Size(770, 75);
+            epicSelector.TabIndex = 13;
             // 
             // treeView
             // 
@@ -725,7 +717,7 @@ namespace UserStoryGenerator.View
             // openToolStripMenuItem
             // 
             openToolStripMenuItem.Name = "openToolStripMenuItem";
-            openToolStripMenuItem.Size = new Size(180, 22);
+            openToolStripMenuItem.Size = new Size(178, 22);
             openToolStripMenuItem.Text = "&Open...";
             openToolStripMenuItem.Click +=  OpenToolStripMenuItem_Click ;
             // 
@@ -733,17 +725,25 @@ namespace UserStoryGenerator.View
             // 
             saveStoriesAsJsonToolStripMenuItem.Enabled = false;
             saveStoriesAsJsonToolStripMenuItem.Name = "saveStoriesAsJsonToolStripMenuItem";
-            saveStoriesAsJsonToolStripMenuItem.Size = new Size(180, 22);
+            saveStoriesAsJsonToolStripMenuItem.Size = new Size(178, 22);
             saveStoriesAsJsonToolStripMenuItem.Text = "&Save as Json...";
-            saveStoriesAsJsonToolStripMenuItem.Click +=  saveStoriesAsJsonToolStripMenuItem_Click ;
+            saveStoriesAsJsonToolStripMenuItem.Click +=  SaveStoriesAsJsonToolStripMenuItem_Click ;
             // 
             // saveStoriesAsCSVToolStripMenuItem
             // 
             saveStoriesAsCSVToolStripMenuItem.Enabled = false;
             saveStoriesAsCSVToolStripMenuItem.Name = "saveStoriesAsCSVToolStripMenuItem";
-            saveStoriesAsCSVToolStripMenuItem.Size = new Size(180, 22);
+            saveStoriesAsCSVToolStripMenuItem.Size = new Size(178, 22);
             saveStoriesAsCSVToolStripMenuItem.Text = "Save &as CSV...";
-            saveStoriesAsCSVToolStripMenuItem.Click +=  saveStoriesAsCSVToolStripMenuItem_Click ;
+            saveStoriesAsCSVToolStripMenuItem.Click +=  SaveStoriesAsCSVToolStripMenuItem_Click ;
+            // 
+            // getUserStoryListToolStripMenuItem
+            // 
+            getUserStoryListToolStripMenuItem.Enabled = false;
+            getUserStoryListToolStripMenuItem.Name = "getUserStoryListToolStripMenuItem";
+            getUserStoryListToolStripMenuItem.Size = new Size(178, 22);
+            getUserStoryListToolStripMenuItem.Text = "&Get User Story List...";
+            getUserStoryListToolStripMenuItem.Click +=  GetUserStoryListToolStripMenuItem_Click ;
             // 
             // preferencesToolStripMenuItem
             // 
@@ -765,13 +765,6 @@ namespace UserStoryGenerator.View
             aboutToolStripMenuItem.Size = new Size(125, 22);
             aboutToolStripMenuItem.Text = "About...";
             aboutToolStripMenuItem.Click +=  AboutToolStripMenuItem_Click ;
-            // 
-            // getUserStoryListToolStripMenuItem
-            // 
-            getUserStoryListToolStripMenuItem.Name = "getUserStoryListToolStripMenuItem";
-            getUserStoryListToolStripMenuItem.Size = new Size(180, 22);
-            getUserStoryListToolStripMenuItem.Text = "&Get User Story List...";
-            getUserStoryListToolStripMenuItem.Click +=  GetUserStoryListToolStripMenuItem_Click ;
             // 
             // MainForm
             // 
@@ -845,7 +838,6 @@ namespace UserStoryGenerator.View
         private Label labelStatus;
         private TableLayoutPanel tableLayoutPanelEntryControl;
         private GroupBoxEx groupBoxExProductFeature;
-        private GroupBoxEx groupBoxExEpic;
         private GroupBox groupBoxStoryMin;
         private ComboBoxEx comboBoxExStoryMin;
         private GroupBox groupBoxProduct;
@@ -857,6 +849,7 @@ namespace UserStoryGenerator.View
         private ToolStripMenuItem saveStoriesAsJsonToolStripMenuItem;
         private ToolStripMenuItem saveStoriesAsCSVToolStripMenuItem;
         private ToolStripMenuItem getUserStoryListToolStripMenuItem;
+        private EpicSelector epicSelector;
     }
 
     public interface IReset

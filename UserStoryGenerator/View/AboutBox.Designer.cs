@@ -34,7 +34,7 @@
             labelVersion = new Label();
             labelCopyright = new Label();
             labelCompanyName = new Label();
-            textBoxDescription = new TextBox();
+            textBoxDescription = new RichTextBox();
             okButton = new Button();
             tableLayoutPanel.SuspendLayout();
             ( (System.ComponentModel.ISupportInitialize)logoPictureBox ).BeginInit();
@@ -132,10 +132,8 @@
             textBoxDescription.Dock = DockStyle.Fill;
             textBoxDescription.Location = new Point(167, 123);
             textBoxDescription.Margin = new Padding(7, 3, 4, 3);
-            textBoxDescription.Multiline = true;
             textBoxDescription.Name = "textBoxDescription";
             textBoxDescription.ReadOnly = true;
-            textBoxDescription.ScrollBars = ScrollBars.Both;
             textBoxDescription.Size = new Size(316, 147);
             textBoxDescription.TabIndex = 23;
             textBoxDescription.TabStop = false;
@@ -164,13 +162,12 @@
             MaximizeBox = false;
             MinimizeBox = false;
             Name = "AboutBox";
-            Padding = new Padding(10, 10, 10, 10);
+            Padding = new Padding(10);
             ShowIcon = false;
             ShowInTaskbar = false;
             StartPosition = FormStartPosition.CenterParent;
             Text = "AboutBox";
             tableLayoutPanel.ResumeLayout(false);
-            tableLayoutPanel.PerformLayout();
             ( (System.ComponentModel.ISupportInitialize)logoPictureBox ).EndInit();
             ResumeLayout(false);
         }
@@ -183,7 +180,7 @@
         private System.Windows.Forms.Label labelVersion;
         private System.Windows.Forms.Label labelCopyright;
         private System.Windows.Forms.Label labelCompanyName;
-        private System.Windows.Forms.TextBox textBoxDescription;
+        private System.Windows.Forms.RichTextBox textBoxDescription;
         private System.Windows.Forms.Button okButton;
     }
 }

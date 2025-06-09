@@ -43,8 +43,10 @@
             // 
             // StoryListForm
             // 
+            StartPosition = FormStartPosition.CenterParent;
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
+            Font = new Font("Segoe UI", 11.25F, FontStyle.Regular, GraphicsUnit.Point, 0);
             ClientSize = new Size(800, 450);
             Controls.Add(richTextBox);
             Name = "StoryListForm";
