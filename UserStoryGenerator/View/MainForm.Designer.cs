@@ -44,7 +44,7 @@ namespace UserStoryGenerator.View
             flowLayoutPanelCheckBoxes = new FlowLayoutPanel();
             checkBoxAddSubTasks = new CheckBox();
             checkBoxAddQATests = new CheckBox();
-            textBoxPRD = new GroupBoxEx();
+            groupBoxExPRD = new GroupBoxEx();
             epicSelector = new EpicSelector();
             treeView = new TriStateTreeView();
             panelResults = new Panel();
@@ -103,7 +103,7 @@ namespace UserStoryGenerator.View
             tableLayoutPanelData.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
             tableLayoutPanelData.Controls.Add(tableLayoutPanelEntryControl, 0, 0);
             tableLayoutPanelData.Controls.Add(tableLayoutPanelControls, 0, 3);
-            tableLayoutPanelData.Controls.Add(textBoxPRD, 0, 2);
+            tableLayoutPanelData.Controls.Add(groupBoxExPRD, 0, 2);
             tableLayoutPanelData.Controls.Add(epicSelector, 0, 1);
             tableLayoutPanelData.Dock = DockStyle.Fill;
             tableLayoutPanelData.Location = new Point(3, 4);
@@ -264,24 +264,25 @@ namespace UserStoryGenerator.View
             checkBoxAddQATests.Text = "Add QA Tests";
             checkBoxAddQATests.UseVisualStyleBackColor = true;
             // 
-            // textBoxPRD
+            // groupBoxExPRD
             // 
-            textBoxPRD.AllowDrop = true;
-            textBoxPRD.CaptionText = "Product Description";
-            textBoxPRD.Dock = DockStyle.Fill;
-            textBoxPRD.Location = new Point(2, 181);
-            textBoxPRD.Margin = new Padding(2, 3, 2, 3);
-            textBoxPRD.Multiline = true;
-            textBoxPRD.Name = "textBoxPRD";
-            textBoxPRD.PlaceholderText = "enter the product feature plain text description (required)";
-            textBoxPRD.ReadOnly = false;
-            textBoxPRD.Size = new Size(772, 642);
-            textBoxPRD.TabIndex = 1;
-            textBoxPRD.TextAlign = HorizontalAlignment.Left;
-            textBoxPRD.TextBoxForeColor = SystemColors.WindowText;
-            textBoxPRD.UseSystemPasswordChar = false;
-            textBoxPRD.Value = "";
-            textBoxPRD.TextChanged +=  TextControls_TextChanged ;
+            groupBoxExPRD.AllowDrop = true;
+            groupBoxExPRD.CaptionText = "Product Description";
+            groupBoxExPRD.Dock = DockStyle.Fill;
+            groupBoxExPRD.Location = new Point(2, 181);
+            groupBoxExPRD.Margin = new Padding(2, 3, 2, 3);
+            groupBoxExPRD.Multiline = true;
+            groupBoxExPRD.Name = "groupBoxExPRD";
+            groupBoxExPRD.PlaceholderText = "enter the product feature plain text description (required)";
+            groupBoxExPRD.ReadOnly = false;
+            groupBoxExPRD.Size = new Size(772, 642);
+            groupBoxExPRD.TabIndex = 1;
+            groupBoxExPRD.TextAlign = HorizontalAlignment.Left;
+            groupBoxExPRD.TextBoxForeColor = SystemColors.WindowText;
+            groupBoxExPRD.UseSystemPasswordChar = false;
+            groupBoxExPRD.Value = "";
+            groupBoxExPRD.ValueChanged +=  TextControls_TextChanged ;
+            groupBoxExPRD.TextChanged +=  TextControls_TextChanged ;
             // 
             // epicSelector
             // 
@@ -802,7 +803,7 @@ namespace UserStoryGenerator.View
 
         private TriStateTreeView treeView;
         private TableLayoutPanel tableLayoutPanelData;
-        private GroupBoxEx textBoxPRD;
+        private GroupBoxEx groupBoxExPRD;
         private ColumnHeader columnHeaderUserStorySubject;
         private FlowLayoutPanel flowLayoutPanelMainButtons;
         private Button buttonSave;

@@ -283,6 +283,8 @@ namespace UserStoryGenerator.View
                 // Get the TreeNode at the mouse click location
                 TreeNode clickedNode = this.GetNodeAt(e.Location);
 
+                if( clickedNode == null ) return;
+
                 ContextMenuStrip nodeContextMenu = new();
                 this.ContextMenuStrip = nodeContextMenu;
 

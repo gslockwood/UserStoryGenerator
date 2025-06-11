@@ -51,6 +51,7 @@
             txtNewItem.Name = "txtNewItem";
             txtNewItem.Size = new Size(307, 23);
             txtNewItem.TabIndex = 0;
+            txtNewItem.TextChanged +=  TextChanged2 ;
             // 
             // btnAddItem
             // 
@@ -84,6 +85,7 @@
             txtEditItem.Name = "txtEditItem";
             txtEditItem.Size = new Size(307, 23);
             txtEditItem.TabIndex = 3;
+            txtEditItem.TextChanged +=  TextChanged2 ;
             // 
             // btnUpdateItem
             // 
@@ -165,6 +167,7 @@
             buttonDelete.TabIndex = 9;
             buttonDelete.Text = "Delete";
             buttonDelete.UseVisualStyleBackColor = true;
+            buttonDelete.Click +=  buttonDelete_Click ;
             // 
             // ListViewControl
             // 

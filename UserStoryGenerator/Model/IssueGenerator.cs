@@ -8,8 +8,8 @@ namespace UserStoryGenerator.Model
     {
         public delegate void CompletedEventHandler(IssueGeneratorBaseArgs args);
         public event CompletedEventHandler? Completed;
-        public delegate void ErrorEventHandler();
-        public event ErrorEventHandler? Error;
+        //public delegate void ErrorEventHandler();
+        //public event ErrorEventHandler? Error;
 
         protected const string ADDITIONALINSTRUCTIONS = "Additional Instructions";
         protected const string QATESTSTRUCTIONS = "Under no circumstances generate 'Test' issues";
@@ -31,10 +31,10 @@ namespace UserStoryGenerator.Model
 
         public IssueGeneratorBase(IssueGeneratorBaseInputArgs args)
         {
-            string key = args.Key ?? throw new ArgumentNullException(nameof(args.Key));
-            string target = args.Target ?? throw new ArgumentNullException(nameof(args.Target));
-            this.jiraProject = args.JiraProject ?? throw new ArgumentNullException(nameof(args.JiraProject));
-            this.productName = args.ProductName ?? throw new ArgumentNullException(nameof(args.ProductName));
+            string key = args.Key ?? throw new NullReferenceException(nameof(args.Key));
+            string target = args.Target ?? throw new NullReferenceException(nameof(args.Target));
+            this.jiraProject = args.JiraProject ?? throw new NullReferenceException(nameof(args.JiraProject));
+            this.productName = args.ProductName ?? throw new NullReferenceException(nameof(args.ProductName));
 
             this.AICoaching = args.AICoaching;
             this.AddQATests = args.AddQATests;
@@ -58,7 +58,6 @@ namespace UserStoryGenerator.Model
                     try
                     {
                         await gfsGeminiClientHost.RequestAnswer();
-                        //Logger.Info("after RequestAnswer");
                     }
                     catch( System.Net.Http.HttpRequestException ex )
                     {
@@ -69,7 +68,6 @@ namespace UserStoryGenerator.Model
                     }
                     catch( System.NullReferenceException )
                     {
-                        Error?.Invoke();
                     }
                     catch( System.ArgumentException )
                     {
@@ -80,7 +78,6 @@ namespace UserStoryGenerator.Model
                 });
                 thread.Start();
 
-                //await gfsGeminiClientHost.RequestAnswer();
             }
             catch( System.Net.Http.HttpRequestException ex )
             {
@@ -171,14 +168,8 @@ namespace UserStoryGenerator.Model
 
         protected virtual void OnCompleted(Result result)
         {
-            //if( answer == null )
-            //    Error?.Invoke();
-
-            //else
-            {
-                IssueGeneratorBaseArgs args = new(result);
-                Completed?.Invoke(args);
-            }
+            IssueGeneratorBaseArgs args = new(result);
+            Completed?.Invoke(args);
         }
     }
 

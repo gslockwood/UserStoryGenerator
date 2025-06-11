@@ -33,22 +33,28 @@
             groupBoxExGeminiKey = new GroupBoxEx();
             groupBoxProjects = new GroupBox();
             listViewControl = new ListViewControl();
-            flowLayoutPanelButtons = new FlowLayoutPanel();
-            buttonCancel = new Button();
-            buttonUse = new Button();
-            buttonSave = new Button();
             tabControl = new TabControl();
             tabPageUserStories = new TabPage();
-            tabPageAllIssues = new TabPage();
             aiCoachingUserControlUserStories = new AICoachingUserControl();
+            tabPageAllIssues = new TabPage();
             aiCoachingUserControlAllIssues = new AICoachingUserControl();
+            flowLayoutPanelButtons = new FlowLayoutPanel();
+            buttonClose = new Button();
+            buttonUse = new Button();
+            buttonSave = new Button();
+            menuStrip = new MenuStrip();
+            fileToolStripMenuItem = new ToolStripMenuItem();
+            openToolStripMenuItem = new ToolStripMenuItem();
+            saveToolStripMenuItem = new ToolStripMenuItem();
+            saveasToolStripMenuItem = new ToolStripMenuItem();
             tableLayoutPanelMain.SuspendLayout();
             tableLayoutPanelForm.SuspendLayout();
             groupBoxProjects.SuspendLayout();
-            flowLayoutPanelButtons.SuspendLayout();
             tabControl.SuspendLayout();
             tabPageUserStories.SuspendLayout();
             tabPageAllIssues.SuspendLayout();
+            flowLayoutPanelButtons.SuspendLayout();
+            menuStrip.SuspendLayout();
             SuspendLayout();
             // 
             // tableLayoutPanelMain
@@ -58,13 +64,13 @@
             tableLayoutPanelMain.Controls.Add(tableLayoutPanelForm, 0, 0);
             tableLayoutPanelMain.Controls.Add(flowLayoutPanelButtons, 0, 1);
             tableLayoutPanelMain.Dock = DockStyle.Fill;
-            tableLayoutPanelMain.Location = new Point(0, 0);
+            tableLayoutPanelMain.Location = new Point(0, 24);
             tableLayoutPanelMain.Margin = new Padding(3, 4, 3, 4);
             tableLayoutPanelMain.Name = "tableLayoutPanelMain";
             tableLayoutPanelMain.RowCount = 2;
             tableLayoutPanelMain.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
             tableLayoutPanelMain.RowStyles.Add(new RowStyle(SizeType.Absolute, 45F));
-            tableLayoutPanelMain.Size = new Size(1248, 1173);
+            tableLayoutPanelMain.Size = new Size(1248, 1149);
             tableLayoutPanelMain.TabIndex = 0;
             // 
             // tableLayoutPanelForm
@@ -84,7 +90,7 @@
             tableLayoutPanelForm.RowStyles.Add(new RowStyle(SizeType.Absolute, 250F));
             tableLayoutPanelForm.RowStyles.Add(new RowStyle(SizeType.Absolute, 20F));
             tableLayoutPanelForm.RowStyles.Add(new RowStyle(SizeType.Absolute, 20F));
-            tableLayoutPanelForm.Size = new Size(1242, 1120);
+            tableLayoutPanelForm.Size = new Size(1242, 1096);
             tableLayoutPanelForm.TabIndex = 0;
             // 
             // groupBoxExGeminiKey
@@ -100,6 +106,7 @@
             groupBoxExGeminiKey.Size = new Size(1236, 75);
             groupBoxExGeminiKey.TabIndex = 2;
             groupBoxExGeminiKey.TextAlign = HorizontalAlignment.Left;
+            groupBoxExGeminiKey.TextBoxForeColor = SystemColors.WindowText;
             groupBoxExGeminiKey.UseSystemPasswordChar = false;
             groupBoxExGeminiKey.Value = "";
             // 
@@ -107,12 +114,12 @@
             // 
             groupBoxProjects.Controls.Add(listViewControl);
             groupBoxProjects.Dock = DockStyle.Fill;
-            groupBoxProjects.Location = new Point(3, 873);
+            groupBoxProjects.Location = new Point(3, 849);
             groupBoxProjects.Name = "groupBoxProjects";
             groupBoxProjects.Size = new Size(1236, 244);
             groupBoxProjects.TabIndex = 6;
             groupBoxProjects.TabStop = false;
-            groupBoxProjects.Text = "Projects";
+            groupBoxProjects.Text = "Jira Projects";
             // 
             // listViewControl
             // 
@@ -122,14 +129,70 @@
             listViewControl.Size = new Size(1230, 218);
             listViewControl.TabIndex = 0;
             // 
+            // tabControl
+            // 
+            tabControl.Controls.Add(tabPageUserStories);
+            tabControl.Controls.Add(tabPageAllIssues);
+            tabControl.Dock = DockStyle.Fill;
+            tabControl.Location = new Point(3, 86);
+            tabControl.Name = "tabControl";
+            tabControl.SelectedIndex = 0;
+            tabControl.Size = new Size(1236, 757);
+            tabControl.TabIndex = 7;
+            // 
+            // tabPageUserStories
+            // 
+            tabPageUserStories.Controls.Add(aiCoachingUserControlUserStories);
+            tabPageUserStories.Location = new Point(4, 29);
+            tabPageUserStories.Name = "tabPageUserStories";
+            tabPageUserStories.Padding = new Padding(3);
+            tabPageUserStories.Size = new Size(1228, 724);
+            tabPageUserStories.TabIndex = 0;
+            tabPageUserStories.Text = "User Stories";
+            tabPageUserStories.UseVisualStyleBackColor = true;
+            // 
+            // aiCoachingUserControlUserStories
+            // 
+            aiCoachingUserControlUserStories.Dock = DockStyle.Fill;
+            aiCoachingUserControlUserStories.IssueInstructions = "";
+            aiCoachingUserControlUserStories.Location = new Point(3, 3);
+            aiCoachingUserControlUserStories.Margin = new Padding(3, 4, 3, 4);
+            aiCoachingUserControlUserStories.Name = "aiCoachingUserControlUserStories";
+            aiCoachingUserControlUserStories.QATestInstructions = "";
+            aiCoachingUserControlUserStories.Size = new Size(1222, 718);
+            aiCoachingUserControlUserStories.SubTaskInstructions = "";
+            aiCoachingUserControlUserStories.TabIndex = 0;
+            // 
+            // tabPageAllIssues
+            // 
+            tabPageAllIssues.Controls.Add(aiCoachingUserControlAllIssues);
+            tabPageAllIssues.Location = new Point(4, 24);
+            tabPageAllIssues.Name = "tabPageAllIssues";
+            tabPageAllIssues.Padding = new Padding(3);
+            tabPageAllIssues.Size = new Size(1228, 729);
+            tabPageAllIssues.TabIndex = 1;
+            tabPageAllIssues.Text = "All Issues";
+            tabPageAllIssues.UseVisualStyleBackColor = true;
+            // 
+            // aiCoachingUserControlAllIssues
+            // 
+            aiCoachingUserControlAllIssues.Dock = DockStyle.Fill;
+            aiCoachingUserControlAllIssues.IssueInstructions = "";
+            aiCoachingUserControlAllIssues.Location = new Point(3, 3);
+            aiCoachingUserControlAllIssues.Margin = new Padding(3, 4, 3, 4);
+            aiCoachingUserControlAllIssues.Name = "aiCoachingUserControlAllIssues";
+            aiCoachingUserControlAllIssues.QATestInstructions = "";
+            aiCoachingUserControlAllIssues.Size = new Size(1222, 723);
+            aiCoachingUserControlAllIssues.SubTaskInstructions = "";
+            aiCoachingUserControlAllIssues.TabIndex = 0;
+            // 
             // flowLayoutPanelButtons
             // 
-            flowLayoutPanelButtons.Controls.Add(buttonCancel);
+            flowLayoutPanelButtons.Controls.Add(buttonClose);
             flowLayoutPanelButtons.Controls.Add(buttonUse);
-            flowLayoutPanelButtons.Controls.Add(buttonSave);
             flowLayoutPanelButtons.Dock = DockStyle.Fill;
             flowLayoutPanelButtons.FlowDirection = FlowDirection.RightToLeft;
-            flowLayoutPanelButtons.Location = new Point(3, 1132);
+            flowLayoutPanelButtons.Location = new Point(3, 1108);
             flowLayoutPanelButtons.Margin = new Padding(3, 4, 3, 4);
             flowLayoutPanelButtons.Name = "flowLayoutPanelButtons";
             flowLayoutPanelButtons.Size = new Size(1242, 37);
@@ -137,14 +200,14 @@
             // 
             // buttonClose
             // 
-            buttonCancel.Location = new Point(1153, 4);
-            buttonCancel.Margin = new Padding(3, 4, 3, 4);
-            buttonCancel.Name = "buttonCancel";
-            buttonCancel.Size = new Size(86, 31);
-            buttonCancel.TabIndex = 1;
-            buttonCancel.Text = "Cancel";
-            buttonCancel.UseVisualStyleBackColor = true;
-            buttonCancel.Click +=  ButtonClose_Click ;
+            buttonClose.Location = new Point(1153, 4);
+            buttonClose.Margin = new Padding(3, 4, 3, 4);
+            buttonClose.Name = "buttonClose";
+            buttonClose.Size = new Size(86, 31);
+            buttonClose.TabIndex = 1;
+            buttonClose.Text = "Close";
+            buttonClose.UseVisualStyleBackColor = true;
+            buttonClose.Click +=  ButtonClose_Click ;
             // 
             // buttonUse
             // 
@@ -168,77 +231,69 @@
             buttonSave.UseVisualStyleBackColor = true;
             buttonSave.Click +=  ButtonSave_Click ;
             // 
-            // tabControl
+            // menuStrip
             // 
-            tabControl.Controls.Add(tabPageUserStories);
-            tabControl.Controls.Add(tabPageAllIssues);
-            tabControl.Dock = DockStyle.Fill;
-            tabControl.Location = new Point(3, 86);
-            tabControl.Name = "tabControl";
-            tabControl.SelectedIndex = 0;
-            tabControl.Size = new Size(1236, 781);
-            tabControl.TabIndex = 7;
+            menuStrip.Items.AddRange(new ToolStripItem[] { fileToolStripMenuItem });
+            menuStrip.Location = new Point(0, 0);
+            menuStrip.Name = "menuStrip";
+            menuStrip.Size = new Size(1248, 24);
+            menuStrip.TabIndex = 1;
+            menuStrip.Text = "menuStrip1";
             // 
-            // tabPageUserStories
+            // fileToolStripMenuItem
             // 
-            tabPageUserStories.Controls.Add(aiCoachingUserControlUserStories);
-            tabPageUserStories.Location = new Point(4, 29);
-            tabPageUserStories.Name = "tabPageUserStories";
-            tabPageUserStories.Padding = new Padding(3);
-            tabPageUserStories.Size = new Size(1228, 748);
-            tabPageUserStories.TabIndex = 0;
-            tabPageUserStories.Text = "User Stories";
-            tabPageUserStories.UseVisualStyleBackColor = true;
+            fileToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { openToolStripMenuItem, saveToolStripMenuItem, saveasToolStripMenuItem });
+            fileToolStripMenuItem.Name = "fileToolStripMenuItem";
+            fileToolStripMenuItem.Size = new Size(37, 20);
+            fileToolStripMenuItem.Text = "&File";
             // 
-            // tabPageAllIssues
+            // openToolStripMenuItem
             // 
-            tabPageAllIssues.Controls.Add(aiCoachingUserControlAllIssues);
-            tabPageAllIssues.Location = new Point(4, 29);
-            tabPageAllIssues.Name = "tabPageAllIssues";
-            tabPageAllIssues.Padding = new Padding(3);
-            tabPageAllIssues.Size = new Size(1228, 748);
-            tabPageAllIssues.TabIndex = 1;
-            tabPageAllIssues.Text = "All Issues";
-            tabPageAllIssues.UseVisualStyleBackColor = true;
+            openToolStripMenuItem.Name = "openToolStripMenuItem";
+            openToolStripMenuItem.Size = new Size(121, 22);
+            openToolStripMenuItem.Text = "&Open...";
+            openToolStripMenuItem.Click +=  OpenToolStripMenuItem_Click ;
             // 
-            // aiCoachingUserControlUserStories
+            // saveToolStripMenuItem
             // 
-            aiCoachingUserControlUserStories.Dock = DockStyle.Fill;
-            aiCoachingUserControlUserStories.Location = new Point(3, 3);
-            aiCoachingUserControlUserStories.Margin = new Padding(3, 4, 3, 4);
-            aiCoachingUserControlUserStories.Name = "aiCoachingUserControlUserStories";
-            aiCoachingUserControlUserStories.Size = new Size(1222, 742);
-            aiCoachingUserControlUserStories.TabIndex = 0;
+            saveToolStripMenuItem.Name = "saveToolStripMenuItem";
+            saveToolStripMenuItem.Size = new Size(121, 22);
+            saveToolStripMenuItem.Text = "&Save...";
+            saveToolStripMenuItem.Click +=  SaveToolStripMenuItem_Click ;
             // 
-            // aiCoachingUserControlAllIssues
+            // saveasToolStripMenuItem
             // 
-            aiCoachingUserControlAllIssues.Dock = DockStyle.Fill;
-            aiCoachingUserControlAllIssues.Location = new Point(3, 3);
-            aiCoachingUserControlAllIssues.Margin = new Padding(3, 4, 3, 4);
-            aiCoachingUserControlAllIssues.Name = "aiCoachingUserControlAllIssues";
-            aiCoachingUserControlAllIssues.Size = new Size(1222, 742);
-            aiCoachingUserControlAllIssues.TabIndex = 0;
+            saveasToolStripMenuItem.Name = "saveasToolStripMenuItem";
+            saveasToolStripMenuItem.Size = new Size(121, 22);
+            saveasToolStripMenuItem.Text = "Save &as...";
+            saveasToolStripMenuItem.Click +=  SaveasToolStripMenuItem_Click ;
             // 
             // SettingsForm
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
-            StartPosition = FormStartPosition.CenterParent;
             AutoScaleMode = AutoScaleMode.Font;
-            CancelButton = buttonCancel;
+            CancelButton = buttonClose;
             ClientSize = new Size(1248, 1173);
             Controls.Add(tableLayoutPanelMain);
+            Controls.Add(menuStrip);
             Font = new Font("Segoe UI", 11.25F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            MainMenuStrip = menuStrip;
             Margin = new Padding(3, 4, 3, 4);
             Name = "SettingsForm";
-            Text = "SettingsForm";
+            StartPosition = FormStartPosition.CenterParent;
+            Tag = "Settings Form - ";
+            Text = "Settings Form";
             tableLayoutPanelMain.ResumeLayout(false);
             tableLayoutPanelForm.ResumeLayout(false);
             groupBoxProjects.ResumeLayout(false);
-            flowLayoutPanelButtons.ResumeLayout(false);
             tabControl.ResumeLayout(false);
             tabPageUserStories.ResumeLayout(false);
             tabPageAllIssues.ResumeLayout(false);
+            flowLayoutPanelButtons.ResumeLayout(false);
+            menuStrip.ResumeLayout(false);
+            menuStrip.PerformLayout();
             ResumeLayout(false);
+            PerformLayout();
         }
 
         #endregion
@@ -247,7 +302,7 @@
         private TableLayoutPanel tableLayoutPanelForm;
         private GroupBoxEx groupBoxExGeminiKey;
         private FlowLayoutPanel flowLayoutPanelButtons;
-        private Button buttonCancel;
+        private Button buttonClose;
         private Button buttonUse;
         private Button buttonSave;
         private GroupBox groupBoxProjects;
@@ -257,5 +312,10 @@
         private TabPage tabPageAllIssues;
         private AICoachingUserControl aiCoachingUserControlUserStories;
         private AICoachingUserControl aiCoachingUserControlAllIssues;
+        private MenuStrip menuStrip;
+        private ToolStripMenuItem fileToolStripMenuItem;
+        private ToolStripMenuItem openToolStripMenuItem;
+        private ToolStripMenuItem saveToolStripMenuItem;
+        private ToolStripMenuItem saveasToolStripMenuItem;
     }
 }

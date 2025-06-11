@@ -8,47 +8,18 @@ namespace UserStoryGenerator.View
     public partial class MainForm : Form
     {
         private readonly Model.Model model;
+        private SettingsForm? form;
 
         public MainForm()
         {
             try
             {
-                model = new();
-                if( model.Settings == null ) throw new NullReferenceException(nameof(model.Settings));
-                if( model.Settings.Key == null ) throw new NullReferenceException(nameof(model.Settings.Key));
-
                 InitializeComponent();
 
                 ResetUI();
 
-                // for testing missing info situations
-                //model.Settings.Key = Model.Model.DEFAULTKEY;
-                //model.Settings.Key = "esdfggf9s4Ar-OsfgsgsfgCgclvaA-LitgsumL0";
+                model = new();
 
-                comboBoxExStoryMin.DataSource = new int[] { 10, 20, 30, 40, 50, 75 };
-                comboBoxExStoryMin.SelectedIndex = 2;
-
-                comboBoxJiraProjects.DataSource = model.Settings.Projects;
-                this.comboBoxJiraProjects.SelectedIndex = 0;
-
-
-                if( model.Settings.Key.Equals(Model.Model.DEFAULTKEY, StringComparison.CurrentCultureIgnoreCase) )
-                {
-                    MessageBox.Show($"Setting (json) file is needs to be initialized.\n\nA form will appear next, fill it out in order to use this app.\n\nYour settings will persist and you can change them later by using the \"Preferences\" menu item.\n\n", "Set up: Settings", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                    PreferencesToolStripMenuItem_Click(model.Settings, new EventArgs());
-                }
-#if DEBUG 
-                //this.epicSelector.Value = "An epic Epic";
-                checkBoxAddQATests.Checked = true;
-                checkBoxAddSubTasks.Checked = true;
-
-
-                string testProdDesc = "Implement a mobile-first, fully responsive e-commerce platform for our online store, enabling users to browse products, add them to a shopping cart, and complete secure online purchases. The platform should offer a streamlined checkout process, diverse payment options, and robust order tracking capabilities. We need to ensure that the platform is user-friendly, accessible, and highly performant, with a focus on a seamless user experience across all devices.  Please include this task: Create a Database table called \"Customer\".   Add the \"Name\" and \"Phone number\" and other relevant columns to the \"Customer\" table.";
-
-                textBoxPRD.Value = testProdDesc;
-                groupBoxExProductFeature.Value = "Feature X";
-
-#endif
             }
             catch( System.Text.Json.JsonException ex )
             {
@@ -75,15 +46,55 @@ namespace UserStoryGenerator.View
                 UpdateSelectedIssues(issueCollector);
             };
 
-            model.IssueGeneratorCompleted += Model_IssueGeneratorCompleted;
             model.UserStoryGeneratorCompleted += Model_UserStoryGeneratorCompleted;
+            model.IssueGeneratorCompleted += Model_IssueGeneratorCompleted;
+
+        }
+
+        protected override void OnShown(EventArgs e)
+        {
+            base.OnShown(e);
+
+            if( model.Settings == null ) throw new NullReferenceException(nameof(model.Settings));
+            if( model.Settings.Key == null ) throw new NullReferenceException(nameof(model.Settings.Key));
+
+            form = new SettingsForm(model.Settings);
 
 
-#if DEBUG 
-            model.CreateUserStories();
+            comboBoxExStoryMin.DataSource = new int[] { 10, 20, 30, 40, 50, 75 };
+            comboBoxExStoryMin.SelectedIndex = 2;
+
+            comboBoxJiraProjects.DataSource = model.Settings.Projects;
+            this.comboBoxJiraProjects.SelectedIndex = 0;
+
+
+            // for testing missing info situations
+            //model.Settings.Key = Model.Model.DEFAULTKEY;
+            //model.Settings.Key = "esdfggf9s4Ar-OsfgsgsfgCgclvaA-LitgsumL0";
+
+            if( model.Settings.Key.Equals(Model.Model.DEFAULTKEY, StringComparison.CurrentCultureIgnoreCase) )
+            {
+                MessageBox.Show($"Setting (json) file is needs to be initialized.\n\nA form will appear next, fill it out in order to use this app.\n\nYour settings will persist and you can change them later by using the \"Preferences\" menu item.\n\n", "Set up: Settings", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                PreferencesToolStripMenuItem_Click(model.Settings, new EventArgs());
+            }
+
+
+#if DEBUG
+            //this.epicSelector.Value = "An epic Epic";
+            checkBoxAddQATests.Checked = true;
+            checkBoxAddSubTasks.Checked = true;
+
+
+            //string testProdDesc = "Implement a mobile-first, fully responsive e-commerce platform for our online store, enabling users to browse products, add them to a shopping cart, and complete secure online purchases. The platform should offer a streamlined checkout process, diverse payment options, and robust order tracking capabilities. We need to ensure that the platform is user-friendly, accessible, and highly performant, with a focus on a seamless user experience across all devices.  Please include this task: Create a Database table called \"Customer\".   Add the \"Name\" and \"Phone number\" and other relevant columns to the \"Customer\" table.";
+            //textBoxPRD.Value = testProdDesc;
+            groupBoxExProductFeature.Value = "Feature X";
+
+            groupBoxExPRD.Value = model.CreateUserStories();
+
 #endif
 
         }
+
         private void Model_UserStoryGeneratorCompleted(IssueGeneratorBaseArgs args)
         {
             if( this.InvokeRequired )
@@ -97,7 +108,8 @@ namespace UserStoryGenerator.View
 
                 buttonProcessStories.Enabled = true;
 
-                if( args.Result != null && args.Issues != null )
+                //if( args.Result != null && args.Issues != null )
+                if( args.Issues != null )
                 {
                     treeView.Nodes.Clear();
                     PopulateUI(args.Issues);
@@ -250,7 +262,7 @@ namespace UserStoryGenerator.View
 
             //string testProdDesc = "Implement a mobile-first, fully responsive e-commerce platform for our online store, enabling users to browse products, add them to a shopping cart, and complete secure online purchases. The platform should offer a streamlined checkout process, diverse payment options, and robust order tracking capabilities. We need to ensure that the platform is user-friendly, accessible, and highly performant, with a focus on a seamless user experience across all devices.  Please include this task: Create a Database table called \"Customer\".   Add the \"Name\" and \"Phone number\" and other relevant columns to the \"Customer\" table.";
 
-            string? testProdDesc = textBoxPRD.Value;
+            string? testProdDesc = groupBoxExPRD.Value;
             if( string.IsNullOrEmpty(testProdDesc) ) throw new NullReferenceException(nameof(testProdDesc));
 
             if( groupBoxExProductFeature.Value == null ) throw new NullReferenceException(nameof(groupBoxExProductFeature));
@@ -275,46 +287,6 @@ namespace UserStoryGenerator.View
 
         }
 
-        //private void ProcessIssues(string answer)
-        //{
-        //    try
-        //    {
-        //        Model.IssueData? data = JsonSerializer.Deserialize<Model.IssueData>(answer);
-        //        if( data != null && data.Issues != null )
-        //            PopulateUI(data.Issues);
-
-        //        //
-        //    }
-        //    catch( Exception ex )
-        //    {
-        //        MessageBox.Show(ex.Message, "Critical Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-        //    }
-        //}
-
-        //private void FillUIFromJson(string json)
-        //{
-        //    try
-        //    {
-        //        TreeSerialization.IssueResults? issueResults = JsonSerializer.Deserialize<TreeSerialization.IssueResults>(json);
-        //        if( issueResults == null ) return;
-
-        //        List<IssueData.Issue>? issues = issueResults.Issues;
-        //        if( issues != null )
-        //        {
-        //            treeView.Nodes.Clear();
-        //            PopulateUI(issues);
-        //        }
-
-        //        buttonProcessStories.Enabled = true;
-
-        //    }
-        //    catch( Exception )
-        //    {
-        //        throw;
-        //    }
-        //}
-
-
         private void PopulateUI(List<IssueData.Issue> issues)
         {
             if( issues == null ) return;
@@ -336,10 +308,9 @@ namespace UserStoryGenerator.View
             //
         }
 
-        //private void UpdateCountersUI(IssueData data)
-        private void UpdateCountersUI(List<IssueData.Issue> issues)
+        private int UpdateCountersUI(List<IssueData.Issue> issues)
         {
-            if( issues == null ) return;
+            if( issues == null ) return 0;
 
             int total = 0;
             int count = issues.FlattenStandardIssues().Where(issue => issue.IssueType == JiraIssueTypes.STORY).Count();
@@ -361,6 +332,9 @@ namespace UserStoryGenerator.View
             groupBoxExSubTask.Value = count.ToString();
 
             groupBoxExIssueCount.Value = total.ToString();
+
+            return total;
+            //
         }
 
         private static void Recursive(IList<Model.IssueData.Issue> issues, TreeNode node, bool allIssue = false)
@@ -423,6 +397,12 @@ namespace UserStoryGenerator.View
             groupBoxExSelectedTests.Value = issueCollector.Tests.Count.ToString();
             groupBoxExSelectedBugs.Value = issueCollector.Bugs.Count.ToString();
             groupBoxExSelectedSubTasks.Value = issueCollector.SubTasks.Count.ToString();
+
+            if( Convert.ToInt16(this.groupBoxExSelectedIssues.Value) > 250 )
+                groupBoxExSelectedIssues.ForeColor = Color.Red;
+            else
+                groupBoxExSelectedIssues.ForeColor = SystemColors.ControlText;
+
         }
         private static List<Model.IssueData.SubTask> GetAllSubTasks(List<Model.IssueData.Issue> issues)
         {
@@ -456,47 +436,8 @@ namespace UserStoryGenerator.View
 
         private void TextControls_TextChanged(object? sender, EventArgs e)
         {
-            buttonConvert.Enabled = !( groupBoxExProductFeature.TextLength == 0 || textBoxPRD.TextLength == 0 );
+            buttonConvert.Enabled = !( groupBoxExProductFeature.TextLength == 0 || groupBoxExPRD.TextLength == 0 );
         }
-        /*
-        private void TextBoxEpic_TextChanged(object sender, EventArgs e)
-        {
-            if( groupBoxExEpic.Value == null ) throw new NullReferenceException(nameof(groupBoxExEpic));
-
-            string currentText = this.groupBoxExEpic.Value;
-
-            if( currentText.Length == 0 )//|| currentText.Length> 8
-            {
-                groupBoxExEpic.TextBoxForeColor = SystemColors.ControlText;
-                TextControls_TextChanged(sender, new EventArgs());
-                return;
-            }
-
-            bool found = Utilities.InputValidator.RegexContainsValidation(currentText);
-            if( found )
-            {
-                bool isValid = Utilities.InputValidator.RegexValidation(currentText);
-
-                // Update the label based on the validation result
-                if( isValid )
-                {
-                    groupBoxExEpic.TextBoxForeColor = SystemColors.ControlText;
-                    TextControls_TextChanged(sender, new EventArgs());
-                    return;
-                }
-                else
-                {
-                    groupBoxExEpic.TextBoxForeColor = System.Drawing.Color.Red;
-                    buttonConvert.Enabled = false;
-                    return;
-                }
-            }
-            else
-            {
-                groupBoxExEpic.TextBoxForeColor = SystemColors.ControlText;
-                TextControls_TextChanged(sender, new EventArgs());
-            }
-        }*/
 
         private void SetMenuItem(bool enabled)
         {
@@ -511,21 +452,13 @@ namespace UserStoryGenerator.View
 
         private void PreferencesToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            string? selectedValue = comboBoxJiraProjects.CurrentSelectedItem.ToString();
-
-            SettingsForm? form = null;
-
-            form = new SettingsForm(model.Settings);
-
             if( form != null )
             {
-                form.NewSettings += (settings, save) =>
-                {
-                    model.SetSettings(settings);
-                    if( save )
-                        model.SaveSettings();
+                string? selectedValue = comboBoxJiraProjects.CurrentSelectedItem.ToString();
 
-                    comboBoxJiraProjects.DataSource = settings.Projects;
+                form.ResetSettingProjects += () =>
+                {
+                    comboBoxJiraProjects.DataSource = this.model.Settings.Projects;
 
                     int index = comboBoxJiraProjects.FindString(selectedValue);
                     if( index == -1 )
@@ -534,7 +467,8 @@ namespace UserStoryGenerator.View
 
                 };
 
-                form.ShowDialog();
+                form.Show();
+                //
             }
         }
 
@@ -553,12 +487,7 @@ namespace UserStoryGenerator.View
                 // Get the text from the clipboard
                 string text = Clipboard.GetText();
 
-                textBoxPRD.Text = text;
-
-                //Logger.Info(answer);
-
-                //treeView.Nodes.Clear();
-                //ProcessIssues(answer);
+                groupBoxExPRD.Text = text;
 
                 return;
             }
@@ -636,7 +565,7 @@ namespace UserStoryGenerator.View
                 try
                 {
                     string json = File.ReadAllText(dialog.FileName) ?? throw new Exception($"{dialog.FileName} is blank.");
-                    model.CreateUserStories(json);
+                    groupBoxExPRD.Value = model.CreateUserStories(json);
                 }
                 catch( Exception ex )
                 {
@@ -650,7 +579,7 @@ namespace UserStoryGenerator.View
         {
             SaveFileDialog dialog = new()
             {
-                Filter = "Text Files (*.json)|*.json|All Files (*.*)|*.*",
+                Filter = "JSON Files (*.json)|*.json|All Files (*.*)|*.*",
                 FilterIndex = 1, // Sets the default selected filter to "Text Files"
                 RestoreDirectory = true // Restores the directory to the previously selected one
             };
@@ -662,7 +591,7 @@ namespace UserStoryGenerator.View
                 try
                 {
                     SaveData();
-                    bool success = model.SaveUserStoryResultsToJson(filePath);
+                    bool success = model.SaveUserStoryResultsAsJson(filePath, groupBoxExPRD.Value);
                     if( !success ) MessageBox.Show("Problem with SaveUserStoryResults.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
                 catch( Exception ex )

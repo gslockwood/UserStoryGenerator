@@ -123,5 +123,34 @@
                 listViewItems.Items.Add(new ListViewItem(item));
             }
         }
+
+        private void buttonDelete_Click(object sender, EventArgs e)
+        {
+            if( listViewItems.SelectedItems.Count > 0 )
+            {
+                // Get the selected item.
+                ListViewItem item = listViewItems.SelectedItems[0];
+                listViewItems.Items.Remove(item);
+            }
+        }
+
+        private void TextChanged2(object sender, EventArgs e)
+        {
+            if( sender is TextBox textBox )
+            {
+                if( textBox.TextLength > 4 )
+                {
+                    textBox.Text = textBox.Text[..4];
+                    textBox.SelectionStart = 4;
+                    textBox.SelectionLength = 0;
+                }
+
+
+                //if( textBox.TextLength > 4 )
+                //    textBox.ForeColor = Color.Red;
+                //else
+                //    textBox.ForeColor = SystemColors.ControlText;
+            }
+        }
     }
 }

@@ -92,6 +92,7 @@ namespace UserStoryGenerator.Model
 
         public class IssueResults
         {
+            public string? ProductDescription { get; set; }
             public List<string>? UserStoryList { get; set; }
             public List<IssueData.Issue>? Issues { get; set; }
         }
