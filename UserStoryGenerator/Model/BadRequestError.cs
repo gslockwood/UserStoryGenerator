@@ -1,12 +1,24 @@
 ﻿namespace UserStoryGenerator.Model
 {
 #pragma warning disable IDE1006 // Naming Styles
-    public class BadRequestError
+
+    public interface IError
     {
-        public Error? error { get; set; }
+        int code { get; set; }
+        string? message { get; set; }
+        string? status { get; set; }
+    }
 
+    public interface IRequestFailed
+    {
+        IError? error { get; set; }
+    }
 
-        public class Error
+    public class BadRequestError : IRequestFailed
+    {
+        public IError? error { get; set; }
+
+        public class Error : IError
         {
             public int code { get; set; }
             public string? message { get; set; }
@@ -29,6 +41,21 @@
             public string? service { get; set; }
         }
     }
+
+
+
+    public class RequestFailed : IRequestFailed
+    {
+        public IError? error { get; set; }
+
+        public class Error : IError
+        {
+            public int code { get; set; }
+            public string? message { get; set; }
+            public string? status { get; set; }
+        }
+    }
+
 #pragma warning restore IDE1006 // Naming Styles
 
 }

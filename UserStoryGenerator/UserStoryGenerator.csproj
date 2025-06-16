@@ -10,9 +10,14 @@
 		<Description>Tell me a story...\n\nThis app will generate user stories and associated issues and sub-task for importation into Jira.</Description>
 		<Copyright>© 2025</Copyright>
 		<Authors>G.S. Lockwood</Authors>
-		<AssemblyVersion>2.3.0.0</AssemblyVersion>
+		<AssemblyVersion>2.4.0.0</AssemblyVersion>
+		<ApplicationIcon>Light.ico</ApplicationIcon>
 
 	</PropertyGroup>
+
+	<ItemGroup>
+	  <Content Include="Light.ico" />
+	</ItemGroup>
 
 	<ItemGroup>
 		<PackageReference Include="Mscc.GenerativeAI.Google" Version="2.6.1" />

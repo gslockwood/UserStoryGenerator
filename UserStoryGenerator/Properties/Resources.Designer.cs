@@ -61,6 +61,36 @@ namespace UserStoryGenerator.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap Colors {
+            get {
+                object obj = ResourceManager.GetObject("Colors", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap Dark {
+            get {
+                object obj = ResourceManager.GetObject("Dark", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap Light {
+            get {
+                object obj = ResourceManager.GetObject("Light", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to {
         ///  &quot;Key&quot;: &quot;google cloud gemini Ai api key&quot;,
         ///  &quot;GeneralAITraining&quot;: &quot;text to coach the ai to write jira issues&quot;,

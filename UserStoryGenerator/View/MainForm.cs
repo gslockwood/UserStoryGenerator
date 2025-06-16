@@ -48,7 +48,19 @@ namespace UserStoryGenerator.View
 
             model.UserStoryGeneratorCompleted += Model_UserStoryGeneratorCompleted;
             model.IssueGeneratorCompleted += Model_IssueGeneratorCompleted;
+            model.CompletedInError += (error) =>
+            {
+                string errorMesage = "UNK";
 
+                if( error is IRequestFailed reqFailed )
+                {
+                    if( reqFailed.error != null && reqFailed.error.message != null )
+                        errorMesage = reqFailed.error.message;
+                }
+
+                MessageBox.Show(errorMesage, "Critical Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+
+            };
         }
 
         protected override void OnShown(EventArgs e)
@@ -270,6 +282,7 @@ namespace UserStoryGenerator.View
             stopwatchClockConvertRun.Start();
 
             if( comboBoxExStoryMin.SelectedItem == null ) throw new NullReferenceException(nameof(comboBoxExStoryMin.SelectedItem));
+
             await model.ProduceUserStories(project, groupBoxExProductFeature.Value, testProdDesc, this.checkBoxAddQATests.Checked, checkBoxAddSubTasks.Checked, (int)comboBoxExStoryMin.SelectedItem);
             //
         }
@@ -472,37 +485,7 @@ namespace UserStoryGenerator.View
             }
         }
 
-        private void TreeView_DragEnter(object sender, DragEventArgs e)
-        {
-            e.Effect = DragDropEffects.Copy;
-        }
 
-        private void TreeView_DragDrop(object sender, DragEventArgs e)
-        {
-            if( e.Data == null ) return;
-
-            // Check if the clipboard contains text
-            if( Clipboard.ContainsText() )
-            {
-                // Get the text from the clipboard
-                string text = Clipboard.GetText();
-
-                groupBoxExPRD.Text = text;
-
-                return;
-            }
-
-            //if( e.Data.GetDataPresent(DataFormats.Text) )
-            //{
-            //    // If it's text, allow a Copy operation (or Move, Link, etc.)
-            //    e.Effect = DragDropEffects.Copy;
-            //}
-            //else
-            //{
-            //    // If it's not text, disallow the drop
-            //    e.Effect = DragDropEffects.None;
-            //}
-        }
 
         private async void ButtonProcessStories_ClickAsync(object sender, EventArgs e)//async
         {
@@ -621,7 +604,7 @@ namespace UserStoryGenerator.View
 
         private void SaveStoriesAsCSVToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            bool proceed = false;
+            //bool proceed = true;
             if( Convert.ToInt16(this.groupBoxExSelectedIssues.Value) > 250 )
             {
                 DialogResult dialogResult = MessageBox.Show(
@@ -630,10 +613,10 @@ namespace UserStoryGenerator.View
                     MessageBoxButtons.YesNo,
                     MessageBoxIcon.Warning);
 
-                proceed = ( dialogResult == DialogResult.Yes );
+                bool proceed = ( dialogResult == DialogResult.Yes );
+                if( !proceed ) return;
                 //
             }
-            if( !proceed ) return;
 
 
             SaveFileDialog dialog = new()
@@ -685,5 +668,150 @@ namespace UserStoryGenerator.View
             }
 
         }
+
+        private void TreeView_ItemDrag(object sender, ItemDragEventArgs e)
+        {
+            if( e.Item is TreeNodeEx node )
+            {
+                DraggableNodeData nodeData = new(node);
+                string jsonNodeData = System.Text.Json.JsonSerializer.Serialize(nodeData);
+
+                //DraggableNodeData nodeData0 = System.Text.Json.JsonSerializer.Deserialize<DraggableNodeData>(jsonNodeData);
+
+                DataObject data = new();
+                data.SetData("YourApp.TreeNodeData", jsonNodeData); // Use a unique custom format string
+
+                ( (TreeView)sender ).DoDragDrop(data, DragDropEffects.Copy);
+
+                /*
+                // DoDragDrop starts the drag operation.
+                // The first argument is the data to be dragged (the TreeNode itself).
+                // The second argument specifies the allowed drag-and-drop effects (e.g., Move, Copy, Link).
+                ( (TreeView)sender ).DoDragDrop(node, DragDropEffects.Copy);
+                */
+            }
+        }
+
+        private void TreeView_DragEnter(object sender, DragEventArgs e)
+        {
+            if( e.Data == null ) return;
+
+            if( e.Data.GetDataPresent("YourApp.TreeNodeData") )
+                e.Effect = DragDropEffects.Copy;
+
+            /*
+            //string[] formats = e.Data.GetFormats();
+            if( e.Data.GetDataPresent(typeof(TreeNodeEx)) )
+            {
+                // If it's a TreeNode, allow a 'Move' effect.
+                e.Effect = DragDropEffects.Copy;
+            }
+            */
+
+        }
+
+        private void TreeView_DragDrop(object sender, DragEventArgs e)
+        {
+            if( e.Data == null ) return;
+
+            if( e.Data.GetDataPresent("YourApp.TreeNodeData") )
+            {
+                try
+                {
+                    // Retrieve the serialized data string
+                    string? jsonNodeData = e.Data.GetData("YourApp.TreeNodeData") as string;
+                    if( !string.IsNullOrEmpty(jsonNodeData) )
+                    {
+                        // Deserialize it back into your DraggableNodeData object
+                        DraggableNodeData? nodeData = System.Text.Json.JsonSerializer.Deserialize<DraggableNodeData>(jsonNodeData);
+                        if( nodeData != null )
+                        {
+                            // Convert DraggableNodeData back to TreeNodeEx
+                            TreeNodeEx? droppedNode = nodeData.ToTreeNodeEx();
+
+                            if( droppedNode != null )
+                            {
+                                Logger.Info("DragDrop: Successfully deserialized custom node data.");
+
+                                var root = this.treeView.Nodes[0];
+                                root.Nodes.Add(droppedNode);
+                            }
+                        }
+
+                    }
+                }
+                catch( Exception ex )
+                {
+                    Console.WriteLine($"DragDrop: Error deserializing custom node data: {ex.Message}");
+                    MessageBox.Show($"Error processing dropped data: {ex.Message}", "Drag/Drop Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    e.Effect = DragDropEffects.None;
+                    return;
+                }
+            }
+
+            /*
+            var fff = e.Data.GetData(typeof(TreeNodeEx));
+
+            if( e.Data.GetDataPresent(typeof(TreeNodeEx)) )
+            {
+                TreeNodeEx droppedNode = (TreeNodeEx)e.Data.GetData(typeof(TreeNodeEx));
+
+            again:
+                if( droppedNode != null )
+                {
+                    var root = this.treeView.Nodes[0];
+                    //root.Nodes.Add(droppedNode);
+                }
+
+                //goto again;
+
+            }
+            */
+
+            //if( e.Data.GetDataPresent(DataFormats.Text) )
+            //{
+            //    // If it's text, allow a Copy operation (or Move, Link, etc.)
+            //    e.Effect = DragDropEffects.Copy;
+            //}
+            //else
+            //{
+            //    // If it's not text, disallow the drop
+            //    e.Effect = DragDropEffects.None;
+            //}
+        }
+
+        private void GroupBoxExPRD_DragDrop(object sender, DragEventArgs e)
+        {
+            if( e.Data == null ) return;
+
+            if( e != null && e.Data != null && e.Data.GetDataPresent(DataFormats.Text) )
+            {
+                var obj = e.Data.GetData(DataFormats.Text);
+                if( obj != null )
+                    groupBoxExPRD.Value = obj.ToString();
+            }
+
+            //// Check if the clipboard contains text
+            //if( Clipboard.ContainsText() )
+            //{
+            //    // Get the text from the clipboard
+            //    string text = Clipboard.GetText();
+
+            //    groupBoxExPRD.Text = text;
+
+            //    return;
+            //}
+        }
+
+        private void GroupBoxExPRD_DragEnter(object sender, DragEventArgs e)
+        {
+            if( e == null || e.Data == null ) return;
+
+            if( e.Data.GetDataPresent(DataFormats.Text) )
+                e.Effect = DragDropEffects.Copy;
+            else
+                e.Effect = DragDropEffects.None;
+        }
+
     }
 }

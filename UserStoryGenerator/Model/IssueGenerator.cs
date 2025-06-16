@@ -8,8 +8,10 @@ namespace UserStoryGenerator.Model
     {
         public delegate void CompletedEventHandler(IssueGeneratorBaseArgs args);
         public event CompletedEventHandler? Completed;
-        //public delegate void ErrorEventHandler();
-        //public event ErrorEventHandler? Error;
+
+        //public delegate void ErrorEventHandler(object error);
+        public delegate void CompletedInErrorEventHandler(object? error);
+        public event CompletedInErrorEventHandler? Error;
 
         protected const string ADDITIONALINSTRUCTIONS = "Additional Instructions";
         protected const string QATESTSTRUCTIONS = "Under no circumstances generate 'Test' issues";
@@ -57,14 +59,39 @@ namespace UserStoryGenerator.Model
                 {
                     try
                     {
+                        //throw new HttpRequestException("ServiceUnavailable");
+
                         await gfsGeminiClientHost.RequestAnswer();
                     }
                     catch( System.Net.Http.HttpRequestException ex )
                     {
-                        string errorMsg = ex.Message.Replace("Request failed with Status Code: BadRequest", "");
-                        errorMsg = errorMsg.Replace("Request failed", "");
+                        //RequestFailed requestFailedTEST = new();//RequestFailed
+                        //requestFailedTEST.error = new RequestFailed.Error();
+                        //requestFailedTEST.error.message = "RequestFailed";
+                        //Error?.Invoke(requestFailedTEST);
+                        //return;
 
-                        BadRequestError? badRequestError = JsonSerializer.Deserialize<BadRequestError>(errorMsg);
+                        if( ex.Message.Contains("ServiceUnavailable") )
+                        {
+                            string errorMsg = ex.Message.Replace("Request failed with Status Code: ServiceUnavailable", "");
+                            errorMsg = errorMsg.Replace("Request failed", "");
+
+                            RequestFailed? requestFailed = JsonSerializer.Deserialize<RequestFailed>(errorMsg);
+                            Error?.Invoke(requestFailed);
+                            //
+                        }
+                        else if( ex.Message.Contains("BadRequest") )
+                        {
+                            string errorMsg = ex.Message.Replace("Request failed with Status Code: BadRequest", "");
+                            errorMsg = errorMsg.Replace("Request failed", "");
+
+                            BadRequestError? badRequestError = JsonSerializer.Deserialize<BadRequestError>(errorMsg);
+                            Error?.Invoke(badRequestError);
+
+                        }
+                        else
+                        {
+                        }
                     }
                     catch( System.NullReferenceException )
                     {

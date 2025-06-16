@@ -20,6 +20,9 @@ namespace UserStoryGenerator.Model
         public delegate void CompletedEventHandler(IssueGeneratorBaseArgsEx args);
         public event CompletedEventHandler? IssueGeneratorCompleted;
 
+        public event IssueGeneratorBase.CompletedInErrorEventHandler? CompletedInError;
+
+
         public Model()
         {
             try
@@ -197,8 +200,14 @@ namespace UserStoryGenerator.Model
 
             };
 
+            issueGenerator.Error += (error) =>
+            {
+                CompletedInError?.Invoke(error);
+            };
+
             await Task.Delay(0);// this because RequestAnswer isn't really async
             issueGenerator.RequestAnswer();
+            //
         }
 
         internal async Task ProcessStoryList(string productName, bool addQATests, bool addSubTasks, int maxStories, List<StoryPackage> list)//async Task 
@@ -254,8 +263,14 @@ namespace UserStoryGenerator.Model
                 };
 
                 await Task.Delay(0);// this because RequestAnswer isn't really async
-                issueGenerator.RequestAnswer();
-
+                try
+                {
+                    issueGenerator.RequestAnswer();
+                }
+                catch( Exception )
+                {
+                    throw;
+                }
             }
 
         }

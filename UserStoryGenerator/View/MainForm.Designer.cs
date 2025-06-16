@@ -32,6 +32,7 @@ namespace UserStoryGenerator.View
         private void InitializeComponent()
         {
             components = new System.ComponentModel.Container();
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainForm));
             tableLayoutPanelData = new TableLayoutPanel();
             tableLayoutPanelEntryControl = new TableLayoutPanel();
             groupBoxStoryMin = new GroupBox();
@@ -72,7 +73,7 @@ namespace UserStoryGenerator.View
             labelStatus = new Label();
             tableLayoutPanelMainData = new TableLayoutPanel();
             tableLayoutPanelMain = new TableLayoutPanel();
-            menuStrip1 = new MenuStrip();
+            menuStrip = new MenuStrip();
             fileToolStripMenuItem = new ToolStripMenuItem();
             openToolStripMenuItem = new ToolStripMenuItem();
             saveStoriesAsJsonToolStripMenuItem = new ToolStripMenuItem();
@@ -94,7 +95,7 @@ namespace UserStoryGenerator.View
             flowLayoutPanelMainButtons.SuspendLayout();
             tableLayoutPanelMainData.SuspendLayout();
             tableLayoutPanelMain.SuspendLayout();
-            menuStrip1.SuspendLayout();
+            menuStrip.SuspendLayout();
             SuspendLayout();
             // 
             // tableLayoutPanelData
@@ -283,6 +284,8 @@ namespace UserStoryGenerator.View
             groupBoxExPRD.Value = "";
             groupBoxExPRD.ValueChanged +=  TextControls_TextChanged ;
             groupBoxExPRD.TextChanged +=  TextControls_TextChanged ;
+            groupBoxExPRD.DragDrop +=  GroupBoxExPRD_DragDrop ;
+            groupBoxExPRD.DragEnter +=  GroupBoxExPRD_DragEnter ;
             // 
             // epicSelector
             // 
@@ -305,6 +308,7 @@ namespace UserStoryGenerator.View
             treeView.Size = new Size(1264, 713);
             treeView.TabIndex = 2;
             treeView.TriStateStyleProperty = TriStateTreeView.TriStateStyles.Standard;
+            treeView.ItemDrag +=  TreeView_ItemDrag ;
             treeView.DragDrop +=  TreeView_DragDrop ;
             treeView.DragEnter +=  TreeView_DragEnter ;
             // 
@@ -698,15 +702,15 @@ namespace UserStoryGenerator.View
             tableLayoutPanelMain.Size = new Size(2064, 930);
             tableLayoutPanelMain.TabIndex = 5;
             // 
-            // menuStrip1
+            // menuStrip
             // 
-            menuStrip1.Items.AddRange(new ToolStripItem[] { fileToolStripMenuItem, preferencesToolStripMenuItem });
-            menuStrip1.Location = new Point(0, 0);
-            menuStrip1.Name = "menuStrip1";
-            menuStrip1.Padding = new Padding(7, 3, 0, 3);
-            menuStrip1.Size = new Size(2064, 25);
-            menuStrip1.TabIndex = 6;
-            menuStrip1.Text = "menuStrip1";
+            menuStrip.Items.AddRange(new ToolStripItem[] { fileToolStripMenuItem, preferencesToolStripMenuItem });
+            menuStrip.Location = new Point(0, 0);
+            menuStrip.Name = "menuStrip";
+            menuStrip.Padding = new Padding(7, 3, 0, 3);
+            menuStrip.Size = new Size(2064, 25);
+            menuStrip.TabIndex = 6;
+            menuStrip.Text = "menuStrip1";
             // 
             // fileToolStripMenuItem
             // 
@@ -773,9 +777,10 @@ namespace UserStoryGenerator.View
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(2064, 955);
             Controls.Add(tableLayoutPanelMain);
-            Controls.Add(menuStrip1);
+            Controls.Add(menuStrip);
             Font = new Font("Segoe UI", 11.25F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            MainMenuStrip = menuStrip1;
+            Icon = (Icon)resources.GetObject("$this.Icon");
+            MainMenuStrip = menuStrip;
             Margin = new Padding(3, 4, 3, 4);
             Name = "MainForm";
             Text = "Tell me a story...";
@@ -793,8 +798,8 @@ namespace UserStoryGenerator.View
             flowLayoutPanelMainButtons.ResumeLayout(false);
             tableLayoutPanelMainData.ResumeLayout(false);
             tableLayoutPanelMain.ResumeLayout(false);
-            menuStrip1.ResumeLayout(false);
-            menuStrip1.PerformLayout();
+            menuStrip.ResumeLayout(false);
+            menuStrip.PerformLayout();
             ResumeLayout(false);
             PerformLayout();
         }
@@ -814,7 +819,7 @@ namespace UserStoryGenerator.View
         private CheckBox checkBoxAddSubTasks;
         private CheckBox checkBoxAddQATests;
         private ComboBoxEx comboBoxJiraProjects;
-        private MenuStrip menuStrip1;
+        private MenuStrip menuStrip;
         private ToolStripMenuItem preferencesToolStripMenuItem;
         private Panel panelResults;
         private TableLayoutPanel tableLayoutPanelResults;

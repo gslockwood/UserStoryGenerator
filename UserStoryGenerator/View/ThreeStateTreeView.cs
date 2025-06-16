@@ -1,5 +1,5 @@
-﻿using UserStoryGenerator.Model;
-
+﻿using System.Text.Json;
+using UserStoryGenerator.Model;
 namespace UserStoryGenerator.View
 {
     public class TriStateTreeView : System.Windows.Forms.TreeView
@@ -23,19 +23,125 @@ namespace UserStoryGenerator.View
 
             }
 
-            public TreeNodeEx()
+            public TreeNodeEx() { }
+            public TreeNodeEx(string text) : base(text)
             {
-            }
-            public TreeNodeEx(string text)
-            {
-                Text = text;
+                //Text = text;
                 Name = text;
             }
+            public TreeNodeEx(string text, TreeNode[] children) : base(text, children) { }
         }
 
         public class TreeNodeExSubTasks(string text) : TreeNodeEx(text) { }
 
         public class TreeNodeExLinkedIssues(string text) : TreeNodeEx(text) { }
+
+
+        [Serializable]
+        public class DraggableNodeData : Model.IIssue
+        {
+            public string? Text { get; set; }
+            public string? TagJson { get; set; } // Store Tag as JSON string
+
+            // Add any other custom properties from TreeNodeEx you need to transfer                                                 
+            //public string CustomProperty { get; set; }
+
+            public string? Product { get; set; }
+            public string? Summary { get; set; }
+            public string? IssueType { get; set; }
+            public long Key { get; set; }
+
+
+            public List<DraggableNodeData> Children { get; set; } = [];
+
+            public DraggableNodeData() : base()
+            {
+                Product = string.Empty;
+                Summary = string.Empty;
+                IssueType = string.Empty;
+                Key = -1;
+            }
+
+
+            // Constructor to convert TreeNodeEx to DraggableNodeData
+            public DraggableNodeData(TreeNodeEx node)
+            {
+                Text = node.Text;
+                if( node.Tag != null )
+                {
+                    try
+                    {
+                        // Attempt to serialize Tag to JSON
+                        TagJson = JsonSerializer.Serialize(node.Tag);
+                    }
+                    catch( Exception ex )
+                    {
+                        // Handle cases where Tag is not serializable
+                        Console.WriteLine($"Warning: Tag '{node.Tag.GetType().Name}' is not JSON serializable. {ex.Message}");
+                        TagJson = null; // Or some error indicator
+                    }
+                }
+
+
+                // Copy custom properties
+                Product = node.Product; // Assuming CustomProperty exists in TreeNodeEx
+                Summary = node.Summary;
+                IssueType = node.IssueType;
+                Key = node.Key;
+
+
+                foreach( TreeNode childNode in node.Nodes )
+                {
+                    if( childNode is TreeNodeEx childEx )
+                    {
+                        Children.Add(new DraggableNodeData(childEx));
+                    }
+                    // Decide how to handle non-TreeNodeEx children if they exist
+                }
+            }
+
+            // Method to convert DraggableNodeData back to TreeNodeEx
+            public TreeNodeEx? ToTreeNodeEx()
+            {
+                if( Text == null ) return null;
+
+                TreeNodeEx newNode = new(Text)
+                {
+                    //newNode.CustomProperty = CustomProperty; // Copy custom properties
+                    Product = Product,
+                    Summary = Summary,
+                    IssueType = IssueType,
+                    Key = Key
+                };
+
+                if( TagJson != null )
+                {
+                    try
+                    {
+                        // Assuming Tag was a simple string or primitive type for demonstration
+                        // You might need to know the original type of Tag or use a generic deserialize
+                        newNode.Tag = JsonSerializer.Deserialize<string>(TagJson); // Adjust based on your actual Tag type
+                    }
+                    catch( Exception ex )
+                    {
+                        Console.WriteLine($"Warning: Could not deserialize Tag JSON: {ex.Message}");
+                        newNode.Tag = null;
+                    }
+                }
+
+                foreach( var childData in Children )
+                {
+                    TreeNodeEx? child = childData.ToTreeNodeEx();
+                    if( child == null ) continue;
+                    newNode.Nodes.Add(child);
+                }
+                return newNode;
+            }
+        }
+
+
+
+
 
 
         public delegate void CheckEventHandler(IssueCollector issueCollector);
