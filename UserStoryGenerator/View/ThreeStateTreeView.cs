@@ -194,6 +194,21 @@ namespace UserStoryGenerator.View
 
             StateImageList = new System.Windows.Forms.ImageList();
 
+            ImageList = new ImageList
+            {
+                ColorDepth = ColorDepth.Depth32Bit,
+                ImageSize = new Size(16, 16),
+                TransparentColor = Color.Transparent
+            };
+            ImageList.Images.Add(UserStoryGenerator.Properties.Resources.epic);
+            ImageList.Images.Add(UserStoryGenerator.Properties.Resources.story);
+            ImageList.Images.Add(UserStoryGenerator.Properties.Resources.task);
+            ImageList.Images.Add(UserStoryGenerator.Properties.Resources.test);
+            ImageList.Images.Add(UserStoryGenerator.Properties.Resources.Sub_task);
+            //ImageList.Images.Add(UserStoryGenerator.Properties.Resources.bug);
+            //ImageList.Images.Add(UserStoryGenerator.Properties.Resources.technical_debt);
+
+
 
             // populate the image list, using images from the 
             // System.Windows.Forms.CheckBoxRenderer class
@@ -232,7 +247,9 @@ namespace UserStoryGenerator.View
                 }
 
                 StateImageList.Images.Add(bmp);
+
             }
+
         }
 
         protected override void OnCreateControl()

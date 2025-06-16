@@ -372,13 +372,27 @@ namespace UserStoryGenerator.View
                     Tag = allIssue
                 };
 
+                issueNode.ImageIndex = issue.IssueType switch
+                {
+                    JiraIssueTypes.EPIC => 0,
+                    JiraIssueTypes.STORY => 1,
+                    JiraIssueTypes.TASK => 2,
+                    JiraIssueTypes.TEST => 3,
+                    JiraIssueTypes.SUBTASK => 4,
+                    //JiraIssueTypes.BUG => 5,
+                    //JiraIssueTypes.TECHNICAL_DEBT => 6,
+                    _ => throw new NotImplementedException(),
+                };
+
                 node.Nodes.Add(issueNode);
 
                 TreeNodeExSubTasks subtasksNode = new("Subtasks");
+                subtasksNode.ImageIndex = 4;
                 issueNode.Nodes.Add(subtasksNode);
 
                 //TreeNode linkedIssuesNode = new TreeNode("LinkedIssues");
                 TreeNodeExLinkedIssues linkedIssuesNode = new("LinkedIssues");
+                linkedIssuesNode.ImageIndex = 2;
                 issueNode.Nodes.Add(linkedIssuesNode);
 
 
@@ -388,7 +402,8 @@ namespace UserStoryGenerator.View
                     {
                         TriStateTreeView.TreeNodeEx? newNodeSub = new(subTask)
                         {
-                            ToolTipText = subTask.IssueType
+                            ToolTipText = subTask.IssueType,
+                            ImageIndex = 4,
                         };
                         subtasksNode.Nodes.Add(newNodeSub);
                     }
