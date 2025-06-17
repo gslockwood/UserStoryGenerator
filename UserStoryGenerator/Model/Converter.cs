@@ -5,11 +5,16 @@ namespace UserStoryGenerator.Model
 {
     internal class Converter
     {
-        internal static string ToCSV(string? epicText, TreeSerialization.IssueResults? userStoryResults)
+        public static long NO_EPIC_HAS_NO_PARENT = -1;
+        public static string SubTaskIssueType { get; private set; }
+
+        internal static string ToCSV(string? epicText, string? epicIssueType, string subTaskIssueType, TreeSerialization.IssueResults? userStoryResults)
         {
             if( userStoryResults == null ) throw new NullReferenceException(nameof(userStoryResults));
             if( userStoryResults.Issues == null ) throw new NullReferenceException(nameof(userStoryResults.Issues));
-            if( userStoryResults.Issues.Count == 0 ) throw new ArgumentNullException(nameof(userStoryResults.Issues));
+            //if( userStoryResults.Issues.Count == 0 ) throw new ArgumentNullException(nameof(userStoryResults.Issues));
+
+            SubTaskIssueType = subTaskIssueType;
 
             //string headerLine = "Project Key,ID,Parent ID,Summary,Issue Type,Description,Status, Reporter,Assignee";
             string headerLine = "Project Key,ID,Parent ID,Link,Summary,Issue Type,Status";
@@ -41,7 +46,7 @@ namespace UserStoryGenerator.Model
                     IssueData.Issue epicIssue = new()
                     {
                         Summary = epicText,
-                        IssueType = JiraIssueTypes.EPIC,
+                        IssueType = epicIssueType,// JiraIssueTypes.EPIC,
                         Product = userStoryResults.Issues[0].Product,
                         Key = epicKey0,
                     };
@@ -62,7 +67,6 @@ namespace UserStoryGenerator.Model
             //
         }
 
-        public static long NO_EPIC_HAS_NO_PARENT = -1;
 
         private static void Recursive(List<IssueData.Issue> hierarchyIssueList, string epicKey, long issueKey, StringBuilder sbFile)
         {
@@ -153,13 +157,13 @@ namespace UserStoryGenerator.Model
             sbLine.Append(issueKey.ToString() + ",");
 
             // Parent ID
-            if( issue.IssueType != null && issue.IssueType.Equals(JiraIssueTypes.SUBTASK) )
+            if( issue.IssueType != null && issue.IssueType.Equals(SubTaskIssueType) )//JiraIssueTypes.SUBTASK
                 sbLine.Append(linedToId + ",");
             else
                 sbLine.Append(parentID + ",");
 
             // Linked To ID
-            if( issue.IssueType != null && issue.IssueType.Equals(JiraIssueTypes.SUBTASK) )
+            if( issue.IssueType != null && issue.IssueType.Equals(SubTaskIssueType) )//JiraIssueTypes.SUBTASK
                 sbLine.Append(',');
             else
                 sbLine.Append(linedToId + ",");

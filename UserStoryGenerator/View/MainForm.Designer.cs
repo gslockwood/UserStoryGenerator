@@ -50,23 +50,14 @@ namespace UserStoryGenerator.View
             treeView = new TriStateTreeView();
             panelResults = new Panel();
             tableLayoutPanelResults = new TableLayoutPanel();
-            tableLayoutPanelResultsBottom = new TableLayoutPanelEx();
-            groupBoxExSelectedSubTasks = new GroupBoxEx();
-            groupBoxExSelectedBugs = new GroupBoxEx();
-            groupBoxExSelectedTests = new GroupBoxEx();
-            groupBoxExSelectedTasks = new GroupBoxEx();
-            groupBoxExSelectedStories = new GroupBoxEx();
-            groupBoxExSelectedIssues = new GroupBoxEx();
-            tableLayoutPanelResultsTop = new TableLayoutPanelEx();
-            groupBoxExSubTask = new GroupBoxEx();
-            groupBoxExBug = new GroupBoxEx();
-            groupBoxExTest = new GroupBoxEx();
-            groupBoxExTask = new GroupBoxEx();
-            groupBoxExStory = new GroupBoxEx();
-            stopwatchClockConvertRun = new StopwatchClock();
-            groupBoxExIssueCount = new GroupBoxEx();
-            groupBoxExDuration = new GroupBoxEx();
+            flowLayoutPanelSelected = new ResizableGroupBoxFlowLayoutPanelEx();
+            tableLayoutPanelResultsTotal = new TableLayoutPanelEx();
             buttonProcessStories = new Button();
+            stopwatchClockConvertRun = new StopwatchClock();
+            groupBoxExDuration = new GroupBoxEx();
+            flowLayoutPanelExTotals = new ResizableGroupBoxFlowLayoutPanelEx();
+            flowLayoutPanelIssueImages = new FlowLayoutPanelImages();
+            groupBoxExIssueCount = new GroupBoxEx();
             columnHeaderUserStorySubject = new ColumnHeader();
             flowLayoutPanelMainButtons = new FlowLayoutPanel();
             buttonSave = new Button();
@@ -90,8 +81,7 @@ namespace UserStoryGenerator.View
             flowLayoutPanelCheckBoxes.SuspendLayout();
             panelResults.SuspendLayout();
             tableLayoutPanelResults.SuspendLayout();
-            tableLayoutPanelResultsBottom.SuspendLayout();
-            tableLayoutPanelResultsTop.SuspendLayout();
+            tableLayoutPanelResultsTotal.SuspendLayout();
             flowLayoutPanelMainButtons.SuspendLayout();
             tableLayoutPanelMainData.SuspendLayout();
             tableLayoutPanelMain.SuspendLayout();
@@ -247,9 +237,9 @@ namespace UserStoryGenerator.View
             checkBoxAddSubTasks.Location = new Point(3, 4);
             checkBoxAddSubTasks.Margin = new Padding(3, 4, 3, 4);
             checkBoxAddSubTasks.Name = "checkBoxAddSubTasks";
-            checkBoxAddSubTasks.Size = new Size(118, 24);
+            checkBoxAddSubTasks.Size = new Size(117, 24);
             checkBoxAddSubTasks.TabIndex = 0;
-            checkBoxAddSubTasks.Text = "Add SubTasks";
+            checkBoxAddSubTasks.Text = "Add Subtasks";
             checkBoxAddSubTasks.UseVisualStyleBackColor = true;
             // 
             // checkBoxAddQATests
@@ -257,7 +247,7 @@ namespace UserStoryGenerator.View
             checkBoxAddQATests.AutoSize = true;
             checkBoxAddQATests.Checked = true;
             checkBoxAddQATests.CheckState = CheckState.Checked;
-            checkBoxAddQATests.Location = new Point(127, 4);
+            checkBoxAddQATests.Location = new Point(126, 4);
             checkBoxAddQATests.Margin = new Padding(3, 4, 3, 4);
             checkBoxAddQATests.Name = "checkBoxAddQATests";
             checkBoxAddQATests.Size = new Size(117, 24);
@@ -301,11 +291,13 @@ namespace UserStoryGenerator.View
             // 
             treeView.AllowDrop = true;
             treeView.Dock = DockStyle.Fill;
-            treeView.Location = new Point(3, 79);
+            treeView.ImageIndex = 0;
+            treeView.Location = new Point(3, 115);
             treeView.Margin = new Padding(3, 4, 3, 4);
             treeView.Name = "treeView";
+            treeView.SelectedImageIndex = 0;
             treeView.ShowNodeToolTips = true;
-            treeView.Size = new Size(1264, 713);
+            treeView.Size = new Size(1264, 677);
             treeView.TabIndex = 2;
             treeView.TriStateStyleProperty = TriStateTreeView.TriStateStyles.Standard;
             treeView.ItemDrag +=  TreeView_ItemDrag ;
@@ -326,250 +318,61 @@ namespace UserStoryGenerator.View
             // 
             tableLayoutPanelResults.ColumnCount = 1;
             tableLayoutPanelResults.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
-            tableLayoutPanelResults.Controls.Add(tableLayoutPanelResultsBottom, 0, 2);
-            tableLayoutPanelResults.Controls.Add(tableLayoutPanelResultsTop, 0, 0);
-            tableLayoutPanelResults.Controls.Add(treeView, 0, 1);
+            tableLayoutPanelResults.Controls.Add(flowLayoutPanelSelected, 0, 3);
+            tableLayoutPanelResults.Controls.Add(tableLayoutPanelResultsTotal, 0, 0);
+            tableLayoutPanelResults.Controls.Add(treeView, 0, 2);
+            tableLayoutPanelResults.Controls.Add(flowLayoutPanelIssueImages, 0, 1);
             tableLayoutPanelResults.Dock = DockStyle.Fill;
             tableLayoutPanelResults.Location = new Point(0, 0);
             tableLayoutPanelResults.Name = "tableLayoutPanelResults";
-            tableLayoutPanelResults.RowCount = 3;
-            tableLayoutPanelResults.RowStyles.Add(new RowStyle(SizeType.Absolute, 75F));
+            tableLayoutPanelResults.RowCount = 4;
+            tableLayoutPanelResults.RowStyles.Add(new RowStyle(SizeType.Absolute, 87F));
+            tableLayoutPanelResults.RowStyles.Add(new RowStyle(SizeType.Absolute, 24F));
             tableLayoutPanelResults.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
             tableLayoutPanelResults.RowStyles.Add(new RowStyle(SizeType.Absolute, 75F));
             tableLayoutPanelResults.Size = new Size(1270, 871);
             tableLayoutPanelResults.TabIndex = 0;
             // 
-            // tableLayoutPanelResultsBottom
+            // flowLayoutPanelSelected
             // 
-            tableLayoutPanelResultsBottom.ColumnCount = 9;
-            tableLayoutPanelResultsBottom.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 100F));
-            tableLayoutPanelResultsBottom.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 120F));
-            tableLayoutPanelResultsBottom.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 120F));
-            tableLayoutPanelResultsBottom.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 120F));
-            tableLayoutPanelResultsBottom.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 120F));
-            tableLayoutPanelResultsBottom.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 120F));
-            tableLayoutPanelResultsBottom.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 120F));
-            tableLayoutPanelResultsBottom.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 120F));
-            tableLayoutPanelResultsBottom.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
-            tableLayoutPanelResultsBottom.Controls.Add(groupBoxExSelectedSubTasks, 7, 0);
-            tableLayoutPanelResultsBottom.Controls.Add(groupBoxExSelectedBugs, 6, 0);
-            tableLayoutPanelResultsBottom.Controls.Add(groupBoxExSelectedTests, 5, 0);
-            tableLayoutPanelResultsBottom.Controls.Add(groupBoxExSelectedTasks, 4, 0);
-            tableLayoutPanelResultsBottom.Controls.Add(groupBoxExSelectedStories, 3, 0);
-            tableLayoutPanelResultsBottom.Controls.Add(groupBoxExSelectedIssues, 2, 0);
-            tableLayoutPanelResultsBottom.Dock = DockStyle.Fill;
-            tableLayoutPanelResultsBottom.Location = new Point(3, 799);
-            tableLayoutPanelResultsBottom.Name = "tableLayoutPanelResultsBottom";
-            tableLayoutPanelResultsBottom.RowCount = 1;
-            tableLayoutPanelResultsBottom.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
-            tableLayoutPanelResultsBottom.Size = new Size(1264, 69);
-            tableLayoutPanelResultsBottom.TabIndex = 3;
+            flowLayoutPanelSelected.Dock = DockStyle.Fill;
+            flowLayoutPanelSelected.Location = new Point(3, 799);
+            flowLayoutPanelSelected.Name = "flowLayoutPanelSelected";
+            flowLayoutPanelSelected.Size = new Size(1264, 69);
+            flowLayoutPanelSelected.TabIndex = 3;
+            flowLayoutPanelSelected.WrapContents = false;
             // 
-            // groupBoxExSelectedSubTasks
+            // tableLayoutPanelResultsTotal
             // 
-            groupBoxExSelectedSubTasks.CaptionText = "SubTasks";
-            groupBoxExSelectedSubTasks.Dock = DockStyle.Fill;
-            groupBoxExSelectedSubTasks.Location = new Point(823, 3);
-            groupBoxExSelectedSubTasks.Multiline = false;
-            groupBoxExSelectedSubTasks.Name = "groupBoxExSelectedSubTasks";
-            groupBoxExSelectedSubTasks.PlaceholderText = "";
-            groupBoxExSelectedSubTasks.ReadOnly = true;
-            groupBoxExSelectedSubTasks.Size = new Size(114, 63);
-            groupBoxExSelectedSubTasks.TabIndex = 7;
-            groupBoxExSelectedSubTasks.TextAlign = HorizontalAlignment.Right;
-            groupBoxExSelectedSubTasks.TextBoxForeColor = SystemColors.WindowText;
-            groupBoxExSelectedSubTasks.UseSystemPasswordChar = false;
-            groupBoxExSelectedSubTasks.Value = "";
+            tableLayoutPanelResultsTotal.ColumnCount = 4;
+            tableLayoutPanelResultsTotal.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 80F));
+            tableLayoutPanelResultsTotal.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 60F));
+            tableLayoutPanelResultsTotal.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 120F));
+            tableLayoutPanelResultsTotal.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 20F));
+            tableLayoutPanelResultsTotal.Controls.Add(buttonProcessStories, 0, 0);
+            tableLayoutPanelResultsTotal.Controls.Add(stopwatchClockConvertRun, 1, 0);
+            tableLayoutPanelResultsTotal.Controls.Add(groupBoxExDuration, 2, 0);
+            tableLayoutPanelResultsTotal.Controls.Add(flowLayoutPanelExTotals, 3, 0);
+            tableLayoutPanelResultsTotal.Dock = DockStyle.Fill;
+            tableLayoutPanelResultsTotal.Location = new Point(3, 3);
+            tableLayoutPanelResultsTotal.Name = "tableLayoutPanelResultsTotal";
+            tableLayoutPanelResultsTotal.RowCount = 1;
+            tableLayoutPanelResultsTotal.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
+            tableLayoutPanelResultsTotal.Size = new Size(1264, 81);
+            tableLayoutPanelResultsTotal.TabIndex = 0;
             // 
-            // groupBoxExSelectedBugs
+            // buttonProcessStories
             // 
-            groupBoxExSelectedBugs.CaptionText = "Bugs";
-            groupBoxExSelectedBugs.Dock = DockStyle.Fill;
-            groupBoxExSelectedBugs.Location = new Point(703, 3);
-            groupBoxExSelectedBugs.Multiline = false;
-            groupBoxExSelectedBugs.Name = "groupBoxExSelectedBugs";
-            groupBoxExSelectedBugs.PlaceholderText = "";
-            groupBoxExSelectedBugs.ReadOnly = true;
-            groupBoxExSelectedBugs.Size = new Size(114, 63);
-            groupBoxExSelectedBugs.TabIndex = 6;
-            groupBoxExSelectedBugs.TextAlign = HorizontalAlignment.Right;
-            groupBoxExSelectedBugs.TextBoxForeColor = SystemColors.WindowText;
-            groupBoxExSelectedBugs.UseSystemPasswordChar = false;
-            groupBoxExSelectedBugs.Value = "";
-            // 
-            // groupBoxExSelectedTests
-            // 
-            groupBoxExSelectedTests.CaptionText = "Tests";
-            groupBoxExSelectedTests.Dock = DockStyle.Fill;
-            groupBoxExSelectedTests.Location = new Point(583, 3);
-            groupBoxExSelectedTests.Multiline = false;
-            groupBoxExSelectedTests.Name = "groupBoxExSelectedTests";
-            groupBoxExSelectedTests.PlaceholderText = "";
-            groupBoxExSelectedTests.ReadOnly = true;
-            groupBoxExSelectedTests.Size = new Size(114, 63);
-            groupBoxExSelectedTests.TabIndex = 5;
-            groupBoxExSelectedTests.TextAlign = HorizontalAlignment.Right;
-            groupBoxExSelectedTests.TextBoxForeColor = SystemColors.WindowText;
-            groupBoxExSelectedTests.UseSystemPasswordChar = false;
-            groupBoxExSelectedTests.Value = "";
-            // 
-            // groupBoxExSelectedTasks
-            // 
-            groupBoxExSelectedTasks.CaptionText = "Tasks";
-            groupBoxExSelectedTasks.Dock = DockStyle.Fill;
-            groupBoxExSelectedTasks.Location = new Point(463, 3);
-            groupBoxExSelectedTasks.Multiline = false;
-            groupBoxExSelectedTasks.Name = "groupBoxExSelectedTasks";
-            groupBoxExSelectedTasks.PlaceholderText = "";
-            groupBoxExSelectedTasks.ReadOnly = true;
-            groupBoxExSelectedTasks.Size = new Size(114, 63);
-            groupBoxExSelectedTasks.TabIndex = 4;
-            groupBoxExSelectedTasks.TextAlign = HorizontalAlignment.Right;
-            groupBoxExSelectedTasks.TextBoxForeColor = SystemColors.WindowText;
-            groupBoxExSelectedTasks.UseSystemPasswordChar = false;
-            groupBoxExSelectedTasks.Value = "";
-            // 
-            // groupBoxExSelectedStories
-            // 
-            groupBoxExSelectedStories.CaptionText = "Stories";
-            groupBoxExSelectedStories.Dock = DockStyle.Fill;
-            groupBoxExSelectedStories.Location = new Point(343, 3);
-            groupBoxExSelectedStories.Multiline = false;
-            groupBoxExSelectedStories.Name = "groupBoxExSelectedStories";
-            groupBoxExSelectedStories.PlaceholderText = "";
-            groupBoxExSelectedStories.ReadOnly = true;
-            groupBoxExSelectedStories.Size = new Size(114, 63);
-            groupBoxExSelectedStories.TabIndex = 3;
-            groupBoxExSelectedStories.TextAlign = HorizontalAlignment.Right;
-            groupBoxExSelectedStories.TextBoxForeColor = SystemColors.WindowText;
-            groupBoxExSelectedStories.UseSystemPasswordChar = false;
-            groupBoxExSelectedStories.Value = "";
-            // 
-            // groupBoxExSelectedIssues
-            // 
-            groupBoxExSelectedIssues.CaptionText = "Issues";
-            groupBoxExSelectedIssues.Dock = DockStyle.Fill;
-            groupBoxExSelectedIssues.Location = new Point(223, 3);
-            groupBoxExSelectedIssues.Multiline = false;
-            groupBoxExSelectedIssues.Name = "groupBoxExSelectedIssues";
-            groupBoxExSelectedIssues.PlaceholderText = "";
-            groupBoxExSelectedIssues.ReadOnly = true;
-            groupBoxExSelectedIssues.Size = new Size(114, 63);
-            groupBoxExSelectedIssues.TabIndex = 1;
-            groupBoxExSelectedIssues.TextAlign = HorizontalAlignment.Right;
-            groupBoxExSelectedIssues.TextBoxForeColor = SystemColors.WindowText;
-            groupBoxExSelectedIssues.UseSystemPasswordChar = false;
-            groupBoxExSelectedIssues.Value = "";
-            // 
-            // tableLayoutPanelResultsTop
-            // 
-            tableLayoutPanelResultsTop.ColumnCount = 10;
-            tableLayoutPanelResultsTop.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 81F));
-            tableLayoutPanelResultsTop.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 59F));
-            tableLayoutPanelResultsTop.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 120F));
-            tableLayoutPanelResultsTop.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 120F));
-            tableLayoutPanelResultsTop.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 120F));
-            tableLayoutPanelResultsTop.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 120F));
-            tableLayoutPanelResultsTop.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 120F));
-            tableLayoutPanelResultsTop.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 120F));
-            tableLayoutPanelResultsTop.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 120F));
-            tableLayoutPanelResultsTop.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
-            tableLayoutPanelResultsTop.Controls.Add(groupBoxExSubTask, 8, 0);
-            tableLayoutPanelResultsTop.Controls.Add(groupBoxExBug, 7, 0);
-            tableLayoutPanelResultsTop.Controls.Add(groupBoxExTest, 6, 0);
-            tableLayoutPanelResultsTop.Controls.Add(groupBoxExTask, 5, 0);
-            tableLayoutPanelResultsTop.Controls.Add(groupBoxExStory, 4, 0);
-            tableLayoutPanelResultsTop.Controls.Add(stopwatchClockConvertRun, 1, 0);
-            tableLayoutPanelResultsTop.Controls.Add(groupBoxExIssueCount, 3, 0);
-            tableLayoutPanelResultsTop.Controls.Add(groupBoxExDuration, 2, 0);
-            tableLayoutPanelResultsTop.Controls.Add(buttonProcessStories, 0, 0);
-            tableLayoutPanelResultsTop.Dock = DockStyle.Fill;
-            tableLayoutPanelResultsTop.Location = new Point(3, 3);
-            tableLayoutPanelResultsTop.Name = "tableLayoutPanelResultsTop";
-            tableLayoutPanelResultsTop.RowCount = 1;
-            tableLayoutPanelResultsTop.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
-            tableLayoutPanelResultsTop.Size = new Size(1264, 69);
-            tableLayoutPanelResultsTop.TabIndex = 0;
-            // 
-            // groupBoxExSubTask
-            // 
-            groupBoxExSubTask.CaptionText = "SubTasks";
-            groupBoxExSubTask.Dock = DockStyle.Fill;
-            groupBoxExSubTask.Location = new Point(863, 3);
-            groupBoxExSubTask.Multiline = false;
-            groupBoxExSubTask.Name = "groupBoxExSubTask";
-            groupBoxExSubTask.PlaceholderText = "";
-            groupBoxExSubTask.ReadOnly = true;
-            groupBoxExSubTask.Size = new Size(114, 63);
-            groupBoxExSubTask.TabIndex = 7;
-            groupBoxExSubTask.TextAlign = HorizontalAlignment.Right;
-            groupBoxExSubTask.TextBoxForeColor = SystemColors.WindowText;
-            groupBoxExSubTask.UseSystemPasswordChar = false;
-            groupBoxExSubTask.Value = "";
-            // 
-            // groupBoxExBug
-            // 
-            groupBoxExBug.CaptionText = "Bugs";
-            groupBoxExBug.Dock = DockStyle.Fill;
-            groupBoxExBug.Location = new Point(743, 3);
-            groupBoxExBug.Multiline = false;
-            groupBoxExBug.Name = "groupBoxExBug";
-            groupBoxExBug.PlaceholderText = "";
-            groupBoxExBug.ReadOnly = true;
-            groupBoxExBug.Size = new Size(114, 63);
-            groupBoxExBug.TabIndex = 6;
-            groupBoxExBug.TextAlign = HorizontalAlignment.Right;
-            groupBoxExBug.TextBoxForeColor = SystemColors.WindowText;
-            groupBoxExBug.UseSystemPasswordChar = false;
-            groupBoxExBug.Value = "";
-            // 
-            // groupBoxExTest
-            // 
-            groupBoxExTest.CaptionText = "Tests";
-            groupBoxExTest.Dock = DockStyle.Fill;
-            groupBoxExTest.Location = new Point(623, 3);
-            groupBoxExTest.Multiline = false;
-            groupBoxExTest.Name = "groupBoxExTest";
-            groupBoxExTest.PlaceholderText = "";
-            groupBoxExTest.ReadOnly = true;
-            groupBoxExTest.Size = new Size(114, 63);
-            groupBoxExTest.TabIndex = 5;
-            groupBoxExTest.TextAlign = HorizontalAlignment.Right;
-            groupBoxExTest.TextBoxForeColor = SystemColors.WindowText;
-            groupBoxExTest.UseSystemPasswordChar = false;
-            groupBoxExTest.Value = "";
-            // 
-            // groupBoxExTask
-            // 
-            groupBoxExTask.CaptionText = "Tasks";
-            groupBoxExTask.Dock = DockStyle.Fill;
-            groupBoxExTask.Location = new Point(503, 3);
-            groupBoxExTask.Multiline = false;
-            groupBoxExTask.Name = "groupBoxExTask";
-            groupBoxExTask.PlaceholderText = "";
-            groupBoxExTask.ReadOnly = true;
-            groupBoxExTask.Size = new Size(114, 63);
-            groupBoxExTask.TabIndex = 4;
-            groupBoxExTask.TextAlign = HorizontalAlignment.Right;
-            groupBoxExTask.TextBoxForeColor = SystemColors.WindowText;
-            groupBoxExTask.UseSystemPasswordChar = false;
-            groupBoxExTask.Value = "";
-            // 
-            // groupBoxExStory
-            // 
-            groupBoxExStory.CaptionText = "Stories";
-            groupBoxExStory.Dock = DockStyle.Fill;
-            groupBoxExStory.Location = new Point(383, 3);
-            groupBoxExStory.Multiline = false;
-            groupBoxExStory.Name = "groupBoxExStory";
-            groupBoxExStory.PlaceholderText = "";
-            groupBoxExStory.ReadOnly = true;
-            groupBoxExStory.Size = new Size(114, 63);
-            groupBoxExStory.TabIndex = 3;
-            groupBoxExStory.TextAlign = HorizontalAlignment.Right;
-            groupBoxExStory.TextBoxForeColor = SystemColors.WindowText;
-            groupBoxExStory.UseSystemPasswordChar = false;
-            groupBoxExStory.Value = "";
+            buttonProcessStories.Dock = DockStyle.Fill;
+            buttonProcessStories.Enabled = false;
+            buttonProcessStories.Location = new Point(3, 3);
+            buttonProcessStories.Name = "buttonProcessStories";
+            buttonProcessStories.Size = new Size(74, 75);
+            buttonProcessStories.TabIndex = 8;
+            buttonProcessStories.Tag = "Process Stories";
+            buttonProcessStories.Text = "Process Stories";
+            buttonProcessStories.UseVisualStyleBackColor = true;
+            buttonProcessStories.Click +=  ButtonProcessStories_ClickAsync ;
             // 
             // stopwatchClockConvertRun
             // 
@@ -578,13 +381,47 @@ namespace UserStoryGenerator.View
             stopwatchClockConvertRun.Dock = DockStyle.Fill;
             stopwatchClockConvertRun.HasCenterDot = true;
             stopwatchClockConvertRun.IsTicked = true;
-            stopwatchClockConvertRun.Location = new Point(86, 5);
+            stopwatchClockConvertRun.Location = new Point(85, 5);
             stopwatchClockConvertRun.Margin = new Padding(5);
             stopwatchClockConvertRun.Name = "stopwatchClockConvertRun";
             stopwatchClockConvertRun.SecondHandColor = Color.Blue;
-            stopwatchClockConvertRun.Size = new Size(49, 59);
+            stopwatchClockConvertRun.Size = new Size(50, 71);
             stopwatchClockConvertRun.TabIndex = 2;
             stopwatchClockConvertRun.TickMarkColor = Color.Gray;
+            // 
+            // groupBoxExDuration
+            // 
+            groupBoxExDuration.CaptionText = "Duration";
+            groupBoxExDuration.Dock = DockStyle.Fill;
+            groupBoxExDuration.Location = new Point(143, 3);
+            groupBoxExDuration.Multiline = false;
+            groupBoxExDuration.Name = "groupBoxExDuration";
+            groupBoxExDuration.PlaceholderText = "";
+            groupBoxExDuration.ReadOnly = true;
+            groupBoxExDuration.Size = new Size(114, 75);
+            groupBoxExDuration.TabIndex = 0;
+            groupBoxExDuration.TextAlign = HorizontalAlignment.Right;
+            groupBoxExDuration.TextBoxForeColor = SystemColors.WindowText;
+            groupBoxExDuration.UseSystemPasswordChar = false;
+            groupBoxExDuration.Value = "";
+            // 
+            // flowLayoutPanelExTotals
+            // 
+            flowLayoutPanelExTotals.Dock = DockStyle.Fill;
+            flowLayoutPanelExTotals.Location = new Point(263, 3);
+            flowLayoutPanelExTotals.Name = "flowLayoutPanelExTotals";
+            flowLayoutPanelExTotals.Size = new Size(998, 75);
+            flowLayoutPanelExTotals.TabIndex = 9;
+            flowLayoutPanelExTotals.WrapContents = false;
+            // 
+            // flowLayoutPanelIssueImages
+            // 
+            flowLayoutPanelIssueImages.Dock = DockStyle.Fill;
+            flowLayoutPanelIssueImages.Location = new Point(3, 90);
+            flowLayoutPanelIssueImages.Name = "flowLayoutPanelIssueImages";
+            flowLayoutPanelIssueImages.Size = new Size(1264, 18);
+            flowLayoutPanelIssueImages.TabIndex = 4;
+            flowLayoutPanelIssueImages.WrapContents = false;
             // 
             // groupBoxExIssueCount
             // 
@@ -601,35 +438,6 @@ namespace UserStoryGenerator.View
             groupBoxExIssueCount.TextBoxForeColor = SystemColors.WindowText;
             groupBoxExIssueCount.UseSystemPasswordChar = false;
             groupBoxExIssueCount.Value = "";
-            // 
-            // groupBoxExDuration
-            // 
-            groupBoxExDuration.CaptionText = "Duration";
-            groupBoxExDuration.Dock = DockStyle.Fill;
-            groupBoxExDuration.Location = new Point(143, 3);
-            groupBoxExDuration.Multiline = false;
-            groupBoxExDuration.Name = "groupBoxExDuration";
-            groupBoxExDuration.PlaceholderText = "";
-            groupBoxExDuration.ReadOnly = true;
-            groupBoxExDuration.Size = new Size(114, 63);
-            groupBoxExDuration.TabIndex = 0;
-            groupBoxExDuration.TextAlign = HorizontalAlignment.Right;
-            groupBoxExDuration.TextBoxForeColor = SystemColors.WindowText;
-            groupBoxExDuration.UseSystemPasswordChar = false;
-            groupBoxExDuration.Value = "";
-            // 
-            // buttonProcessStories
-            // 
-            buttonProcessStories.Dock = DockStyle.Fill;
-            buttonProcessStories.Enabled = false;
-            buttonProcessStories.Location = new Point(3, 3);
-            buttonProcessStories.Name = "buttonProcessStories";
-            buttonProcessStories.Size = new Size(75, 63);
-            buttonProcessStories.TabIndex = 8;
-            buttonProcessStories.Tag = "Process Stories";
-            buttonProcessStories.Text = "Process Stories";
-            buttonProcessStories.UseVisualStyleBackColor = true;
-            buttonProcessStories.Click +=  ButtonProcessStories_ClickAsync ;
             // 
             // columnHeaderUserStorySubject
             // 
@@ -775,7 +583,7 @@ namespace UserStoryGenerator.View
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(2064, 955);
+            ClientSize = new Size(2100, 955);
             Controls.Add(tableLayoutPanelMain);
             Controls.Add(menuStrip);
             Font = new Font("Segoe UI", 11.25F, FontStyle.Regular, GraphicsUnit.Point, 0);
@@ -793,8 +601,7 @@ namespace UserStoryGenerator.View
             flowLayoutPanelCheckBoxes.PerformLayout();
             panelResults.ResumeLayout(false);
             tableLayoutPanelResults.ResumeLayout(false);
-            tableLayoutPanelResultsBottom.ResumeLayout(false);
-            tableLayoutPanelResultsTop.ResumeLayout(false);
+            tableLayoutPanelResultsTotal.ResumeLayout(false);
             flowLayoutPanelMainButtons.ResumeLayout(false);
             tableLayoutPanelMainData.ResumeLayout(false);
             tableLayoutPanelMain.ResumeLayout(false);
@@ -826,20 +633,7 @@ namespace UserStoryGenerator.View
         private GroupBoxEx groupBoxExDuration;
         private GroupBoxEx groupBoxExIssueCount;
         private StopwatchClock stopwatchClockConvertRun;
-        private GroupBoxEx groupBoxExSubTask;
-        private GroupBoxEx groupBoxExBug;
-        private GroupBoxEx groupBoxExTest;
-        private GroupBoxEx groupBoxExTask;
-        private GroupBoxEx groupBoxExStory;
-        private GroupBoxEx groupBoxExSelectedSubTasks;
-        private GroupBoxEx groupBoxExSelectedBugs;
-        private GroupBoxEx groupBoxExSelectedTests;
-        private GroupBoxEx groupBoxExSelectedTasks;
-        private GroupBoxEx groupBoxExSelectedStories;
-        private GroupBoxEx groupBoxExSelectedIssues;
-
-        private TableLayoutPanelEx tableLayoutPanelResultsTop;
-        private TableLayoutPanelEx tableLayoutPanelResultsBottom;
+        private TableLayoutPanelEx tableLayoutPanelResultsTotal;
         private Button buttonProcessStories;
         private Label labelStatus;
         private TableLayoutPanel tableLayoutPanelEntryControl;
@@ -856,6 +650,9 @@ namespace UserStoryGenerator.View
         private ToolStripMenuItem saveStoriesAsCSVToolStripMenuItem;
         private ToolStripMenuItem getUserStoryListToolStripMenuItem;
         private EpicSelector epicSelector;
+        private FlowLayoutPanelImages flowLayoutPanelIssueImages;
+        private ResizableGroupBoxFlowLayoutPanelEx flowLayoutPanelSelected;
+        private ResizableGroupBoxFlowLayoutPanelEx flowLayoutPanelExTotals;
     }
 
     public interface IReset
@@ -875,14 +672,90 @@ namespace UserStoryGenerator.View
         }
     }
 
+    public class FlowLayoutPanelImages : FlowLayoutPanel
+    {
+        public FlowLayoutPanelImages()
+        {
+            // Set some default properties for the FlowLayoutPanel
+            this.FlowDirection = FlowDirection.LeftToRight;
+            this.WrapContents = false; // Important to ensure they lay out horizontally
+
+            //InitializePictureboxes();
+            //
+        }
+
+        //private void InitializePictureboxes()
+        //{
+        //    CreateImageControl(Properties.Resources.epic, "Epic");
+        //    CreateImageControl(Properties.Resources.story, "Story");
+        //    CreateImageControl(Properties.Resources.task, "Task");
+        //    CreateImageControl(Properties.Resources.test, "Test");
+        //    CreateImageControl(Properties.Resources.Sub_task, "Sub-task");
+        //}
+
+        private void CreateImageControl(string issueType,Bitmap bitmap)
+        {
+            int desiredWidth = 16;
+            int desiredHeight = 16;
+
+            issueType = "   " + issueType;// trying to get a space in front of a long issueType
+
+            // Create a new Bitmap with the desired size
+            Bitmap resizedImage = new Bitmap(desiredWidth, desiredHeight);
+
+            // Create a Graphics object from the new Bitmap
+            using( Graphics g = Graphics.FromImage(resizedImage) )
+            {
+                // Set high-quality interpolation mode for better resizing
+                g.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.HighQualityBicubic;
+                g.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.HighQuality;
+                g.PixelOffsetMode = System.Drawing.Drawing2D.PixelOffsetMode.HighQuality;
+                g.CompositingQuality = System.Drawing.Drawing2D.CompositingQuality.HighQuality;
+
+                // Draw the original image onto the new Bitmap, scaling it
+                g.DrawImage(bitmap, 0, 0, desiredWidth, desiredHeight);
+            }
+
+            // Dispose the original image if it's no longer needed
+            bitmap.Dispose();
+
+            Label control = new Label
+            {
+                Text = issueType,
+                AutoSize = false,
+                Margin = new Padding(4),
+                Image = resizedImage,
+                TextAlign = ContentAlignment.MiddleRight,
+                ImageAlign = ContentAlignment.MiddleLeft,
+            };
+
+            Size textSize = TextRenderer.MeasureText(
+                issueType,
+                control.Font,
+                Size.Empty, // A "no wrapping" constraint
+                TextFormatFlags.SingleLine | TextFormatFlags.NoPadding
+            );
+
+            control.Width = textSize.Width+ desiredWidth + 20; 
+
+            Controls.Add(control);
+            //
+        }
+
+        internal void AddImage(string issueType, Image image)
+        {
+            CreateImageControl(issueType, (Bitmap)image);
+        }
+    }
+
+
     public class TableLayoutPanelEx : TableLayoutPanel, IReset
     {
         public void Reset()
         {
             foreach( Control control in this.Controls )
             {
-                IReset reset = control as IReset;
-                if( reset != null )
+                if( control is IReset reset )
                     reset.Reset();
             }
         }

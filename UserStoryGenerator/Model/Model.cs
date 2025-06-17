@@ -50,10 +50,20 @@ namespace UserStoryGenerator.Model
                 temp.AllIssueCoaching.SubTaskInstructions = "Every Story issues shall have Documentation sub-tasks.\r\n\r\nEvery \"Frontend Task\" shall receive at least one or many \"Implement UI Control x\" Sub-task issue for each UI control in the implementation. Each is placed in the Task's \"Sub-tasks\" collection. \r\nEvery \"Database Task\" shall receive a \"Implement CRUD method: x\" Sub-task issue where x is of the list: {create, read, update, and delete} in the implementation. Each is placed in the Task's \"Sub-tasks\" collection.  There shall be a corresponding TDD test Sub-task issue for each. \r\n\r\nEvery \"API Task\" shall receive a \"Implement HTTP method: x\" Sub-task issue where x is of the list: {GET,POST,PUT,PATCH,DELETE} in the implementation. Each is placed in the Task's \"Sub-tasks\" collection. There shall be a corresponding TDD test Sub-task issue for each. \r\n\r\nThere shall be \"Backend\" Tasks take cover relevant Database queries and Service usage functionality. There shall be a corresponding TDD test Sub-task issues for each. \r\n\r\n\r\nTest Issue Sub-tasks: \r\nIf directed to include Test issues, there shall be subtasks for all and any \"Test Automation\" as required by the Test Issue's Parent Task. \r\nIf directed to include Test issues, there shall be subtasks for all and any \"Integration Tests\" as required by the Test Issue's Parent Task. \r\nIf directed to include Test issues, there shall be subtasks for all and any Manual Workflow Validation Tests\" as required by the Test Issue's Parent Task. ";
                 */
 
+                //IEnumerable<KeyValuePair<string, Settings.JiraIssue>> any = Settings.JiraIssueTypes.Where(type => type.Value.Order == 2);
+                //if( !any.Any() ) throw new NullReferenceException("subTaskIssueType is missing");
+                //if( any.Count() > 1 ) throw new NullReferenceException("more than 1 subTaskIssueType");
+
+
 
                 Settings = new Settings();
                 if( temp != null )
                     Settings = temp;
+
+                IEnumerable<KeyValuePair<string, Settings.JiraIssue>> any = Settings.JiraIssueTypes.Where(type => type.Value.Order == 2);
+                if( !any.Any() ) throw new NullReferenceException("subTaskIssueType is missing");
+                if( any.Count() > 1 ) throw new NullReferenceException("more than 1 subTaskIssueType");
+
 
                 //this.SaveSettings(); //testing only
 
@@ -124,9 +134,33 @@ namespace UserStoryGenerator.Model
         public bool SaveUserStoryResultsToCSV(string fullFilePath, string epicText)
         {
             if( userStoryResults.UserStoryList == null || userStoryResults.UserStoryList.Count == 0 ) return false;
-            string csv = Converter.ToCSV(epicText, userStoryResults);
-            File.WriteAllText(fullFilePath, csv);
-            return true;
+
+            if( Settings.JiraIssueTypes == null ) return false;
+
+            string? epicIssueType = null;
+            IEnumerable<KeyValuePair<string, Settings.JiraIssue>> any = Settings.JiraIssueTypes.Where(type => type.Value.Order == 0);
+            if( any.Any() )
+            {
+                KeyValuePair<string, Settings.JiraIssue> toIssue = any.First();
+                epicIssueType = toIssue.Value.IssueType;
+            }
+
+            any = Settings.JiraIssueTypes.Where(type => type.Value.Order == 2);
+            if( any.Any() )
+            {
+                KeyValuePair<string, Settings.JiraIssue> toIssue = any.First();
+                if( toIssue.Value != null && toIssue.Value.IssueType != null )
+                {
+                    string subTaskIssueType = toIssue.Value.IssueType;
+
+                    string csv = Converter.ToCSV(epicText, epicIssueType, subTaskIssueType, userStoryResults);
+                    File.WriteAllText(fullFilePath, csv);
+                    return true;
+                }
+            }
+
+            throw new NullReferenceException("subTaskIssueType is missing");
+
         }
         public bool SaveUserStoryResultsAsJson(string fullFilePath, string? productDescription)
         {
@@ -334,6 +368,7 @@ namespace UserStoryGenerator.Model
         string? Summary { get; set; }
         string? IssueType { get; set; }
         long Key { get; set; }
+        //uint Order { get; set; }
     }
 
     public class IssueDataBase : IIssue
@@ -342,6 +377,7 @@ namespace UserStoryGenerator.Model
         public string? IssueType { get; set; }
         public string? Product { get; set; }
         public long Key { get; set; } = new Random().Next() * ( uint.MaxValue / int.MaxValue ) + (uint)new Random().Next(0, 2) * ( uint.MaxValue % int.MaxValue );
+        //public uint Order { get; set; }
     }
 
     public class IssueData
@@ -378,14 +414,6 @@ namespace UserStoryGenerator.Model
 
     }
 
-    public class JiraIssueTypes
-    {
-        public const String STORY = "Story";
-        public const String TASK = "Task";
-        public const String TEST = "Test";
-        public const String BUG = "Bug";
-        public const String EPIC = "Epic";
-        public const String SUBTASK = "Sub-task";
-    }
+
 
 }

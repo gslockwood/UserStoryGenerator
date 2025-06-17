@@ -28,7 +28,8 @@ namespace UserStoryGenerator.Tests
         }
         internal static void Generate(string testName, string? epicName, TreeSerialization.IssueResults? userStoryResults)
         {
-            string csv = Converter.ToCSV(epicName, userStoryResults);
+
+            string csv = Converter.ToCSV(epicName, "Epic", "Sub-task", userStoryResults);
 
             Logger.Info(csv);
             File.WriteAllText($"./{testName} Issues.csv", csv);

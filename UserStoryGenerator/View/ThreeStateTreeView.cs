@@ -140,10 +140,9 @@ namespace UserStoryGenerator.View
         }
 
 
-
-
-
-
+        // // // // // // // // // // // // // // // // // // // // 
+        // // // // // // // // // // // // // // // // // // // // 
+        // // // // // // // // // // // // // // // // // // // // 
         public delegate void CheckEventHandler(IssueCollector issueCollector);
         public event CheckEventHandler? Checked;
 
@@ -183,6 +182,25 @@ namespace UserStoryGenerator.View
             set { TriStateStyle = value; }
         }
 
+        //public Dictionary<string, Settings.JiraIssue>? JiraIssueTypes { get; internal set; }
+
+        string? subTaskIssueType = null;
+        public Dictionary<string, Settings.JiraIssue> jiraIssueTypes;
+        public Dictionary<string, Settings.JiraIssue> JiraIssueTypes
+        {
+            get { return jiraIssueTypes; }
+            internal set
+            {
+                jiraIssueTypes = value;
+                IEnumerable<KeyValuePair<string, Settings.JiraIssue>> any = jiraIssueTypes.Where(type => type.Value.Order == 2);
+                if( !any.Any() ) throw new NullReferenceException("subTaskIssueType is missing");
+                if( any.Count() > 1 ) throw new NullReferenceException("more than 1 subTaskIssueType");
+
+                subTaskIssueType = any.First().Value.IssueType;
+
+            }
+        }
+
         public TriStateTreeView() : base()
         {
             this.CheckBoxes = true;
@@ -192,23 +210,16 @@ namespace UserStoryGenerator.View
             ShowNodeToolTips = true;
 
 
-            StateImageList = new System.Windows.Forms.ImageList();
-
             ImageList = new ImageList
             {
                 ColorDepth = ColorDepth.Depth32Bit,
                 ImageSize = new Size(16, 16),
                 TransparentColor = Color.Transparent
             };
-            ImageList.Images.Add(UserStoryGenerator.Properties.Resources.epic);
-            ImageList.Images.Add(UserStoryGenerator.Properties.Resources.story);
-            ImageList.Images.Add(UserStoryGenerator.Properties.Resources.task);
-            ImageList.Images.Add(UserStoryGenerator.Properties.Resources.test);
-            ImageList.Images.Add(UserStoryGenerator.Properties.Resources.Sub_task);
-            //ImageList.Images.Add(UserStoryGenerator.Properties.Resources.bug);
-            //ImageList.Images.Add(UserStoryGenerator.Properties.Resources.technical_debt);
 
 
+
+            StateImageList = new System.Windows.Forms.ImageList();
 
             // populate the image list, using images from the 
             // System.Windows.Forms.CheckBoxRenderer class
@@ -247,7 +258,6 @@ namespace UserStoryGenerator.View
                 }
 
                 StateImageList.Images.Add(bmp);
-
             }
 
         }
@@ -317,17 +327,42 @@ namespace UserStoryGenerator.View
 
         public class IssueCollector
         {
-            public List<TreeNodeEx> Stories { get; } = [];
-            public List<TreeNodeEx> Tasks { get; } = [];
-            public List<TreeNodeEx> Tests { get; } = [];
-            public List<TreeNodeEx> Bugs { get; } = [];
-            public List<TreeNodeEx> SubTasks { get; } = [];
+            public Dictionary<string, List<TreeNodeEx>> JiraIssuesByType { get; set; } = [];
 
-            public int Total { get { return Stories.Count + Tasks.Count + Tests.Count + Bugs.Count + SubTasks.Count; } }
 
-            public override string ToString()
+            public int Total
             {
-                return $"Stories={Stories.Count}, Tasks={Tasks.Count}, Tests={Tests.Count}, Bugs={Bugs.Count}, SubTasks={SubTasks.Count}";
+                get
+                {
+                    int total = 0;
+                    foreach( List<TreeNodeEx> value in JiraIssuesByType.Values )
+                        total += value.Count;
+                    return total;
+                }
+            }
+
+            public void AddJiraIssuesByType(TreeNodeEx node)
+            {
+                if( string.IsNullOrEmpty(node.IssueType) ) return;
+
+                if( !JiraIssuesByType.ContainsKey(node.IssueType) )
+                    JiraIssuesByType[node.IssueType] = [];
+
+                JiraIssuesByType[node.IssueType].Add(node);
+
+            }
+
+            public List<TreeNodeEx> GetJiraIssuesByType(string issueType)
+            {
+                return JiraIssuesByType[issueType];
+            }
+
+            public int GetJiraIssuesCountByType(string issueType)
+            {
+                if( JiraIssuesByType.TryGetValue(issueType, out List<TreeNodeEx>? value) )
+                    return value.Count;
+
+                return 0;
             }
 
         }
@@ -353,20 +388,8 @@ namespace UserStoryGenerator.View
         {
             foreach( TreeNodeEx node in nodes )
             {
-                if( !node.Text.Equals("LinkedIssues") && !node.Text.Equals("SubTasks") )
-                {
-                    if( node.IssueType != null && node.IssueType.Equals(JiraIssueTypes.STORY) )
-                        issueCollector.Stories.Add(node);
-                    else if( node.IssueType != null && node.IssueType.Equals(JiraIssueTypes.TASK) )
-                        issueCollector.Tasks.Add(node);
-                    else if( node.IssueType != null && node.IssueType.Equals(JiraIssueTypes.TEST) )
-                        issueCollector.Tests.Add(node);
-                    else if( node.IssueType != null && node.IssueType.Equals(JiraIssueTypes.BUG) )
-                        issueCollector.Bugs.Add(node);
-
-                    else if( node.IssueType != null && node.IssueType.Equals(JiraIssueTypes.SUBTASK) )//"SubTask"
-                        issueCollector.SubTasks.Add(node);
-                }
+                if( !node.Text.Equals("LinkedIssues") && !node.Text.Equals("Subtasks") )
+                    issueCollector.AddJiraIssuesByType(node);
 
                 if( node.Nodes != null )
                     GetCheckedNodeCount(node.Nodes, issueCollector);
@@ -895,7 +918,7 @@ namespace UserStoryGenerator.View
             }
             return strings;
         }
-        private static void GetCheckedNodesRecursive(TreeNodeCollection nodes, List<string> strings)
+        private void GetCheckedNodesRecursive(TreeNodeCollection nodes, List<string> strings)
         {
             foreach( TreeNode node in nodes )
             {
@@ -908,13 +931,8 @@ namespace UserStoryGenerator.View
                 var issueType = ( (TreeNodeEx)node ).IssueType;
                 if( issueType == null ) continue;
 
-                if( issueType.Equals(Model.JiraIssueTypes.SUBTASK) )
-                    strings.Add(node.Text);
-
                 if( node.Nodes.Count > 0 )
-                {
                     GetCheckedNodesRecursive(node.Nodes, strings);
-                }
             }
 
         }

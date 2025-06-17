@@ -35,7 +35,7 @@ namespace UserStoryGenerator.Model
                 {
                     foreach( TriStateTreeView.TreeNodeEx xxxx in node.Nodes )
                     {
-                        if( xxxx.Text.Equals("Subtasks") )
+                        if( xxxx.Text.Equals("Subtasks") )// collection node with this text
                         {
                             foreach( TriStateTreeView.TreeNodeEx subTaskNode in xxxx.Nodes )
                             {
@@ -50,7 +50,7 @@ namespace UserStoryGenerator.Model
                             }
 
                         }
-                        else if( xxxx.Text.Equals("LinkedIssues") )
+                        else if( xxxx.Text.Equals("LinkedIssues") )// collection node with this text
                         {
                             issue.LinkedIssues = ConvertTreeNodesToJsonStructure(xxxx.Nodes.Cast<TreeNode>().ToList());
                         }
@@ -96,6 +96,7 @@ namespace UserStoryGenerator.Model
             public List<string>? UserStoryList { get; set; }
             public List<IssueData.Issue>? Issues { get; set; }
         }
+
     }
 
 }

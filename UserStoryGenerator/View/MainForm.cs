@@ -16,8 +16,6 @@ namespace UserStoryGenerator.View
             {
                 InitializeComponent();
 
-                ResetUI();
-
                 model = new();
 
             }
@@ -37,6 +35,26 @@ namespace UserStoryGenerator.View
         protected override void OnLoad(EventArgs e)
         {
             base.OnLoad(e);
+
+            if( model.Settings == null ) throw new NullReferenceException(nameof(model.Settings));
+            if( model.Settings.JiraIssueTypes == null ) throw new NullReferenceException(nameof(model.Settings.JiraIssueTypes));
+
+            treeView.JiraIssueTypes = model.Settings.JiraIssueTypes;
+
+            foreach( var jiraIssueType in model.Settings.JiraIssueTypes )
+            {
+                if( jiraIssueType.Value == null || jiraIssueType.Value.IssueType == null || jiraIssueType.Value.ImagePath == null ) continue;
+                Image? image = Utilities.ImageLoader.GetImageFromFilePath(jiraIssueType.Value.ImagePath);
+                if( image != null )
+                {
+                    treeView.ImageList.Images.Add(jiraIssueType.Value.IssueType, image);
+                    flowLayoutPanelIssueImages.AddImage(jiraIssueType.Value.IssueType, image);
+
+                    flowLayoutPanelSelected.AddResizableGroupBox(jiraIssueType.Value);
+                    flowLayoutPanelExTotals.AddResizableGroupBox(jiraIssueType.Value);
+
+                }
+            }
 
             treeView.Checked += (issueCollector) =>
             {
@@ -61,6 +79,9 @@ namespace UserStoryGenerator.View
                 MessageBox.Show(errorMesage, "Critical Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
 
             };
+
+            ResetUI();
+
         }
 
         protected override void OnShown(EventArgs e)
@@ -82,7 +103,7 @@ namespace UserStoryGenerator.View
 
             // for testing missing info situations
             //model.Settings.Key = Model.Model.DEFAULTKEY;
-            //model.Settings.Key = "esdfggf9s4Ar-OsfgsgsfgCgclvaA-LitgsumL0";
+            //model.Settings.Key = "esdf5gf9s4Ar-OsfgsgsfgCgclvaA-LitgsumL0";
 
             if( model.Settings.Key.Equals(Model.Model.DEFAULTKEY, StringComparison.CurrentCultureIgnoreCase) )
             {
@@ -185,20 +206,6 @@ namespace UserStoryGenerator.View
                     {
                         try
                         {
-                            //List<Issue> Issues = [];
-                            //if( args.Result != null && args.Result.Issues != null )
-                            //{
-                            //    Issues = args.Result.Issues;
-                            //}
-                            //else
-                            //{
-                            //    Model.IssueData? data = JsonSerializer.Deserialize<Model.IssueData>(args.Result.Answer);
-                            //    Utilities.Logger.Info(JsonSerializer.Serialize(data));
-                            //    if( data != null && data.Issues != null )
-                            //    {
-                            //        Issues = data.Issues;
-                            //    }
-                            //}
                             List<Issue> Issues = args.Issues;
 
                             //Logger.Info("Model_IssueGeneratorCompleted " + data.Issues.Count);
@@ -289,11 +296,8 @@ namespace UserStoryGenerator.View
 
         private void ResetUI()
         {
-            groupBoxExDuration.Value = null;
-
-            stopwatchClockConvertRun.Reset();
-            tableLayoutPanelResultsTop.Reset();
-            tableLayoutPanelResultsBottom.Reset();
+            tableLayoutPanelResultsTotal.Reset();
+            flowLayoutPanelSelected.Reset();
 
             labelStatus.Text = null;
             labelStatus.ForeColor = SystemColors.ControlText;
@@ -324,33 +328,14 @@ namespace UserStoryGenerator.View
         private int UpdateCountersUI(List<IssueData.Issue> issues)
         {
             if( issues == null ) return 0;
-
-            int total = 0;
-            int count = issues.FlattenStandardIssues().Where(issue => issue.IssueType == JiraIssueTypes.STORY).Count();
-            total += count;
-            groupBoxExStory.Value = count.ToString();
-
-            count = issues.FlattenStandardIssues().Where(issue => issue.IssueType == JiraIssueTypes.TASK).Count();
-            total += count;
-            groupBoxExTask.Value = count.ToString();
-            count = issues.FlattenStandardIssues().Where(issue => issue.IssueType == JiraIssueTypes.TEST).Count();
-            total += count;
-            groupBoxExTest.Value = count.ToString();
-            count = issues.FlattenStandardIssues().Where(issue => issue.IssueType == JiraIssueTypes.BUG).Count();
-            total += count;
-            groupBoxExBug.Value = count.ToString();
-
-            count = GetAllSubTasks(issues).Count;
-            total += count;
-            groupBoxExSubTask.Value = count.ToString();
-
-            groupBoxExIssueCount.Value = total.ToString();
-
-            return total;
+            return flowLayoutPanelExTotals.SetValuesByIssue(issues);
             //
         }
-
-        private static void Recursive(IList<Model.IssueData.Issue> issues, TreeNode node, bool allIssue = false)
+        private int UpdateSelectedIssues(IssueCollector issueCollector)
+        {
+            return flowLayoutPanelSelected.SetValues(issueCollector);
+        }
+        private void Recursive(IList<Model.IssueData.Issue> issues, TreeNode node, bool allIssue = false)
         {
             foreach( Model.IssueData.Issue issue in issues )
             {
@@ -359,40 +344,56 @@ namespace UserStoryGenerator.View
                 TriStateTreeView.TreeNodeEx? issueNode = new(issue)
                 {
                     ToolTipText = issue.IssueType,
-                    ForeColor = issue.IssueType switch
-                    {
-                        JiraIssueTypes.STORY => Color.DarkGreen,
-                        JiraIssueTypes.TASK => Color.Navy,
-                        JiraIssueTypes.BUG => Color.IndianRed,
-                        JiraIssueTypes.TEST => Color.DarkGoldenrod,
-                        JiraIssueTypes.SUBTASK => Color.DarkSalmon,
-                        _ => Color.Black,
-                    },
+
+                    //ForeColor = issue.IssueType switch
+                    //{
+                    //    JiraIssueTypes.STORY => Color.DarkGreen,
+                    //    JiraIssueTypes.TASK => Color.Navy,
+                    //    JiraIssueTypes.BUG => Color.IndianRed,
+                    //    JiraIssueTypes.TEST => Color.DarkGoldenrod,
+                    //    JiraIssueTypes.SUBTASK => Color.DarkSalmon,
+                    //    _ => Color.Black,
+                    //},
                     // mark the issue as generated by userStory generation  (false) or 'all issue' run for a user story (true)
-                    Tag = allIssue
+                    Tag = allIssue,
+                    //ImageIndex = issue.IssueType switch
+                    //{
+                    //    JiraIssueTypes.EPIC => 0,
+                    //    JiraIssueTypes.STORY => 1,
+                    //    JiraIssueTypes.TASK => 2,
+                    //    JiraIssueTypes.TEST => 3,
+                    //    JiraIssueTypes.SUBTASK => 4,
+                    //    //JiraIssueTypes.BUG => 5,
+                    //    //JiraIssueTypes.TECHNICAL_DEBT => 6,
+                    //    _ => throw new NotImplementedException(),
+                    //}
                 };
 
-                issueNode.ImageIndex = issue.IssueType switch
+                if( issue.IssueType != null )
                 {
-                    JiraIssueTypes.EPIC => 0,
-                    JiraIssueTypes.STORY => 1,
-                    JiraIssueTypes.TASK => 2,
-                    JiraIssueTypes.TEST => 3,
-                    JiraIssueTypes.SUBTASK => 4,
-                    //JiraIssueTypes.BUG => 5,
-                    //JiraIssueTypes.TECHNICAL_DEBT => 6,
-                    _ => throw new NotImplementedException(),
-                };
+                    if( model.Settings != null && model.Settings.JiraIssueTypes != null && model.Settings.JiraIssueTypes[issue.IssueType].ForeColor != null )
+                    {
+                        string? foreColor = model.Settings.JiraIssueTypes[issue.IssueType].ForeColor;
+                        if( foreColor != null )
+                            issueNode.ForeColor = Color.FromName(foreColor);
+                    }
+
+                    issueNode.ImageIndex = treeView.ImageList.Images.IndexOfKey(issue.IssueType);
+                }
 
                 node.Nodes.Add(issueNode);
 
-                TreeNodeExSubTasks subtasksNode = new("Subtasks");
-                subtasksNode.ImageIndex = 4;
+                TreeNodeExSubTasks subtasksNode = new("Subtasks")
+                {
+                    ImageIndex = GetSubTaskImageIndex()// 4
+                };
                 issueNode.Nodes.Add(subtasksNode);
 
                 //TreeNode linkedIssuesNode = new TreeNode("LinkedIssues");
-                TreeNodeExLinkedIssues linkedIssuesNode = new("LinkedIssues");
-                linkedIssuesNode.ImageIndex = 2;
+                TreeNodeExLinkedIssues linkedIssuesNode = new("LinkedIssues")
+                {
+                    ImageIndex = 2
+                };
                 issueNode.Nodes.Add(linkedIssuesNode);
 
 
@@ -403,7 +404,7 @@ namespace UserStoryGenerator.View
                         TriStateTreeView.TreeNodeEx? newNodeSub = new(subTask)
                         {
                             ToolTipText = subTask.IssueType,
-                            ImageIndex = 4,
+                            ImageIndex = GetSubTaskImageIndex(),//4
                         };
                         subtasksNode.Nodes.Add(newNodeSub);
                     }
@@ -417,37 +418,21 @@ namespace UserStoryGenerator.View
                 //
             }
         }
-        private void UpdateSelectedIssues(IssueCollector issueCollector)
+
+        private int GetSubTaskImageIndex()
         {
-            groupBoxExSelectedIssues.Value = issueCollector.Total.ToString();
-            groupBoxExSelectedStories.Value = issueCollector.Stories.Count.ToString();
-            groupBoxExSelectedTasks.Value = issueCollector.Tasks.Count.ToString();
-            groupBoxExSelectedTests.Value = issueCollector.Tests.Count.ToString();
-            groupBoxExSelectedBugs.Value = issueCollector.Bugs.Count.ToString();
-            groupBoxExSelectedSubTasks.Value = issueCollector.SubTasks.Count.ToString();
+            if( model.Settings == null ) throw new NullReferenceException(nameof(model.Settings));
+            if( model.Settings.JiraIssueTypes == null ) throw new NullReferenceException(nameof(model.Settings.JiraIssueTypes));
 
-            if( Convert.ToInt16(this.groupBoxExSelectedIssues.Value) > 250 )
-                groupBoxExSelectedIssues.ForeColor = Color.Red;
-            else
-                groupBoxExSelectedIssues.ForeColor = SystemColors.ControlText;
+            IEnumerable<KeyValuePair<string, Settings.JiraIssue>> any = model.Settings.JiraIssueTypes.Where(type => type.Value.Order == 2);
+            if( !any.Any() ) throw new NullReferenceException("subTaskIssueType is missing");
+            if( any.Count() > 1 ) throw new NullReferenceException("more than 1 subTaskIssueType");
 
-        }
-        private static List<Model.IssueData.SubTask> GetAllSubTasks(List<Model.IssueData.Issue> issues)
-        {
-            List<Model.IssueData.SubTask> list = [];
-            if( issues != null )
-            {
-                foreach( var issue in issues )
-                {
-                    if( issue.Subtasks != null )
-                        list.AddRange(issue.Subtasks);
+            Settings.JiraIssue first = any.First().Value;
+            if( first.IssueType == null ) throw new NullReferenceException("first.IssueType");
 
-                    if( issue.LinkedIssues != null )
-                        list.AddRange(GetAllSubTasks(issue.LinkedIssues));
+            return treeView.ImageList.Images.IndexOfKey(first.IssueType);
 
-                }
-            }
-            return list;
         }
 
         private void ButtonSave_Click(object sender, EventArgs e)
@@ -499,8 +484,6 @@ namespace UserStoryGenerator.View
                 //
             }
         }
-
-
 
         private async void ButtonProcessStories_ClickAsync(object sender, EventArgs e)//async
         {
@@ -599,7 +582,6 @@ namespace UserStoryGenerator.View
 
             }
         }
-
         private void SaveData()
         {
             List<string> storySummaries = treeView.GetStorySummaries();
@@ -619,8 +601,7 @@ namespace UserStoryGenerator.View
 
         private void SaveStoriesAsCSVToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            //bool proceed = true;
-            if( Convert.ToInt16(this.groupBoxExSelectedIssues.Value) > 250 )
+            if( this.flowLayoutPanelSelected.Total > 250 )
             {
                 DialogResult dialogResult = MessageBox.Show(
                     "You need to be an administrator to create more than 250 issues per CSV file.\n\nIf you don't have that permission, when importing the CSV, you will not get a full import.\n\nDo you want to proceed?",
@@ -684,6 +665,8 @@ namespace UserStoryGenerator.View
 
         }
 
+        private const string TREENODEDATA = "TREEVIEWDRAGDROPDATA";
+
         private void TreeView_ItemDrag(object sender, ItemDragEventArgs e)
         {
             if( e.Item is TreeNodeEx node )
@@ -691,19 +674,11 @@ namespace UserStoryGenerator.View
                 DraggableNodeData nodeData = new(node);
                 string jsonNodeData = System.Text.Json.JsonSerializer.Serialize(nodeData);
 
-                //DraggableNodeData nodeData0 = System.Text.Json.JsonSerializer.Deserialize<DraggableNodeData>(jsonNodeData);
-
                 DataObject data = new();
-                data.SetData("YourApp.TreeNodeData", jsonNodeData); // Use a unique custom format string
+                data.SetData(TREENODEDATA, jsonNodeData); // Use a unique custom format string
 
                 ( (TreeView)sender ).DoDragDrop(data, DragDropEffects.Copy);
-
-                /*
-                // DoDragDrop starts the drag operation.
-                // The first argument is the data to be dragged (the TreeNode itself).
-                // The second argument specifies the allowed drag-and-drop effects (e.g., Move, Copy, Link).
-                ( (TreeView)sender ).DoDragDrop(node, DragDropEffects.Copy);
-                */
+                //
             }
         }
 
@@ -711,17 +686,8 @@ namespace UserStoryGenerator.View
         {
             if( e.Data == null ) return;
 
-            if( e.Data.GetDataPresent("YourApp.TreeNodeData") )
+            if( e.Data.GetDataPresent(TREENODEDATA) )
                 e.Effect = DragDropEffects.Copy;
-
-            /*
-            //string[] formats = e.Data.GetFormats();
-            if( e.Data.GetDataPresent(typeof(TreeNodeEx)) )
-            {
-                // If it's a TreeNode, allow a 'Move' effect.
-                e.Effect = DragDropEffects.Copy;
-            }
-            */
 
         }
 
@@ -729,12 +695,12 @@ namespace UserStoryGenerator.View
         {
             if( e.Data == null ) return;
 
-            if( e.Data.GetDataPresent("YourApp.TreeNodeData") )
+            if( e.Data.GetDataPresent(TREENODEDATA) )
             {
                 try
                 {
                     // Retrieve the serialized data string
-                    string? jsonNodeData = e.Data.GetData("YourApp.TreeNodeData") as string;
+                    string? jsonNodeData = e.Data.GetData(TREENODEDATA) as string;
                     if( !string.IsNullOrEmpty(jsonNodeData) )
                     {
                         // Deserialize it back into your DraggableNodeData object
@@ -750,6 +716,7 @@ namespace UserStoryGenerator.View
 
                                 var root = this.treeView.Nodes[0];
                                 root.Nodes.Add(droppedNode);
+                                droppedNode.Checked = true;
                             }
                         }
 
@@ -764,35 +731,6 @@ namespace UserStoryGenerator.View
                 }
             }
 
-            /*
-            var fff = e.Data.GetData(typeof(TreeNodeEx));
-
-            if( e.Data.GetDataPresent(typeof(TreeNodeEx)) )
-            {
-                TreeNodeEx droppedNode = (TreeNodeEx)e.Data.GetData(typeof(TreeNodeEx));
-
-            again:
-                if( droppedNode != null )
-                {
-                    var root = this.treeView.Nodes[0];
-                    //root.Nodes.Add(droppedNode);
-                }
-
-                //goto again;
-
-            }
-            */
-
-            //if( e.Data.GetDataPresent(DataFormats.Text) )
-            //{
-            //    // If it's text, allow a Copy operation (or Move, Link, etc.)
-            //    e.Effect = DragDropEffects.Copy;
-            //}
-            //else
-            //{
-            //    // If it's not text, disallow the drop
-            //    e.Effect = DragDropEffects.None;
-            //}
         }
 
         private void GroupBoxExPRD_DragDrop(object sender, DragEventArgs e)
