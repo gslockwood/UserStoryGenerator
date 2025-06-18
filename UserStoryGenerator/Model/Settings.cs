@@ -25,16 +25,13 @@
             public int Order { get; set; }
 
         }
-    }
 
-    //public class JiraIssueTypes1
-    //{
-    //    //public const String EPIC = "Epic";
-    //    public const String STORY = "Story";
-    //    public const String TASK = "Task";
-    //    public const String TEST = "Test";
-    //    public const String BUG = "Bug";
-    //    //public const String SUBTASK = "Sub-task";
-    //}
+        public Settings()
+        {
+            JiraIssueTypes = [];
+            JiraIssueTypes.Add("Epic", new JiraIssue() { IssueType = "Epic", Order = 0 });
+            JiraIssueTypes.Add("Sub-task", new JiraIssue() { IssueType = "Sub-task", Order = 2 });
+        }
+    }
 
 }

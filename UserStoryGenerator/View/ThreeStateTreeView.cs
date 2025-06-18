@@ -184,19 +184,22 @@ namespace UserStoryGenerator.View
 
         //public Dictionary<string, Settings.JiraIssue>? JiraIssueTypes { get; internal set; }
 
-        string? subTaskIssueType = null;
-        public Dictionary<string, Settings.JiraIssue> jiraIssueTypes;
-        public Dictionary<string, Settings.JiraIssue> JiraIssueTypes
+        //string? subTaskIssueType = null;
+        public Dictionary<string, Settings.JiraIssue>? jiraIssueTypes;
+        public Dictionary<string, Settings.JiraIssue>? JiraIssueTypes
         {
             get { return jiraIssueTypes; }
             internal set
             {
                 jiraIssueTypes = value;
+
+                if( jiraIssueTypes == null ) return;
+
                 IEnumerable<KeyValuePair<string, Settings.JiraIssue>> any = jiraIssueTypes.Where(type => type.Value.Order == 2);
                 if( !any.Any() ) throw new NullReferenceException("subTaskIssueType is missing");
                 if( any.Count() > 1 ) throw new NullReferenceException("more than 1 subTaskIssueType");
 
-                subTaskIssueType = any.First().Value.IssueType;
+                //subTaskIssueType = any.First().Value.IssueType;
 
             }
         }

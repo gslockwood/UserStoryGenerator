@@ -30,14 +30,19 @@
         {
             tableLayoutPanelMain = new TableLayoutPanel();
             tableLayoutPanelForm = new TableLayoutPanel();
-            groupBoxExGeminiKey = new GroupBoxEx();
-            groupBoxProjects = new GroupBox();
-            listViewControl = new ListViewControl();
             tabControl = new TabControl();
             tabPageUserStories = new TabPage();
             aiCoachingUserControlUserStories = new AICoachingUserControl();
             tabPageAllIssues = new TabPage();
             aiCoachingUserControlAllIssues = new AICoachingUserControl();
+            tabPageIssueProjectDefinition = new TabPage();
+            tableLayoutPanel = new TableLayoutPanel();
+            groupBoxProjects = new GroupBox();
+            listViewControl = new ListViewControl();
+            groupBoxIssues = new GroupBox();
+            flowLayoutPanelIssues = new StretchedFlowLayoutPanel();
+            tabPageMisc = new TabPage();
+            groupBoxExGeminiKey = new GroupBoxEx();
             flowLayoutPanelButtons = new FlowLayoutPanel();
             buttonClose = new Button();
             buttonUse = new Button();
@@ -49,10 +54,14 @@
             saveasToolStripMenuItem = new ToolStripMenuItem();
             tableLayoutPanelMain.SuspendLayout();
             tableLayoutPanelForm.SuspendLayout();
-            groupBoxProjects.SuspendLayout();
             tabControl.SuspendLayout();
             tabPageUserStories.SuspendLayout();
             tabPageAllIssues.SuspendLayout();
+            tabPageIssueProjectDefinition.SuspendLayout();
+            tableLayoutPanel.SuspendLayout();
+            groupBoxProjects.SuspendLayout();
+            groupBoxIssues.SuspendLayout();
+            tabPageMisc.SuspendLayout();
             flowLayoutPanelButtons.SuspendLayout();
             menuStrip.SuspendLayout();
             SuspendLayout();
@@ -77,67 +86,28 @@
             // 
             tableLayoutPanelForm.ColumnCount = 1;
             tableLayoutPanelForm.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
-            tableLayoutPanelForm.Controls.Add(groupBoxExGeminiKey, 0, 0);
-            tableLayoutPanelForm.Controls.Add(groupBoxProjects, 0, 2);
-            tableLayoutPanelForm.Controls.Add(tabControl, 0, 1);
+            tableLayoutPanelForm.Controls.Add(tabControl, 0, 0);
             tableLayoutPanelForm.Dock = DockStyle.Fill;
             tableLayoutPanelForm.Location = new Point(3, 4);
             tableLayoutPanelForm.Margin = new Padding(3, 4, 3, 4);
             tableLayoutPanelForm.Name = "tableLayoutPanelForm";
-            tableLayoutPanelForm.RowCount = 3;
-            tableLayoutPanelForm.RowStyles.Add(new RowStyle(SizeType.Absolute, 83F));
+            tableLayoutPanelForm.RowCount = 1;
             tableLayoutPanelForm.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
-            tableLayoutPanelForm.RowStyles.Add(new RowStyle(SizeType.Absolute, 250F));
-            tableLayoutPanelForm.RowStyles.Add(new RowStyle(SizeType.Absolute, 20F));
             tableLayoutPanelForm.RowStyles.Add(new RowStyle(SizeType.Absolute, 20F));
             tableLayoutPanelForm.Size = new Size(1242, 1096);
             tableLayoutPanelForm.TabIndex = 0;
-            // 
-            // groupBoxExGeminiKey
-            // 
-            groupBoxExGeminiKey.CaptionText = "GeminiKey";
-            groupBoxExGeminiKey.Dock = DockStyle.Fill;
-            groupBoxExGeminiKey.Location = new Point(3, 4);
-            groupBoxExGeminiKey.Margin = new Padding(3, 4, 3, 4);
-            groupBoxExGeminiKey.Multiline = false;
-            groupBoxExGeminiKey.Name = "groupBoxExGeminiKey";
-            groupBoxExGeminiKey.PlaceholderText = "";
-            groupBoxExGeminiKey.ReadOnly = false;
-            groupBoxExGeminiKey.Size = new Size(1236, 75);
-            groupBoxExGeminiKey.TabIndex = 2;
-            groupBoxExGeminiKey.TextAlign = HorizontalAlignment.Left;
-            groupBoxExGeminiKey.TextBoxForeColor = SystemColors.WindowText;
-            groupBoxExGeminiKey.UseSystemPasswordChar = false;
-            groupBoxExGeminiKey.Value = "";
-            // 
-            // groupBoxProjects
-            // 
-            groupBoxProjects.Controls.Add(listViewControl);
-            groupBoxProjects.Dock = DockStyle.Fill;
-            groupBoxProjects.Location = new Point(3, 849);
-            groupBoxProjects.Name = "groupBoxProjects";
-            groupBoxProjects.Size = new Size(1236, 244);
-            groupBoxProjects.TabIndex = 6;
-            groupBoxProjects.TabStop = false;
-            groupBoxProjects.Text = "Jira Projects";
-            // 
-            // listViewControl
-            // 
-            listViewControl.Dock = DockStyle.Fill;
-            listViewControl.Location = new Point(3, 23);
-            listViewControl.Name = "listViewControl";
-            listViewControl.Size = new Size(1230, 218);
-            listViewControl.TabIndex = 0;
             // 
             // tabControl
             // 
             tabControl.Controls.Add(tabPageUserStories);
             tabControl.Controls.Add(tabPageAllIssues);
+            tabControl.Controls.Add(tabPageIssueProjectDefinition);
+            tabControl.Controls.Add(tabPageMisc);
             tabControl.Dock = DockStyle.Fill;
-            tabControl.Location = new Point(3, 86);
+            tabControl.Location = new Point(3, 3);
             tabControl.Name = "tabControl";
             tabControl.SelectedIndex = 0;
-            tabControl.Size = new Size(1236, 757);
+            tabControl.Size = new Size(1236, 1090);
             tabControl.TabIndex = 7;
             // 
             // tabPageUserStories
@@ -146,7 +116,7 @@
             tabPageUserStories.Location = new Point(4, 29);
             tabPageUserStories.Name = "tabPageUserStories";
             tabPageUserStories.Padding = new Padding(3);
-            tabPageUserStories.Size = new Size(1228, 724);
+            tabPageUserStories.Size = new Size(1228, 1057);
             tabPageUserStories.TabIndex = 0;
             tabPageUserStories.Text = "User Stories";
             tabPageUserStories.UseVisualStyleBackColor = true;
@@ -159,7 +129,7 @@
             aiCoachingUserControlUserStories.Margin = new Padding(3, 4, 3, 4);
             aiCoachingUserControlUserStories.Name = "aiCoachingUserControlUserStories";
             aiCoachingUserControlUserStories.QATestInstructions = "";
-            aiCoachingUserControlUserStories.Size = new Size(1222, 718);
+            aiCoachingUserControlUserStories.Size = new Size(1222, 1051);
             aiCoachingUserControlUserStories.SubTaskInstructions = "";
             aiCoachingUserControlUserStories.TabIndex = 0;
             // 
@@ -169,7 +139,7 @@
             tabPageAllIssues.Location = new Point(4, 24);
             tabPageAllIssues.Name = "tabPageAllIssues";
             tabPageAllIssues.Padding = new Padding(3);
-            tabPageAllIssues.Size = new Size(1228, 729);
+            tabPageAllIssues.Size = new Size(1228, 1062);
             tabPageAllIssues.TabIndex = 1;
             tabPageAllIssues.Text = "All Issues";
             tabPageAllIssues.UseVisualStyleBackColor = true;
@@ -182,9 +152,103 @@
             aiCoachingUserControlAllIssues.Margin = new Padding(3, 4, 3, 4);
             aiCoachingUserControlAllIssues.Name = "aiCoachingUserControlAllIssues";
             aiCoachingUserControlAllIssues.QATestInstructions = "";
-            aiCoachingUserControlAllIssues.Size = new Size(1222, 723);
+            aiCoachingUserControlAllIssues.Size = new Size(1222, 1056);
             aiCoachingUserControlAllIssues.SubTaskInstructions = "";
             aiCoachingUserControlAllIssues.TabIndex = 0;
+            // 
+            // tabPageIssueProjectDefinition
+            // 
+            tabPageIssueProjectDefinition.Controls.Add(tableLayoutPanel);
+            tabPageIssueProjectDefinition.Location = new Point(4, 29);
+            tabPageIssueProjectDefinition.Name = "tabPageIssueProjectDefinition";
+            tabPageIssueProjectDefinition.Size = new Size(1228, 1057);
+            tabPageIssueProjectDefinition.TabIndex = 2;
+            tabPageIssueProjectDefinition.Text = "Issue Project Definition";
+            tabPageIssueProjectDefinition.UseVisualStyleBackColor = true;
+            // 
+            // tableLayoutPanel
+            // 
+            tableLayoutPanel.ColumnCount = 1;
+            tableLayoutPanel.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
+            tableLayoutPanel.Controls.Add(groupBoxProjects, 0, 1);
+            tableLayoutPanel.Controls.Add(groupBoxIssues, 0, 0);
+            tableLayoutPanel.Dock = DockStyle.Fill;
+            tableLayoutPanel.Location = new Point(0, 0);
+            tableLayoutPanel.Name = "tableLayoutPanel";
+            tableLayoutPanel.RowCount = 2;
+            tableLayoutPanel.RowStyles.Add(new RowStyle(SizeType.Percent, 64.61684F));
+            tableLayoutPanel.RowStyles.Add(new RowStyle(SizeType.Percent, 35.38316F));
+            tableLayoutPanel.RowStyles.Add(new RowStyle(SizeType.Absolute, 20F));
+            tableLayoutPanel.Size = new Size(1228, 1057);
+            tableLayoutPanel.TabIndex = 1;
+            // 
+            // groupBoxProjects
+            // 
+            groupBoxProjects.Controls.Add(listViewControl);
+            groupBoxProjects.Dock = DockStyle.Fill;
+            groupBoxProjects.Location = new Point(3, 686);
+            groupBoxProjects.Name = "groupBoxProjects";
+            groupBoxProjects.Size = new Size(1222, 368);
+            groupBoxProjects.TabIndex = 7;
+            groupBoxProjects.TabStop = false;
+            groupBoxProjects.Text = "Jira Projects";
+            // 
+            // listViewControl
+            // 
+            listViewControl.Dock = DockStyle.Fill;
+            listViewControl.Location = new Point(3, 23);
+            listViewControl.Name = "listViewControl";
+            listViewControl.Size = new Size(1216, 342);
+            listViewControl.TabIndex = 0;
+            // 
+            // groupBoxIssues
+            // 
+            groupBoxIssues.Controls.Add(flowLayoutPanelIssues);
+            groupBoxIssues.Dock = DockStyle.Fill;
+            groupBoxIssues.Location = new Point(3, 3);
+            groupBoxIssues.Name = "groupBoxIssues";
+            groupBoxIssues.Size = new Size(1222, 677);
+            groupBoxIssues.TabIndex = 8;
+            groupBoxIssues.TabStop = false;
+            groupBoxIssues.Text = "Issues Type Definitions";
+            // 
+            // flowLayoutPanelIssues
+            // 
+            flowLayoutPanelIssues.AutoScroll = true;
+            flowLayoutPanelIssues.Dock = DockStyle.Fill;
+            flowLayoutPanelIssues.FlowDirection = FlowDirection.TopDown;
+            flowLayoutPanelIssues.Location = new Point(3, 23);
+            flowLayoutPanelIssues.Name = "flowLayoutPanelIssues";
+            flowLayoutPanelIssues.Size = new Size(1216, 651);
+            flowLayoutPanelIssues.TabIndex = 9;
+            flowLayoutPanelIssues.WrapContents = false;
+            // 
+            // tabPageMisc
+            // 
+            tabPageMisc.Controls.Add(groupBoxExGeminiKey);
+            tabPageMisc.Location = new Point(4, 24);
+            tabPageMisc.Name = "tabPageMisc";
+            tabPageMisc.Size = new Size(1228, 1062);
+            tabPageMisc.TabIndex = 3;
+            tabPageMisc.Text = "Misc";
+            tabPageMisc.UseVisualStyleBackColor = true;
+            // 
+            // groupBoxExGeminiKey
+            // 
+            groupBoxExGeminiKey.CaptionText = "GeminiKey";
+            groupBoxExGeminiKey.Dock = DockStyle.Fill;
+            groupBoxExGeminiKey.Location = new Point(0, 0);
+            groupBoxExGeminiKey.Margin = new Padding(3, 4, 3, 4);
+            groupBoxExGeminiKey.Multiline = false;
+            groupBoxExGeminiKey.Name = "groupBoxExGeminiKey";
+            groupBoxExGeminiKey.PlaceholderText = "";
+            groupBoxExGeminiKey.ReadOnly = false;
+            groupBoxExGeminiKey.Size = new Size(1228, 1062);
+            groupBoxExGeminiKey.TabIndex = 3;
+            groupBoxExGeminiKey.TextAlign = HorizontalAlignment.Left;
+            groupBoxExGeminiKey.TextBoxForeColor = SystemColors.WindowText;
+            groupBoxExGeminiKey.UseSystemPasswordChar = false;
+            groupBoxExGeminiKey.Value = "";
             // 
             // flowLayoutPanelButtons
             // 
@@ -285,10 +349,14 @@
             Text = "Settings Form";
             tableLayoutPanelMain.ResumeLayout(false);
             tableLayoutPanelForm.ResumeLayout(false);
-            groupBoxProjects.ResumeLayout(false);
             tabControl.ResumeLayout(false);
             tabPageUserStories.ResumeLayout(false);
             tabPageAllIssues.ResumeLayout(false);
+            tabPageIssueProjectDefinition.ResumeLayout(false);
+            tableLayoutPanel.ResumeLayout(false);
+            groupBoxProjects.ResumeLayout(false);
+            groupBoxIssues.ResumeLayout(false);
+            tabPageMisc.ResumeLayout(false);
             flowLayoutPanelButtons.ResumeLayout(false);
             menuStrip.ResumeLayout(false);
             menuStrip.PerformLayout();
@@ -300,13 +368,10 @@
 
         private TableLayoutPanel tableLayoutPanelMain;
         private TableLayoutPanel tableLayoutPanelForm;
-        private GroupBoxEx groupBoxExGeminiKey;
         private FlowLayoutPanel flowLayoutPanelButtons;
         private Button buttonClose;
         private Button buttonUse;
         private Button buttonSave;
-        private GroupBox groupBoxProjects;
-        private ListViewControl listViewControl;
         private TabControl tabControl;
         private TabPage tabPageUserStories;
         private TabPage tabPageAllIssues;
@@ -317,5 +382,13 @@
         private ToolStripMenuItem openToolStripMenuItem;
         private ToolStripMenuItem saveToolStripMenuItem;
         private ToolStripMenuItem saveasToolStripMenuItem;
+        private TabPage tabPageIssueProjectDefinition;
+        private TabPage tabPageMisc;
+        private GroupBoxEx groupBoxExGeminiKey;
+        private TableLayoutPanel tableLayoutPanel;
+        private GroupBox groupBoxProjects;
+        private ListViewControl listViewControl;
+        private GroupBox groupBoxIssues;
+        private StretchedFlowLayoutPanel flowLayoutPanelIssues;
     }
 }

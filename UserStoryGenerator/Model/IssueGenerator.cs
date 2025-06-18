@@ -25,7 +25,7 @@ namespace UserStoryGenerator.Model
         protected readonly bool AddQATests;
         protected readonly bool AddSubTasks;
         protected readonly int maxStories;
-
+        private readonly Dictionary<string, Settings.JiraIssue>? jiraIssueTypes;
         protected readonly StringBuilder sbCoaching = new();
         protected String targetPrepend = "";
 
@@ -42,6 +42,7 @@ namespace UserStoryGenerator.Model
             this.AddQATests = args.AddQATests;
             this.AddSubTasks = args.AddSubTasks;
             this.maxStories = args.MaxStories;
+            this.jiraIssueTypes = args.JiraIssueTypes;
 
             gfsGeminiClientHost = new(key, AIType.GenerativeAI);
             gfsGeminiClientHost.LookupCompleted += LookupCompleted;
@@ -132,8 +133,31 @@ namespace UserStoryGenerator.Model
 
             sbCoaching.AppendLine("");
 
-            if( this.AICoaching != null )
-                sbCoaching.AppendLine(this.AICoaching.IssueInstructions);
+            if( this.AICoaching != null && AICoaching.IssueInstructions != null && jiraIssueTypes != null )
+            {
+                string issueInstructions = AICoaching.IssueInstructions;
+
+                if( issueInstructions.Contains("ISSUETYPEDEFINITIONS") )
+                {
+                    StringBuilder issueTypeDefinitions = new();
+
+                    foreach( Settings.JiraIssue jiraIssue in jiraIssueTypes.Values )
+                    {
+                        if( jiraIssue.Order == 0 ) continue;
+
+                        issueTypeDefinitions.Append($"\"{jiraIssue.IssueType}\"" + ",");
+                    }
+
+                    issueInstructions = issueInstructions.Replace("ISSUETYPEDEFINITIONS", issueTypeDefinitions.ToString().TrimEnd(','));
+                    //
+                }
+                ////\"Story\",\"Task\",\"Test\",\"Bug\"
+
+                sbCoaching.AppendLine(issueInstructions);
+
+                //sbCoaching.AppendLine(this.AICoaching.IssueInstructions);
+                //
+            }
 
             // add any QATests or Subtasks if instructed
             AddAdditionalInstructions();
@@ -210,7 +234,7 @@ namespace UserStoryGenerator.Model
         public bool AddQATests { get; internal set; }
         public bool AddSubTasks { get; internal set; }
         public int MaxStories { get; internal set; }
-
+        public Dictionary<string, Settings.JiraIssue>? JiraIssueTypes { get; internal set; }
     }
 
 

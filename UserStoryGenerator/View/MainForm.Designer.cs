@@ -292,12 +292,12 @@ namespace UserStoryGenerator.View
             treeView.AllowDrop = true;
             treeView.Dock = DockStyle.Fill;
             treeView.ImageIndex = 0;
-            treeView.Location = new Point(3, 115);
+            treeView.Location = new Point(3, 122);
             treeView.Margin = new Padding(3, 4, 3, 4);
             treeView.Name = "treeView";
             treeView.SelectedImageIndex = 0;
             treeView.ShowNodeToolTips = true;
-            treeView.Size = new Size(1264, 677);
+            treeView.Size = new Size(1300, 670);
             treeView.TabIndex = 2;
             treeView.TriStateStyleProperty = TriStateTreeView.TriStateStyles.Standard;
             treeView.ItemDrag +=  TreeView_ItemDrag ;
@@ -311,7 +311,7 @@ namespace UserStoryGenerator.View
             panelResults.Location = new Point(785, 4);
             panelResults.Margin = new Padding(3, 4, 3, 4);
             panelResults.Name = "panelResults";
-            panelResults.Size = new Size(1270, 871);
+            panelResults.Size = new Size(1306, 871);
             panelResults.TabIndex = 2;
             // 
             // tableLayoutPanelResults
@@ -327,10 +327,10 @@ namespace UserStoryGenerator.View
             tableLayoutPanelResults.Name = "tableLayoutPanelResults";
             tableLayoutPanelResults.RowCount = 4;
             tableLayoutPanelResults.RowStyles.Add(new RowStyle(SizeType.Absolute, 87F));
-            tableLayoutPanelResults.RowStyles.Add(new RowStyle(SizeType.Absolute, 24F));
+            tableLayoutPanelResults.RowStyles.Add(new RowStyle(SizeType.Absolute, 31F));
             tableLayoutPanelResults.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
             tableLayoutPanelResults.RowStyles.Add(new RowStyle(SizeType.Absolute, 75F));
-            tableLayoutPanelResults.Size = new Size(1270, 871);
+            tableLayoutPanelResults.Size = new Size(1306, 871);
             tableLayoutPanelResults.TabIndex = 0;
             // 
             // flowLayoutPanelSelected
@@ -338,7 +338,7 @@ namespace UserStoryGenerator.View
             flowLayoutPanelSelected.Dock = DockStyle.Fill;
             flowLayoutPanelSelected.Location = new Point(3, 799);
             flowLayoutPanelSelected.Name = "flowLayoutPanelSelected";
-            flowLayoutPanelSelected.Size = new Size(1264, 69);
+            flowLayoutPanelSelected.Size = new Size(1300, 69);
             flowLayoutPanelSelected.TabIndex = 3;
             flowLayoutPanelSelected.WrapContents = false;
             // 
@@ -358,7 +358,7 @@ namespace UserStoryGenerator.View
             tableLayoutPanelResultsTotal.Name = "tableLayoutPanelResultsTotal";
             tableLayoutPanelResultsTotal.RowCount = 1;
             tableLayoutPanelResultsTotal.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
-            tableLayoutPanelResultsTotal.Size = new Size(1264, 81);
+            tableLayoutPanelResultsTotal.Size = new Size(1300, 81);
             tableLayoutPanelResultsTotal.TabIndex = 0;
             // 
             // buttonProcessStories
@@ -410,7 +410,7 @@ namespace UserStoryGenerator.View
             flowLayoutPanelExTotals.Dock = DockStyle.Fill;
             flowLayoutPanelExTotals.Location = new Point(263, 3);
             flowLayoutPanelExTotals.Name = "flowLayoutPanelExTotals";
-            flowLayoutPanelExTotals.Size = new Size(998, 75);
+            flowLayoutPanelExTotals.Size = new Size(1034, 75);
             flowLayoutPanelExTotals.TabIndex = 9;
             flowLayoutPanelExTotals.WrapContents = false;
             // 
@@ -419,7 +419,7 @@ namespace UserStoryGenerator.View
             flowLayoutPanelIssueImages.Dock = DockStyle.Fill;
             flowLayoutPanelIssueImages.Location = new Point(3, 90);
             flowLayoutPanelIssueImages.Name = "flowLayoutPanelIssueImages";
-            flowLayoutPanelIssueImages.Size = new Size(1264, 18);
+            flowLayoutPanelIssueImages.Size = new Size(1300, 25);
             flowLayoutPanelIssueImages.TabIndex = 4;
             flowLayoutPanelIssueImages.WrapContents = false;
             // 
@@ -453,13 +453,13 @@ namespace UserStoryGenerator.View
             flowLayoutPanelMainButtons.Location = new Point(3, 891);
             flowLayoutPanelMainButtons.Margin = new Padding(3, 4, 3, 4);
             flowLayoutPanelMainButtons.Name = "flowLayoutPanelMainButtons";
-            flowLayoutPanelMainButtons.Size = new Size(2058, 35);
+            flowLayoutPanelMainButtons.Size = new Size(2094, 35);
             flowLayoutPanelMainButtons.TabIndex = 3;
             // 
             // buttonSave
             // 
             buttonSave.Enabled = false;
-            buttonSave.Location = new Point(1969, 4);
+            buttonSave.Location = new Point(2005, 4);
             buttonSave.Margin = new Padding(3, 4, 3, 4);
             buttonSave.Name = "buttonSave";
             buttonSave.Size = new Size(86, 31);
@@ -471,7 +471,7 @@ namespace UserStoryGenerator.View
             // 
             // labelStatus
             // 
-            labelStatus.Location = new Point(667, 6);
+            labelStatus.Location = new Point(703, 6);
             labelStatus.Margin = new Padding(3, 6, 3, 3);
             labelStatus.Name = "labelStatus";
             labelStatus.Size = new Size(1296, 26);
@@ -491,7 +491,7 @@ namespace UserStoryGenerator.View
             tableLayoutPanelMainData.Name = "tableLayoutPanelMainData";
             tableLayoutPanelMainData.RowCount = 1;
             tableLayoutPanelMainData.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
-            tableLayoutPanelMainData.Size = new Size(2058, 879);
+            tableLayoutPanelMainData.Size = new Size(2094, 879);
             tableLayoutPanelMainData.TabIndex = 4;
             // 
             // tableLayoutPanelMain
@@ -507,7 +507,7 @@ namespace UserStoryGenerator.View
             tableLayoutPanelMain.RowCount = 2;
             tableLayoutPanelMain.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
             tableLayoutPanelMain.RowStyles.Add(new RowStyle(SizeType.Absolute, 43F));
-            tableLayoutPanelMain.Size = new Size(2064, 930);
+            tableLayoutPanelMain.Size = new Size(2100, 930);
             tableLayoutPanelMain.TabIndex = 5;
             // 
             // menuStrip
@@ -516,7 +516,7 @@ namespace UserStoryGenerator.View
             menuStrip.Location = new Point(0, 0);
             menuStrip.Name = "menuStrip";
             menuStrip.Padding = new Padding(7, 3, 0, 3);
-            menuStrip.Size = new Size(2064, 25);
+            menuStrip.Size = new Size(2100, 25);
             menuStrip.TabIndex = 6;
             menuStrip.Text = "menuStrip1";
             // 

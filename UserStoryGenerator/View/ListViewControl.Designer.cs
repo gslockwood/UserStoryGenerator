@@ -38,9 +38,11 @@
             tableLayoutPanelEdit = new TableLayoutPanel();
             tableLayoutPanelControls = new TableLayoutPanel();
             buttonDelete = new Button();
+            tableLayoutPanelMain = new TableLayoutPanel();
             tableLayoutPanelAdd.SuspendLayout();
             tableLayoutPanelEdit.SuspendLayout();
             tableLayoutPanelControls.SuspendLayout();
+            tableLayoutPanelMain.SuspendLayout();
             SuspendLayout();
             // 
             // txtNewItem
@@ -70,7 +72,7 @@
             listViewItems.Anchor =    AnchorStyles.Top  |  AnchorStyles.Bottom   |  AnchorStyles.Left   |  AnchorStyles.Right ;
             listViewItems.Location = new Point(3, 63);
             listViewItems.Name = "listViewItems";
-            listViewItems.Size = new Size(879, 157);
+            listViewItems.Size = new Size(879, 164);
             listViewItems.TabIndex = 2;
             listViewItems.UseCompatibleStateImageBehavior = false;
             listViewItems.View = System.Windows.Forms.View.List;
@@ -102,11 +104,11 @@
             // 
             // labelError
             // 
-            labelError.Anchor =   AnchorStyles.Top  |  AnchorStyles.Left   |  AnchorStyles.Right ;
+            labelError.Dock = DockStyle.Fill;
             labelError.ForeColor = Color.LightCoral;
-            labelError.Location = new Point(3, 224);
+            labelError.Location = new Point(3, 230);
             labelError.Name = "labelError";
-            labelError.Size = new Size(879, 17);
+            labelError.Size = new Size(879, 20);
             labelError.TabIndex = 5;
             // 
             // tableLayoutPanelAdd
@@ -169,13 +171,28 @@
             buttonDelete.UseVisualStyleBackColor = true;
             buttonDelete.Click +=  buttonDelete_Click ;
             // 
+            // tableLayoutPanelMain
+            // 
+            tableLayoutPanelMain.ColumnCount = 1;
+            tableLayoutPanelMain.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
+            tableLayoutPanelMain.Controls.Add(listViewItems, 0, 1);
+            tableLayoutPanelMain.Controls.Add(labelError, 0, 2);
+            tableLayoutPanelMain.Controls.Add(tableLayoutPanelControls, 0, 0);
+            tableLayoutPanelMain.Dock = DockStyle.Fill;
+            tableLayoutPanelMain.Location = new Point(0, 0);
+            tableLayoutPanelMain.Name = "tableLayoutPanelMain";
+            tableLayoutPanelMain.RowCount = 3;
+            tableLayoutPanelMain.RowStyles.Add(new RowStyle(SizeType.Absolute, 60F));
+            tableLayoutPanelMain.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
+            tableLayoutPanelMain.RowStyles.Add(new RowStyle(SizeType.Absolute, 20F));
+            tableLayoutPanelMain.Size = new Size(885, 250);
+            tableLayoutPanelMain.TabIndex = 10;
+            // 
             // ListViewControl
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            Controls.Add(tableLayoutPanelControls);
-            Controls.Add(labelError);
-            Controls.Add(listViewItems);
+            Controls.Add(tableLayoutPanelMain);
             Name = "ListViewControl";
             Size = new Size(885, 250);
             tableLayoutPanelAdd.ResumeLayout(false);
@@ -183,6 +200,7 @@
             tableLayoutPanelEdit.ResumeLayout(false);
             tableLayoutPanelEdit.PerformLayout();
             tableLayoutPanelControls.ResumeLayout(false);
+            tableLayoutPanelMain.ResumeLayout(false);
             ResumeLayout(false);
         }
 
@@ -199,5 +217,6 @@
         private TableLayoutPanel tableLayoutPanelEdit;
         private TableLayoutPanel tableLayoutPanelControls;
         private Button buttonDelete;
+        private TableLayoutPanel tableLayoutPanelMain;
     }
 }

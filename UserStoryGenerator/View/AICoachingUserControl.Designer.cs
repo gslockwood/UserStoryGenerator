@@ -47,9 +47,9 @@
             tableLayoutPanelForm.Margin = new Padding(3, 4, 3, 4);
             tableLayoutPanelForm.Name = "tableLayoutPanelForm";
             tableLayoutPanelForm.RowCount = 3;
-            tableLayoutPanelForm.RowStyles.Add(new RowStyle(SizeType.Percent, 66.6666641F));
-            tableLayoutPanelForm.RowStyles.Add(new RowStyle(SizeType.Percent, 16.666666F));
-            tableLayoutPanelForm.RowStyles.Add(new RowStyle(SizeType.Percent, 16.666666F));
+            tableLayoutPanelForm.RowStyles.Add(new RowStyle(SizeType.Percent, 62.4999962F));
+            tableLayoutPanelForm.RowStyles.Add(new RowStyle(SizeType.Percent, 18.7500019F));
+            tableLayoutPanelForm.RowStyles.Add(new RowStyle(SizeType.Percent, 18.7500019F));
             tableLayoutPanelForm.Size = new Size(837, 1005);
             tableLayoutPanelForm.TabIndex = 1;
             // 
@@ -57,15 +57,16 @@
             // 
             groupBoxExSubTaskAICoaching.CaptionText = "Sub-task AI Coaching";
             groupBoxExSubTaskAICoaching.Dock = DockStyle.Fill;
-            groupBoxExSubTaskAICoaching.Location = new Point(3, 841);
+            groupBoxExSubTaskAICoaching.Location = new Point(3, 820);
             groupBoxExSubTaskAICoaching.Margin = new Padding(3, 4, 3, 4);
             groupBoxExSubTaskAICoaching.Multiline = true;
             groupBoxExSubTaskAICoaching.Name = "groupBoxExSubTaskAICoaching";
             groupBoxExSubTaskAICoaching.PlaceholderText = "place ai coaching and rules about creating Jira Sub-Task issues";
             groupBoxExSubTaskAICoaching.ReadOnly = false;
-            groupBoxExSubTaskAICoaching.Size = new Size(831, 160);
+            groupBoxExSubTaskAICoaching.Size = new Size(831, 181);
             groupBoxExSubTaskAICoaching.TabIndex = 5;
             groupBoxExSubTaskAICoaching.TextAlign = HorizontalAlignment.Left;
+            groupBoxExSubTaskAICoaching.TextBoxForeColor = SystemColors.WindowText;
             groupBoxExSubTaskAICoaching.UseSystemPasswordChar = false;
             groupBoxExSubTaskAICoaching.Value = "";
             // 
@@ -73,15 +74,16 @@
             // 
             groupBoxExQATestAICoaching.CaptionText = "QA Test AI Coaching";
             groupBoxExQATestAICoaching.Dock = DockStyle.Fill;
-            groupBoxExQATestAICoaching.Location = new Point(3, 674);
+            groupBoxExQATestAICoaching.Location = new Point(3, 632);
             groupBoxExQATestAICoaching.Margin = new Padding(3, 4, 3, 4);
             groupBoxExQATestAICoaching.Multiline = true;
             groupBoxExQATestAICoaching.Name = "groupBoxExQATestAICoaching";
             groupBoxExQATestAICoaching.PlaceholderText = "place ai coaching and rules about creating Jira Testing issues";
             groupBoxExQATestAICoaching.ReadOnly = false;
-            groupBoxExQATestAICoaching.Size = new Size(831, 159);
+            groupBoxExQATestAICoaching.Size = new Size(831, 180);
             groupBoxExQATestAICoaching.TabIndex = 4;
             groupBoxExQATestAICoaching.TextAlign = HorizontalAlignment.Left;
+            groupBoxExQATestAICoaching.TextBoxForeColor = SystemColors.WindowText;
             groupBoxExQATestAICoaching.UseSystemPasswordChar = false;
             groupBoxExQATestAICoaching.Value = "";
             // 
@@ -95,9 +97,10 @@
             groupBoxExGeneralAICoaching.Name = "groupBoxExGeneralAICoaching";
             groupBoxExGeneralAICoaching.PlaceholderText = "place ai coaching and rules about creating Jira user stories";
             groupBoxExGeneralAICoaching.ReadOnly = false;
-            groupBoxExGeneralAICoaching.Size = new Size(831, 662);
+            groupBoxExGeneralAICoaching.Size = new Size(831, 620);
             groupBoxExGeneralAICoaching.TabIndex = 3;
             groupBoxExGeneralAICoaching.TextAlign = HorizontalAlignment.Left;
+            groupBoxExGeneralAICoaching.TextBoxForeColor = SystemColors.WindowText;
             groupBoxExGeneralAICoaching.UseSystemPasswordChar = false;
             groupBoxExGeneralAICoaching.Value = "";
             // 

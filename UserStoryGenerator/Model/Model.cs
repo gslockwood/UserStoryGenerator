@@ -57,8 +57,14 @@ namespace UserStoryGenerator.Model
 
 
                 Settings = new Settings();
+                if( Settings.JiraIssueTypes == null ) throw new NullReferenceException(nameof(Settings.JiraIssueTypes));
+                if( Settings.JiraIssueTypes.Count != 2 ) throw new Exception(nameof(Settings.JiraIssueTypes));
+
                 if( temp != null )
                     Settings = temp;
+
+
+                if( Settings.JiraIssueTypes == null ) throw new NullReferenceException(nameof(Settings.JiraIssueTypes));
 
                 IEnumerable<KeyValuePair<string, Settings.JiraIssue>> any = Settings.JiraIssueTypes.Where(type => type.Value.Order == 2);
                 if( !any.Any() ) throw new NullReferenceException("subTaskIssueType is missing");
@@ -66,7 +72,6 @@ namespace UserStoryGenerator.Model
 
 
                 //this.SaveSettings(); //testing only
-
                 //Tests();
 
             }
@@ -205,7 +210,8 @@ namespace UserStoryGenerator.Model
                 AddQATests = addQATests,
                 AddSubTasks = addSubTasks,
                 AICoaching = Settings.UserStoryCoaching,
-                MaxStories = maxStories
+                MaxStories = maxStories,
+                JiraIssueTypes = Settings.JiraIssueTypes,
             };
 
             IssueGeneratorUserStories? issueGenerator = new(issueGeneratorBaseInputArgs);
@@ -264,7 +270,8 @@ namespace UserStoryGenerator.Model
                     AddQATests = addQATests,
                     AddSubTasks = addSubTasks,
                     AICoaching = Settings.AllIssueCoaching,
-                    MaxStories = maxStories
+                    MaxStories = maxStories,
+                    JiraIssueTypes = Settings.JiraIssueTypes,
                 };
 
                 IssueGeneratorUserStories? issueGenerator = new(issueGeneratorBaseInputArgs);

@@ -6,7 +6,7 @@ namespace UserStoryGenerator.Model
     internal class Converter
     {
         public static long NO_EPIC_HAS_NO_PARENT = -1;
-        public static string SubTaskIssueType { get; private set; }
+        public static string? SubTaskIssueType { get; private set; }
 
         internal static string ToCSV(string? epicText, string? epicIssueType, string subTaskIssueType, TreeSerialization.IssueResults? userStoryResults)
         {

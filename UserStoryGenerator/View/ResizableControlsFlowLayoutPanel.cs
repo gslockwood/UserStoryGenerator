@@ -5,12 +5,13 @@ using static UserStoryGenerator.Model.Settings;
 
 namespace UserStoryGenerator.View
 {
-    public class ResizableGroupBoxFlowLayoutPanelEx : ResizableGroupBoxFlowLayoutPanel
+    public class ResizableGroupBoxFlowLayoutPanelEx : ResizableControlsFlowLayoutPanel
     {
         private readonly GroupBoxEx groupBoxExTotalIssues;
-
+        public int Total { get; internal set; }
         public ResizableGroupBoxFlowLayoutPanelEx()
         {
+            this.FlowDirection = FlowDirection.LeftToRight;
             Settings.JiraIssue jiraIssue = new()
             {
                 IssueType = "Total",
@@ -19,7 +20,39 @@ namespace UserStoryGenerator.View
             groupBoxExTotalIssues = AddResizableGroupBox(jiraIssue);
         }
 
-        public int Total { get; internal set; }
+
+        /// <summary>
+        /// Adds a new GroupBoxEx with a specified title. Its width will be adjusted automatically.
+        /// </summary>
+        /// <param name="title">The title for the GroupBoxEx.</param>
+        /// <returns>The newly created GroupBoxEx.</returns>
+        public GroupBoxEx AddResizableGroupBox(Settings.JiraIssue jiraIssue)
+        {
+            if( jiraIssue.IssueType == null ) throw new NullReferenceException(nameof(jiraIssue.IssueType));
+
+            GroupBoxEx newGroupBoxEx = new()
+            {
+                CaptionText = jiraIssue.IssueType,
+                Tag = jiraIssue,
+                Dock = DockStyle.Fill,
+                Location = new Point(143, 3),
+                Multiline = false,
+                Name = "groupBoxEx" + jiraIssue.IssueType,
+                PlaceholderText = "",
+                ReadOnly = true,
+                Size = new Size(114, 63),
+                TabIndex = 0,
+                TextAlign = HorizontalAlignment.Right,
+                TextBoxForeColor = SystemColors.WindowText,
+                UseSystemPasswordChar = false
+            };
+
+            _controls.Add(newGroupBoxEx);
+            this.Controls.Add(newGroupBoxEx);
+            this.PerformLayout(); // Trigger a layout recalculation to size the new control
+            return newGroupBoxEx;
+        }
+
 
         internal int SetValues(TriStateTreeView.IssueCollector issueCollector)
         {
@@ -90,11 +123,11 @@ namespace UserStoryGenerator.View
         }
     }
 
-    public class ResizableGroupBoxFlowLayoutPanel : FlowLayoutPanel, IReset
+    public class ResizableControlsFlowLayoutPanel : FlowLayoutPanel, IReset
     {
-        private readonly List<GroupBoxEx> _groupBoxes = new();
+        protected readonly List<Control> _controls = [];
 
-        public ResizableGroupBoxFlowLayoutPanel()
+        public ResizableControlsFlowLayoutPanel()
         {
             this.FlowDirection = FlowDirection.LeftToRight; // Arrange horizontally
             this.WrapContents = false; // Important: ensures controls stay on a single line
@@ -102,35 +135,7 @@ namespace UserStoryGenerator.View
 
         }
 
-        /// <summary>
-        /// Adds a new GroupBoxEx with a specified title. Its width will be adjusted automatically.
-        /// </summary>
-        /// <param name="title">The title for the GroupBoxEx.</param>
-        /// <returns>The newly created GroupBoxEx.</returns>
-        public GroupBoxEx AddResizableGroupBox(Settings.JiraIssue jiraIssue)
-        {
-            GroupBoxEx newGroupBoxEx = new()
-            {
-                CaptionText = jiraIssue.IssueType,
-                Tag = jiraIssue,
-                Dock = DockStyle.Fill,
-                Location = new Point(143, 3),
-                Multiline = false,
-                Name = "groupBoxEx" + jiraIssue.IssueType,
-                PlaceholderText = "",
-                ReadOnly = true,
-                Size = new Size(114, 63),
-                TabIndex = 0,
-                TextAlign = HorizontalAlignment.Right,
-                TextBoxForeColor = SystemColors.WindowText,
-                UseSystemPasswordChar = false
-            };
 
-            _groupBoxes.Add(newGroupBoxEx);
-            this.Controls.Add(newGroupBoxEx);
-            this.PerformLayout(); // Trigger a layout recalculation to size the new control
-            return newGroupBoxEx;
-        }
 
         /// <summary>
         /// Removes a GroupBoxEx from the panel.
@@ -138,9 +143,9 @@ namespace UserStoryGenerator.View
         /// <param name="groupBoxEx">The GroupBoxEx to remove.</param>
         public void RemoveResizableGroupBox(GroupBoxEx groupBoxEx)
         {
-            if( _groupBoxes.Contains(groupBoxEx) )
+            //if( _groupBoxes.Contains(groupBoxEx) )
             {
-                _groupBoxes.Remove(groupBoxEx);
+                _controls.Remove(groupBoxEx);
                 this.Controls.Remove(groupBoxEx);
                 this.PerformLayout(); // Trigger a layout recalculation after removal
             }
@@ -150,11 +155,11 @@ namespace UserStoryGenerator.View
         {
             base.OnLayout(levent); // Call the base implementation first
 
-            if( _groupBoxes.Any() )
+            if( _controls.Count != 0 )
             {
                 // Calculate the total horizontal margin consumed by all GroupBoxEx controls
                 // This is the sum of Left+Right margins for each GroupBoxEx.
-                int totalHorizontalMargin = _groupBoxes.Sum(gb => gb.Margin.Left + gb.Margin.Right);
+                int totalHorizontalMargin = _controls.Sum(gb => gb.Margin.Left + gb.Margin.Right);
 
                 // Calculate the total available width inside the FlowLayoutPanel's display area,
                 // after accounting for the margins.
@@ -167,13 +172,13 @@ namespace UserStoryGenerator.View
                 // Calculate the width for each individual GroupBoxEx.
                 // If there are no GroupBoxEx controls, groupBoxWidth will remain 0.
                 int groupBoxWidth = 0;
-                if( _groupBoxes.Count > 0 )
+                if( _controls.Count > 0 )
                 {
-                    groupBoxWidth = availableWidth / _groupBoxes.Count;
+                    groupBoxWidth = availableWidth / _controls.Count;
                 }
 
                 // Iterate through each GroupBoxEx and set its dimensions
-                foreach( GroupBoxEx gb in _groupBoxes )
+                foreach( Control gb in _controls )
                 {
                     // Assign the calculated width
                     gb.Width = groupBoxWidth;

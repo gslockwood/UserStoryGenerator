@@ -52,7 +52,15 @@ namespace UserStoryGenerator.View
 
                     flowLayoutPanelSelected.AddResizableGroupBox(jiraIssueType.Value);
                     flowLayoutPanelExTotals.AddResizableGroupBox(jiraIssueType.Value);
+                }
+                else
+                {
+                    image = Properties.Resources.Light;
+                    treeView.ImageList.Images.Add(jiraIssueType.Value.IssueType, image);
+                    flowLayoutPanelIssueImages.AddImage(jiraIssueType.Value.IssueType, image);
 
+                    flowLayoutPanelSelected.AddResizableGroupBox(jiraIssueType.Value);
+                    flowLayoutPanelExTotals.AddResizableGroupBox(jiraIssueType.Value);
                 }
             }
 
@@ -123,8 +131,9 @@ namespace UserStoryGenerator.View
             groupBoxExProductFeature.Value = "Feature X";
 
             groupBoxExPRD.Value = model.CreateUserStories();
-
 #endif
+
+            //PreferencesToolStripMenuItem_Click(this, new EventArgs());
 
         }
 

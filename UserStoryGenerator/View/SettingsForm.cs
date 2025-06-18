@@ -21,7 +21,7 @@ namespace UserStoryGenerator.View
                 FileInfo fileInfo = new(currentFileName);
                 this.Text = $"{Tag}{fileInfo.Name}";
             }
-        } //= 
+        }
 
         public SettingsForm(Settings settings)// = null
         {
@@ -49,19 +49,23 @@ namespace UserStoryGenerator.View
         {
             base.OnLoad(e);
             CenterToParent();
+
+            tabControl.SelectedIndex = 2;
+
         }
 
         private void ButtonUse_Click(object sender, EventArgs e)
         {
-            FillSettingsFromUI();
+            GetSettingsFromUI();
 
             ResetSettingProjects?.Invoke();
 
             //Dispose();
+            Hide();
 
         }
 
-        private void FillSettingsFromUI()
+        private void GetSettingsFromUI()
         {
             settings.Key = groupBoxExGeminiKey.Value;
 
@@ -76,8 +80,11 @@ namespace UserStoryGenerator.View
             settings.AllIssueCoaching.IssueInstructions = aiCoachingUserControlAllIssues.IssueInstructions;
             settings.AllIssueCoaching.QATestInstructions = aiCoachingUserControlAllIssues.QATestInstructions;
             settings.AllIssueCoaching.SubTaskInstructions = aiCoachingUserControlAllIssues.SubTaskInstructions;
+
             settings.Projects = this.listViewControl.GetItems();
 
+            settings.JiraIssueTypes = flowLayoutPanelIssues.GetJiraIssueTypes();
+            //
         }
 
         private void SetSettingsToUI(Settings settings)
@@ -92,9 +99,6 @@ namespace UserStoryGenerator.View
                 groupBoxExGeminiKey.UseSystemPasswordChar = false;
                 if( settings.Key != null )
                     groupBoxExGeminiKey.PlaceholderText = settings.Key;
-
-                if( settings.Projects != null )
-                    this.listViewControl.SetItems(settings.Projects);
             }
             else
             {
@@ -110,9 +114,14 @@ namespace UserStoryGenerator.View
                 aiCoachingUserControlAllIssues.QATestInstructions = settings.AllIssueCoaching.QATestInstructions;
                 aiCoachingUserControlAllIssues.SubTaskInstructions = settings.AllIssueCoaching.SubTaskInstructions;
 
-                if( settings.Projects != null )
-                    this.listViewControl.SetItems(settings.Projects);
             }
+
+            if( settings.Projects != null )
+                this.listViewControl.SetItems(settings.Projects);
+
+            if( settings.JiraIssueTypes != null )
+                flowLayoutPanelIssues.SetSettingsToUI(settings.JiraIssueTypes);
+
         }
 
         private void ButtonClose_Click(object sender, EventArgs e)
@@ -135,7 +144,7 @@ namespace UserStoryGenerator.View
         {
             try
             {
-                FillSettingsFromUI();
+                GetSettingsFromUI();
 
                 ResetSettingProjects?.Invoke();
 
@@ -170,7 +179,7 @@ namespace UserStoryGenerator.View
                     if( settings == null ) return;
 
                     SetSettingsToUI(settings);
-                    FillSettingsFromUI();
+                    GetSettingsFromUI();
 
                     CurrentFileName = dialog.FileName;
                     //
@@ -208,5 +217,6 @@ namespace UserStoryGenerator.View
             }
 
         }
+
     }
 }
