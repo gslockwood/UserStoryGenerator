@@ -67,12 +67,14 @@ namespace UserStoryGenerator.View
             menuStrip = new MenuStrip();
             fileToolStripMenuItem = new ToolStripMenuItem();
             openToolStripMenuItem = new ToolStripMenuItem();
+            openCSVToolStripMenuItem = new ToolStripMenuItem();
             saveStoriesAsJsonToolStripMenuItem = new ToolStripMenuItem();
             saveStoriesAsCSVToolStripMenuItem = new ToolStripMenuItem();
             getUserStoryListToolStripMenuItem = new ToolStripMenuItem();
             preferencesToolStripMenuItem = new ToolStripMenuItem();
             settingsToolStripMenuItem = new ToolStripMenuItem();
             aboutToolStripMenuItem = new ToolStripMenuItem();
+            openPRDToolStripMenuItem = new ToolStripMenuItem();
             tableLayoutPanelData.SuspendLayout();
             tableLayoutPanelEntryControl.SuspendLayout();
             groupBoxStoryMin.SuspendLayout();
@@ -295,7 +297,7 @@ namespace UserStoryGenerator.View
             treeView.Location = new Point(3, 122);
             treeView.Margin = new Padding(3, 4, 3, 4);
             treeView.Name = "treeView";
-            treeView.SelectedImageIndex = 0;
+            treeView.SelectedImageIndex = 1;
             treeView.ShowNodeToolTips = true;
             treeView.Size = new Size(1300, 670);
             treeView.TabIndex = 2;
@@ -522,7 +524,7 @@ namespace UserStoryGenerator.View
             // 
             // fileToolStripMenuItem
             // 
-            fileToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { openToolStripMenuItem, saveStoriesAsJsonToolStripMenuItem, saveStoriesAsCSVToolStripMenuItem, getUserStoryListToolStripMenuItem });
+            fileToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { openToolStripMenuItem, openPRDToolStripMenuItem, openCSVToolStripMenuItem, saveStoriesAsJsonToolStripMenuItem, saveStoriesAsCSVToolStripMenuItem, getUserStoryListToolStripMenuItem });
             fileToolStripMenuItem.Name = "fileToolStripMenuItem";
             fileToolStripMenuItem.Size = new Size(37, 19);
             fileToolStripMenuItem.Text = "&File";
@@ -530,15 +532,22 @@ namespace UserStoryGenerator.View
             // openToolStripMenuItem
             // 
             openToolStripMenuItem.Name = "openToolStripMenuItem";
-            openToolStripMenuItem.Size = new Size(178, 22);
+            openToolStripMenuItem.Size = new Size(180, 22);
             openToolStripMenuItem.Text = "&Open...";
             openToolStripMenuItem.Click +=  OpenToolStripMenuItem_Click ;
+            // 
+            // openCSVToolStripMenuItem
+            // 
+            openCSVToolStripMenuItem.Name = "openCSVToolStripMenuItem";
+            openCSVToolStripMenuItem.Size = new Size(180, 22);
+            openCSVToolStripMenuItem.Text = "&Open &CSV...";
+            openCSVToolStripMenuItem.Click +=  OpenCSVToolStripMenuItem_Click ;
             // 
             // saveStoriesAsJsonToolStripMenuItem
             // 
             saveStoriesAsJsonToolStripMenuItem.Enabled = false;
             saveStoriesAsJsonToolStripMenuItem.Name = "saveStoriesAsJsonToolStripMenuItem";
-            saveStoriesAsJsonToolStripMenuItem.Size = new Size(178, 22);
+            saveStoriesAsJsonToolStripMenuItem.Size = new Size(180, 22);
             saveStoriesAsJsonToolStripMenuItem.Text = "&Save as Json...";
             saveStoriesAsJsonToolStripMenuItem.Click +=  SaveStoriesAsJsonToolStripMenuItem_Click ;
             // 
@@ -546,7 +555,7 @@ namespace UserStoryGenerator.View
             // 
             saveStoriesAsCSVToolStripMenuItem.Enabled = false;
             saveStoriesAsCSVToolStripMenuItem.Name = "saveStoriesAsCSVToolStripMenuItem";
-            saveStoriesAsCSVToolStripMenuItem.Size = new Size(178, 22);
+            saveStoriesAsCSVToolStripMenuItem.Size = new Size(180, 22);
             saveStoriesAsCSVToolStripMenuItem.Text = "Save &as CSV...";
             saveStoriesAsCSVToolStripMenuItem.Click +=  SaveStoriesAsCSVToolStripMenuItem_Click ;
             // 
@@ -554,7 +563,7 @@ namespace UserStoryGenerator.View
             // 
             getUserStoryListToolStripMenuItem.Enabled = false;
             getUserStoryListToolStripMenuItem.Name = "getUserStoryListToolStripMenuItem";
-            getUserStoryListToolStripMenuItem.Size = new Size(178, 22);
+            getUserStoryListToolStripMenuItem.Size = new Size(180, 22);
             getUserStoryListToolStripMenuItem.Text = "&Get User Story List...";
             getUserStoryListToolStripMenuItem.Click +=  GetUserStoryListToolStripMenuItem_Click ;
             // 
@@ -578,6 +587,13 @@ namespace UserStoryGenerator.View
             aboutToolStripMenuItem.Size = new Size(125, 22);
             aboutToolStripMenuItem.Text = "About...";
             aboutToolStripMenuItem.Click +=  AboutToolStripMenuItem_Click ;
+            // 
+            // openPRDToolStripMenuItem
+            // 
+            openPRDToolStripMenuItem.Name = "openPRDToolStripMenuItem";
+            openPRDToolStripMenuItem.Size = new Size(180, 22);
+            openPRDToolStripMenuItem.Text = "Open &PRD...";
+            openPRDToolStripMenuItem.Click +=  OpenPRDToolStripMenuItem_Click ;
             // 
             // MainForm
             // 
@@ -653,6 +669,8 @@ namespace UserStoryGenerator.View
         private FlowLayoutPanelImages flowLayoutPanelIssueImages;
         private ResizableGroupBoxFlowLayoutPanelEx flowLayoutPanelSelected;
         private ResizableGroupBoxFlowLayoutPanelEx flowLayoutPanelExTotals;
+        private ToolStripMenuItem openCSVToolStripMenuItem;
+        private ToolStripMenuItem openPRDToolStripMenuItem;
     }
 
     public interface IReset

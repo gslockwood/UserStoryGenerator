@@ -8,12 +8,7 @@ namespace UserStoryGenerator.Model
         {
             List<IssueData.Issue> serializableIssues = [];
             foreach( TreeNode node in treeNodes )
-            {
-                //if( node.Text.Equals("LinkedIssues") ) continue;
-
                 serializableIssues = ConvertTreeNodesToJsonStructure(treeNodes);
-
-            }
 
             return serializableIssues;
         }
@@ -33,11 +28,12 @@ namespace UserStoryGenerator.Model
 
                 if( node.Nodes.Count > 0 )
                 {
-                    foreach( TriStateTreeView.TreeNodeEx xxxx in node.Nodes )
+                    foreach( TriStateTreeView.TreeNodeEx treeNodeEx in node.Nodes )
                     {
-                        if( xxxx.Text.Equals("Subtasks") )// collection node with this text
+                        //if( treeNodeEx is TriStateTreeView.TreeNodeExSubTasks )// collection node with this text
+                        if( treeNodeEx.Text.Equals(TriStateTreeView.TreeNodeExSubTasks.NodeName) )// collection node with this text
                         {
-                            foreach( TriStateTreeView.TreeNodeEx subTaskNode in xxxx.Nodes )
+                            foreach( TriStateTreeView.TreeNodeEx subTaskNode in treeNodeEx.Nodes )
                             {
                                 IssueData.SubTask subIssue = new()
                                 {
@@ -50,9 +46,9 @@ namespace UserStoryGenerator.Model
                             }
 
                         }
-                        else if( xxxx.Text.Equals("LinkedIssues") )// collection node with this text
+                        else if( treeNodeEx.Text.Equals(TriStateTreeView.TreeNodeExLinkedIssues.NodeName) )// collection node with this text
                         {
-                            issue.LinkedIssues = ConvertTreeNodesToJsonStructure(xxxx.Nodes.Cast<TreeNode>().ToList());
+                            issue.LinkedIssues = ConvertTreeNodesToJsonStructure(treeNodeEx.Nodes.Cast<TreeNode>().ToList());
                         }
                     }
 

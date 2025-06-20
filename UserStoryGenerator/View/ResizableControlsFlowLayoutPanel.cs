@@ -12,7 +12,7 @@ namespace UserStoryGenerator.View
         public ResizableGroupBoxFlowLayoutPanelEx()
         {
             this.FlowDirection = FlowDirection.LeftToRight;
-            Settings.JiraIssue jiraIssue = new()
+            Settings.JiraIssueType jiraIssue = new()
             {
                 IssueType = "Total",
                 Order = -1
@@ -26,7 +26,7 @@ namespace UserStoryGenerator.View
         /// </summary>
         /// <param name="title">The title for the GroupBoxEx.</param>
         /// <returns>The newly created GroupBoxEx.</returns>
-        public GroupBoxEx AddResizableGroupBox(Settings.JiraIssue jiraIssue)
+        public GroupBoxEx AddResizableGroupBox(Settings.JiraIssueType jiraIssue)
         {
             if( jiraIssue.IssueType == null ) throw new NullReferenceException(nameof(jiraIssue.IssueType));
 
@@ -63,7 +63,7 @@ namespace UserStoryGenerator.View
                 {
                     group.Value = null;
 
-                    JiraIssue jiraIssue = (JiraIssue)group.Tag;
+                    JiraIssueType jiraIssue = (JiraIssueType)group.Tag;
                     if( jiraIssue != null && jiraIssue.Order > -1 && jiraIssue.IssueType != null )
                     {
                         int count = issueCollector.GetJiraIssuesCountByType(jiraIssue.IssueType);
@@ -94,7 +94,7 @@ namespace UserStoryGenerator.View
             {
                 if( control is GroupBoxEx group && group.Tag != null )
                 {
-                    JiraIssue jiraIssue = (JiraIssue)group.Tag;
+                    JiraIssueType jiraIssue = (JiraIssueType)group.Tag;
                     if( jiraIssue != null && jiraIssue.Order > -1 && jiraIssue.IssueType != null )
                     {
                         if( jiraIssue.Order == 2 )

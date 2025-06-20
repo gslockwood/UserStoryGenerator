@@ -25,7 +25,7 @@ namespace UserStoryGenerator.Model
         protected readonly bool AddQATests;
         protected readonly bool AddSubTasks;
         protected readonly int maxStories;
-        private readonly Dictionary<string, Settings.JiraIssue>? jiraIssueTypes;
+        private readonly Dictionary<string, Settings.JiraIssueType>? jiraIssueTypes;
         protected readonly StringBuilder sbCoaching = new();
         protected String targetPrepend = "";
 
@@ -141,7 +141,7 @@ namespace UserStoryGenerator.Model
                 {
                     StringBuilder issueTypeDefinitions = new();
 
-                    foreach( Settings.JiraIssue jiraIssue in jiraIssueTypes.Values )
+                    foreach( Settings.JiraIssueType jiraIssue in jiraIssueTypes.Values )
                     {
                         if( jiraIssue.Order == 0 ) continue;
 
@@ -234,7 +234,7 @@ namespace UserStoryGenerator.Model
         public bool AddQATests { get; internal set; }
         public bool AddSubTasks { get; internal set; }
         public int MaxStories { get; internal set; }
-        public Dictionary<string, Settings.JiraIssue>? JiraIssueTypes { get; internal set; }
+        public Dictionary<string, Settings.JiraIssueType>? JiraIssueTypes { get; internal set; }
     }
 
 

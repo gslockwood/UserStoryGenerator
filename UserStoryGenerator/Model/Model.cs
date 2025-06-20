@@ -1,4 +1,5 @@
 ﻿using System.Text.Json;
+using UserStoryGenerator.Utilities;
 using UserStoryGenerator.View;
 using static UserStoryGenerator.Model.IssueData;
 
@@ -66,7 +67,7 @@ namespace UserStoryGenerator.Model
 
                 if( Settings.JiraIssueTypes == null ) throw new NullReferenceException(nameof(Settings.JiraIssueTypes));
 
-                IEnumerable<KeyValuePair<string, Settings.JiraIssue>> any = Settings.JiraIssueTypes.Where(type => type.Value.Order == 2);
+                IEnumerable<KeyValuePair<string, Settings.JiraIssueType>> any = Settings.JiraIssueTypes.Where(type => type.Value.Order == 2);
                 if( !any.Any() ) throw new NullReferenceException("subTaskIssueType is missing");
                 if( any.Count() > 1 ) throw new NullReferenceException("more than 1 subTaskIssueType");
 
@@ -105,6 +106,7 @@ namespace UserStoryGenerator.Model
             userStoryResults = new TreeSerialization.IssueResults()
             {
                 UserStoryList = storyList,
+                //ProductDescription
                 Issues = serializableIssues
             };
 
@@ -143,17 +145,17 @@ namespace UserStoryGenerator.Model
             if( Settings.JiraIssueTypes == null ) return false;
 
             string? epicIssueType = null;
-            IEnumerable<KeyValuePair<string, Settings.JiraIssue>> any = Settings.JiraIssueTypes.Where(type => type.Value.Order == 0);
+            IEnumerable<KeyValuePair<string, Settings.JiraIssueType>> any = Settings.JiraIssueTypes.Where(type => type.Value.Order == 0);
             if( any.Any() )
             {
-                KeyValuePair<string, Settings.JiraIssue> toIssue = any.First();
+                KeyValuePair<string, Settings.JiraIssueType> toIssue = any.First();
                 epicIssueType = toIssue.Value.IssueType;
             }
 
             any = Settings.JiraIssueTypes.Where(type => type.Value.Order == 2);
             if( any.Any() )
             {
-                KeyValuePair<string, Settings.JiraIssue> toIssue = any.First();
+                KeyValuePair<string, Settings.JiraIssueType> toIssue = any.First();
                 if( toIssue.Value != null && toIssue.Value.IssueType != null )
                 {
                     string subTaskIssueType = toIssue.Value.IssueType;
@@ -220,6 +222,7 @@ namespace UserStoryGenerator.Model
                 try
                 {
                     GFSGeminiClientHost.Result result = args.Result;
+                    if( result == null ) throw new NullReferenceException(nameof(result));
                     if( result.Answer == null ) throw new NullReferenceException(nameof(result.Answer));
 
                     List<IssueData.Issue>? issues = ProcessIssues(result.Answer);
@@ -229,9 +232,9 @@ namespace UserStoryGenerator.Model
                     }
 
                 }
-                catch( Exception )
+                catch( Exception ex )
                 {
-                    //throw ex;
+                    Logger.Info(ex.Message);
                 }
                 finally
                 {

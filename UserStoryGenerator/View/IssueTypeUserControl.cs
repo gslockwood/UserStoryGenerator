@@ -1,20 +1,30 @@
-﻿using System.Text.Json;
-using UserStoryGenerator.Model;
+﻿using UserStoryGenerator.Model;
 
 namespace UserStoryGenerator.View
 {
     public partial class IssueTypeUserControl : UserControl
     {
-        private string json;
+        public event EventHandler? ControlSelected;
+        //private readonly string? json;
 
         //
-        public IssueTypeUserControl(Model.Settings.JiraIssue? jiraIssue = null)
+        public IssueTypeUserControl(Model.Settings.JiraIssueType? jiraIssue = null)
         {
             InitializeComponent();
 
             if( jiraIssue == null ) return;
             if( jiraIssue.ForeColor == null ) return;
             if( jiraIssue.ImagePath == null ) return;
+
+            this.Click += UserControlX_Click; // Subscribe to its own Click event
+            foreach( Control control in this.Controls )
+            {
+                control.Click += ChildControl_Click; // Also subscribe child controls' clicks
+                if( control.Controls.Count > 0 )
+                    Recursive(control);
+
+            }
+
 
             groupBoxExIssueName.Value = jiraIssue.IssueType;
 
@@ -28,11 +38,23 @@ namespace UserStoryGenerator.View
             else if( jiraIssue.Order == 2 ) radioButtonSubtask.Checked = true;
             else radioButtonStandard.Checked = true;
 
-            json = JsonSerializer.Serialize(jiraIssue);
+            //json = JsonSerializer.Serialize(jiraIssue);
             //
         }
 
-        private void PictureBoxImagePath_Click(object sender, EventArgs e)
+        private void Recursive(Control control)
+        {
+            foreach( Control subControl in control.Controls )
+            {
+                subControl.Click += ChildControl_Click;
+                //Logger.Info(subControl.Name);
+                if( subControl.Controls.Count > 0 )
+                    Recursive(subControl);
+
+            }
+        }
+
+        private void PictureBoxImagePath_Click(object? sender, EventArgs e)
         {
             OpenFileDialog form = new()
             {
@@ -52,13 +74,21 @@ namespace UserStoryGenerator.View
 
             if( form.ShowDialog() == DialogResult.OK )
             {
-                Image? image = Utilities.ImageLoader.GetImageFromFilePath(form.FileName);
-                pictureBoxImagePath.Image = image;
-                pictureBoxImagePath.Tag = form.FileName;
+                try
+                {
+                    Image? image = Utilities.ImageLoader.GetImageFromFilePath(form.FileName);
+                    pictureBoxImagePath.Image = image;
+                    pictureBoxImagePath.Tag = form.FileName;
+
+                }
+                catch( Exception ex )
+                {
+                    MessageBox.Show(ex.Message, "Critical Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
             }
         }
 
-        private void PictureBoxForeColor_Click(object sender, EventArgs e)
+        private void PictureBoxForeColor_Click(object? sender, EventArgs e)
         {
             ColorDialog form = new();
             if( form.ShowDialog() == DialogResult.OK )
@@ -67,18 +97,23 @@ namespace UserStoryGenerator.View
             }
         }
 
-        private void GroupBoxExIssueName_ValueChanged(object sender, EventArgs e)
+        public class IssueDefinitionException(string? message) : Exception(message) { }
+
+        private void GroupBoxExIssueName_ValueChanged(object? sender, EventArgs e)
         {
             if( groupBoxExIssueName.TextLength == 0 )
                 groupBoxExIssueName.BackColor = Color.Red;
             else groupBoxExIssueName.BackColor = SystemColors.ControlLightLight;
         }
 
-        internal Settings.JiraIssue GetJiraIssue()
+        internal Settings.JiraIssueType GetJiraIssue()
         {
-            Settings.JiraIssue jiraIssue = new();
+            Settings.JiraIssueType jiraIssue = new()
+            {
+                IssueType = groupBoxExIssueName.Value
+            };
 
-            jiraIssue.IssueType = groupBoxExIssueName.Value;
+            if( string.IsNullOrEmpty(jiraIssue.IssueType) ) throw new IssueDefinitionException($"A blank {this.groupBoxExIssueName.CaptionText} was enncountered.  Cannot proceed.");
 
             foreach( RadioButton rb in this.flowLayoutPanelRadios.Controls )
             {
@@ -90,13 +125,16 @@ namespace UserStoryGenerator.View
                 }
             }
 
-            if( pictureBoxImagePath.Tag == null ) throw new NullReferenceException(nameof(pictureBoxImagePath.Tag));
+            if( pictureBoxImagePath.Tag == null ) throw new IssueDefinitionException(nameof(pictureBoxImagePath.Tag));
             jiraIssue.ImagePath = pictureBoxImagePath.Tag.ToString();
+
+            if( string.IsNullOrEmpty(jiraIssue.ImagePath) ) throw new IssueDefinitionException($"A blank ImagePath was enncountered.  Cannot proceed.");
+            if( jiraIssue.ImagePath.Equals($"{"./Resources"}/unknown.png") ) throw new IssueDefinitionException($"The Image was not updated.  Cannot proceed.");
 
             jiraIssue.ForeColor = pictureBoxForeColor.BackColor.Name;
 
-            string json = JsonSerializer.Serialize(jiraIssue);
             /*
+            string json = JsonSerializer.Serialize(jiraIssue);
             if( json.Equals(this.json) )
             {
             }
@@ -106,5 +144,48 @@ namespace UserStoryGenerator.View
             */
             return jiraIssue;
         }
+
+        private void UserControlX_Click(object? sender, EventArgs e)
+        {
+            OnControlSelected();
+        }
+
+        private void ChildControl_Click(object? sender, EventArgs e)
+        {
+            OnControlSelected(); // Propagate click from child controls
+        }
+
+        protected virtual void OnControlSelected()
+        {
+            ControlSelected?.Invoke(this, EventArgs.Empty);
+        }
+
+        // Optional: Add properties for visual selection feedback
+        private bool _isSelected;
+        public bool IsSelected
+        {
+            get { return _isSelected; }
+            set
+            {
+                if( _isSelected != value )
+                {
+                    _isSelected = value;
+                    // You'll need to implement actual visual feedback here
+                    // e.g., changing border, background color, etc.
+                    if( _isSelected )
+                    {
+                        this.BackColor = Color.LightBlue; // Example selection color
+                        this.BorderStyle = BorderStyle.FixedSingle;
+                    }
+                    else
+                    {
+                        this.BackColor = SystemColors.Control; // Default background
+                        this.BorderStyle = BorderStyle.None;
+                    }
+                    this.Invalidate(); // Redraw the control
+                }
+            }
+        }
+
     }
 }

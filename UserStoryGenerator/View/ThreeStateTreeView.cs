@@ -32,9 +32,9 @@ namespace UserStoryGenerator.View
             public TreeNodeEx(string text, TreeNode[] children) : base(text, children) { }
         }
 
-        public class TreeNodeExSubTasks(string text) : TreeNodeEx(text) { }
+        public class TreeNodeExSubTasks() : TreeNodeEx("Subtasks") { public static readonly string NodeName = "Subtasks"; }
 
-        public class TreeNodeExLinkedIssues(string text) : TreeNodeEx(text) { }
+        public class TreeNodeExLinkedIssues() : TreeNodeEx("LinkedIssues") { public static readonly string NodeName = "LinkedIssues"; }
 
 
         [Serializable]
@@ -44,8 +44,6 @@ namespace UserStoryGenerator.View
             public string? TagJson { get; set; } // Store Tag as JSON string
 
             // Add any other custom properties from TreeNodeEx you need to transfer                                                 
-            //public string CustomProperty { get; set; }
-
             public string? Product { get; set; }
             public string? Summary { get; set; }
             public string? IssueType { get; set; }
@@ -84,20 +82,16 @@ namespace UserStoryGenerator.View
 
 
                 // Copy custom properties
-                Product = node.Product; // Assuming CustomProperty exists in TreeNodeEx
+                Product = node.Product;
                 Summary = node.Summary;
                 IssueType = node.IssueType;
                 Key = node.Key;
 
 
                 foreach( TreeNode childNode in node.Nodes )
-                {
                     if( childNode is TreeNodeEx childEx )
-                    {
                         Children.Add(new DraggableNodeData(childEx));
-                    }
-                    // Decide how to handle non-TreeNodeEx children if they exist
-                }
+                // Decide how to handle non-TreeNodeEx children if they exist
             }
 
             // Method to convert DraggableNodeData back to TreeNodeEx
@@ -105,14 +99,23 @@ namespace UserStoryGenerator.View
             {
                 if( Text == null ) return null;
 
-                TreeNodeEx newNode = new(Text)
+                TreeNodeEx? newNode;
+                if( Text.Equals(TriStateTreeView.TreeNodeExSubTasks.NodeName) )
+                    newNode = new TriStateTreeView.TreeNodeExSubTasks() { ImageIndex = Utilities.IssueUtilities.GetSubTaskImageIndex() };
+                else if( Text.Equals(TriStateTreeView.TreeNodeExLinkedIssues.NodeName) )
+                    newNode = new TriStateTreeView.TreeNodeExLinkedIssues() { ImageIndex = Utilities.IssueUtilities.GetImageIndex("Task") };
+                else
                 {
-                    //newNode.CustomProperty = CustomProperty; // Copy custom properties
-                    Product = Product,
-                    Summary = Summary,
-                    IssueType = IssueType,
-                    Key = Key
-                };
+                    if( IssueType == null ) throw new NullReferenceException(nameof(IssueType));
+                    newNode = new(Text)
+                    {
+                        Product = Product,
+                        Summary = Summary,
+                        IssueType = IssueType,
+                        ImageIndex = UserStoryGenerator.Utilities.IssueUtilities.GetImageIndex(IssueType),
+                        Key = Key
+                    };
+                }
 
                 if( TagJson != null )
                 {
@@ -185,8 +188,8 @@ namespace UserStoryGenerator.View
         //public Dictionary<string, Settings.JiraIssue>? JiraIssueTypes { get; internal set; }
 
         //string? subTaskIssueType = null;
-        public Dictionary<string, Settings.JiraIssue>? jiraIssueTypes;
-        public Dictionary<string, Settings.JiraIssue>? JiraIssueTypes
+        public Dictionary<string, Settings.JiraIssueType>? jiraIssueTypes;
+        public Dictionary<string, Settings.JiraIssueType>? JiraIssueTypes
         {
             get { return jiraIssueTypes; }
             internal set
@@ -195,7 +198,7 @@ namespace UserStoryGenerator.View
 
                 if( jiraIssueTypes == null ) return;
 
-                IEnumerable<KeyValuePair<string, Settings.JiraIssue>> any = jiraIssueTypes.Where(type => type.Value.Order == 2);
+                IEnumerable<KeyValuePair<string, Settings.JiraIssueType>> any = jiraIssueTypes.Where(type => type.Value.Order == 2);
                 if( !any.Any() ) throw new NullReferenceException("subTaskIssueType is missing");
                 if( any.Count() > 1 ) throw new NullReferenceException("more than 1 subTaskIssueType");
 
@@ -293,7 +296,11 @@ namespace UserStoryGenerator.View
                     SelectNodeRecursive(childNode, isChecked);
         }
 
-
+        protected override void OnBeforeCheck(TreeViewCancelEventArgs e)
+        {
+            this.Enabled = false;
+            base.OnBeforeCheck(e);
+        }
         protected override void OnAfterCheck(System.Windows.Forms.TreeViewEventArgs e)
         {
             base.OnAfterCheck(e);
@@ -325,13 +332,14 @@ namespace UserStoryGenerator.View
 
             //GetCheckedNodeCount(this.Nodes);
             GetAllCheckedNodes();
+
+            this.Enabled = true;
             //
         }
 
         public class IssueCollector
         {
             public Dictionary<string, List<TreeNodeEx>> JiraIssuesByType { get; set; } = [];
-
 
             public int Total
             {
@@ -391,7 +399,7 @@ namespace UserStoryGenerator.View
         {
             foreach( TreeNodeEx node in nodes )
             {
-                if( !node.Text.Equals("LinkedIssues") && !node.Text.Equals("Subtasks") )
+                if( node is not TreeNodeExLinkedIssues && node is not TreeNodeExSubTasks )
                     issueCollector.AddJiraIssuesByType(node);
 
                 if( node.Nodes != null )
@@ -474,8 +482,7 @@ namespace UserStoryGenerator.View
             IgnoreClickAction--;
         }
 
-        protected static void UpdateChildState(System.Windows.Forms.TreeNodeCollection Nodes,
-    int StateImageIndex, bool Checked, bool ChangeUninitialisedNodesOnly)
+        protected static void UpdateChildState(System.Windows.Forms.TreeNodeCollection Nodes, int StateImageIndex, bool Checked, bool ChangeUninitialisedNodesOnly)
         {
             foreach( System.Windows.Forms.TreeNode tnChild in Nodes )
             {
@@ -841,29 +848,39 @@ namespace UserStoryGenerator.View
                     //    newTreeNode.Nodes.Add(child);
                     //}
 
-                    //if( sourceNode is TreeNodeExSubTasks ) continue;
+                    //if( sourceNode is TreeNodeExSubTasks )continue; 
 
                     TreeNodeEx treeNodeEx = (TreeNodeEx)sourceNode;
+
                     if( full )
                     {
-                        TreeNodeEx treeNodeExRef = (TreeNodeEx)sourceNode;
-                        treeNodeEx = new()
+
+                        if( sourceNode is TreeNodeExSubTasks )
+                            treeNodeEx = new TreeNodeExSubTasks();
+
+                        else if( sourceNode is TreeNodeExLinkedIssues )
+                            treeNodeEx = new TreeNodeExLinkedIssues();
+
+                        else
                         {
-                            Summary = treeNodeExRef.Summary,
-                            IssueType = treeNodeExRef.IssueType,
-                            Product = treeNodeExRef.Product,
-                            Text = treeNodeExRef.Text
-                        };
+                            TreeNodeEx treeNodeExRef = (TreeNodeEx)sourceNode;
+                            treeNodeEx = new()
+                            {
+                                Summary = treeNodeExRef.Summary,
+                                IssueType = treeNodeExRef.IssueType,
+                                Product = treeNodeExRef.Product,
+                                Text = treeNodeExRef.Text
+                            };
+
+                        }
 
                         foreach( TreeNode child in relevantChildren )
-                        {
                             treeNodeEx.Nodes.Add(child);
-                        }
 
                     }
 
                     resultNodes.Add(treeNodeEx); // Add the newly created node to the result list
-                    //resultNodes.Add(newTreeNode); // Add the newly created node to the result list
+                    //
                 }
                 // If the node is not checked and has no checked descendants, it is skipped.
             }

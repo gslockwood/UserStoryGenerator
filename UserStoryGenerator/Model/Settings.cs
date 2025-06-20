@@ -8,7 +8,7 @@
         public AICoaching? AllIssueCoaching { get; set; }
         public List<string>? Projects { get; set; }
         //public List<string>? JiraIssueTypes { get; set; }
-        public Dictionary<string, JiraIssue>? JiraIssueTypes { get; set; }
+        public Dictionary<string, JiraIssueType>? JiraIssueTypes { get; set; }
 
         public class AICoaching
         {
@@ -17,7 +17,7 @@
             public string? SubTaskInstructions { get; set; }
         }
 
-        public class JiraIssue
+        public class JiraIssueType
         {
             public string? IssueType { get; set; }
             public string? ForeColor { get; set; }
@@ -29,8 +29,8 @@
         public Settings()
         {
             JiraIssueTypes = [];
-            JiraIssueTypes.Add("Epic", new JiraIssue() { IssueType = "Epic", Order = 0 });
-            JiraIssueTypes.Add("Sub-task", new JiraIssue() { IssueType = "Sub-task", Order = 2 });
+            JiraIssueTypes.Add("Epic", new JiraIssueType() { IssueType = "Epic", Order = 0 });
+            JiraIssueTypes.Add("Sub-task", new JiraIssueType() { IssueType = "Sub-task", Order = 2 });
         }
     }
 

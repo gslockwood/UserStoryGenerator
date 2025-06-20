@@ -1,4 +1,6 @@
 ﻿using System.Text.RegularExpressions;
+using UserStoryGenerator.Model;
+using static UserStoryGenerator.Model.Settings;
 
 namespace UserStoryGenerator.Utilities
 {
@@ -18,6 +20,9 @@ namespace UserStoryGenerator.Utilities
 
     public class IssueUtilities
     {
+        private static ImageList? ImageList;
+        private static Dictionary<string, JiraIssueType>? JiraIssueTypes;
+
         public static List<Model.IssueData.SubTask> GetAllSubTasks(List<Model.IssueData.Issue> issues)
         {
             List<Model.IssueData.SubTask> list = [];
@@ -34,6 +39,41 @@ namespace UserStoryGenerator.Utilities
                 }
             }
             return list;
+        }
+
+        internal static int GetImageIndex(string issueType)
+        {
+            if( ImageList == null ) throw new NullReferenceException(nameof(ImageList));
+
+            return ImageList.Images.IndexOfKey(issueType);
+        }
+
+        internal static void SetImageList(ImageList imageList)
+        {
+            ImageList = imageList;
+        }
+
+        internal static void SetJiraIssueTypes(Dictionary<string, JiraIssueType> jiraIssueTypes)
+        {
+            JiraIssueTypes = jiraIssueTypes;
+        }
+
+        internal static int GetSubTaskImageIndex()
+        {
+            if( ImageList == null ) throw new NullReferenceException(nameof(ImageList));
+            if( JiraIssueTypes == null ) throw new NullReferenceException(nameof(JiraIssueTypes));
+            //if( model.Settings == null ) throw new NullReferenceException(nameof(model.Settings));
+            //if( model.Settings.JiraIssueTypes == null ) throw new NullReferenceException(nameof(model.Settings.JiraIssueTypes));
+
+            IEnumerable<KeyValuePair<string, Settings.JiraIssueType>> any = JiraIssueTypes.Where(type => type.Value.Order == 2);
+            if( !any.Any() ) throw new NullReferenceException("subTaskIssueType is missing");
+            if( any.Count() > 1 ) throw new NullReferenceException("more than 1 subTaskIssueType");
+
+            Settings.JiraIssueType first = any.First().Value;
+            if( first.IssueType == null ) throw new NullReferenceException("first.IssueType");
+
+            return ImageList.Images.IndexOfKey(first.IssueType);
+
         }
     }
 

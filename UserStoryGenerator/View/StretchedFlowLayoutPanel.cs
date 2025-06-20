@@ -1,4 +1,5 @@
 ﻿using UserStoryGenerator.Model;
+using static UserStoryGenerator.View.IssueTypeUserControl;
 
 namespace UserStoryGenerator.View
 {
@@ -38,6 +39,7 @@ namespace UserStoryGenerator.View
         {
             AdjustControlWidths();
         }
+
 
         protected override void OnLayout(LayoutEventArgs levent)
         {
@@ -81,7 +83,7 @@ namespace UserStoryGenerator.View
             this.Update();
         }
 
-        internal void SetSettingsToUI(Dictionary<string, Settings.JiraIssue> jiraIssueTypes)
+        internal void SetSettingsToUI(Dictionary<string, Settings.JiraIssueType> jiraIssueTypes)
         {
             if( jiraIssueTypes != null )
             {
@@ -106,22 +108,160 @@ namespace UserStoryGenerator.View
             }
         }
 
-        internal Dictionary<string, Settings.JiraIssue>? GetJiraIssueTypes()
+        /////////////////////////////
+        /////////////////////////////
+        /////////////////////////////
+
+        public class IsSelectedEventArgs(bool selected) : EventArgs
         {
-            Dictionary<string, Settings.JiraIssue>? jiraIssueTypes = [];
-            foreach( Control uc in Controls )
+            public bool Selected { get; } = selected;
+        }
+        protected virtual void OnSelectedControlChanged(bool selected)
+        {
+            SelectedControlChanged?.Invoke(this, new IsSelectedEventArgs(selected));
+        }
+
+        public IssueTypeUserControl? SelectedControl
+        {
+            get { return _selectedControl; }
+            set
             {
-                if( uc is IssueTypeUserControl issueTypeUserControl )
+                if( value == null )
                 {
-                    Settings.JiraIssue jiraIssue = issueTypeUserControl.GetJiraIssue();
-                    if( jiraIssue.IssueType == null ) throw new NullReferenceException(nameof(jiraIssue.IssueType));
-                    jiraIssueTypes.Add(jiraIssue.IssueType, jiraIssue);
-                    //
+                    OnSelectedControlChanged(false);
                 }
+                else if( _selectedControl != value )
+                {
+                    // Deselect the old control
+                    if( _selectedControl != null )
+                    {
+                        _selectedControl.IsSelected = false;
+                    }
+
+                    _selectedControl = value;
+
+                    // Select the new control
+                    if( _selectedControl != null )
+                    {
+                        _selectedControl.IsSelected = true;
+                    }
+
+                    OnSelectedControlChanged(true);
+                }
+                //else
+                //{
+                //    OnSelectedControlChanged(false);
+                //}
+            }
+        }
+        private IssueTypeUserControl? _selectedControl;
+        public event EventHandler? SelectedControlChanged;
+        protected override void OnControlAdded(ControlEventArgs e)
+        {
+            base.OnControlAdded(e);
+
+            // If the added control is a UserControlX, subscribe to its selection event
+            if( e.Control is IssueTypeUserControl userControlX )
+            {
+                userControlX.ControlSelected += UserControlX_ControlSelected;
+                //// Also ensure it fills the width
+                //userControlX.Dock = DockStyle.Top; // Or set Anchor and AutoSize
+                //                                   // You might need to adjust the height based on your layout needs
+            }
+
+            // Adjust the layout to stretch controls
+            //AdjustControlSizes();
+        }
+
+        protected override void OnControlRemoved(ControlEventArgs e)
+        {
+            base.OnControlRemoved(e);
+
+            // Unsubscribe from the event when the control is removed
+            if( e.Control is IssueTypeUserControl userControlX )
+            {
+                userControlX.ControlSelected -= UserControlX_ControlSelected;
+                // If the removed control was the selected one, clear selection
+                if( _selectedControl == userControlX )
+                {
+                    SelectedControl = null;
+                }
+            }
+
+            //AdjustControlSizes();
+        }
+        private void UserControlX_ControlSelected(object? sender, EventArgs e)
+        {
+            if( sender is IssueTypeUserControl clickedControl )
+            {
+                this.SelectedControl = clickedControl; // Set the clicked control as selected
+            }
+        }
+
+        /// //////////////////
+        /// //////////////////
+        /// //////////////////
+        /// //////////////////
+
+
+        internal Dictionary<string, Settings.JiraIssueType>? GetJiraIssueTypes()
+        {
+            Dictionary<string, Settings.JiraIssueType>? jiraIssueTypes = [];
+
+            try
+            {
+                foreach( Control uc in Controls )
+                {
+                    if( uc is IssueTypeUserControl issueTypeUserControl )
+                    {
+                        Settings.JiraIssueType jiraIssue = issueTypeUserControl.GetJiraIssue();
+                        if( jiraIssue.IssueType == null ) throw new IssueDefinitionException(nameof(jiraIssue.IssueType));
+                        jiraIssueTypes.Add(jiraIssue.IssueType, jiraIssue);
+                        //
+                    }
+                }
+
+            }
+            catch( Exception ex )
+            {
+                MessageBox.Show(
+                    $"{ex.Message}\n\nNo issue definitions changed.",
+                    "Critical Error",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Error);
+                return null;
             }
 
             return jiraIssueTypes;
             //
+        }
+
+        internal void AddJiraIssueType()
+        {
+            Settings.JiraIssueType item = new()
+            {
+                IssueType = null,
+                Order = 1,
+                ForeColor = Color.GhostWhite.Name,
+                ImagePath = $"{"./Resources"}/unknown.png"
+            };
+
+            IssueTypeUserControl uc = new(item)
+            {
+                Height = 80,
+                //BorderStyle = BorderStyle.FixedSingle
+            };
+
+            Controls.Add(uc);
+        }
+
+        internal void RemoveSelectedItem()
+        {
+            if( _selectedControl != null )
+            {
+                Controls.Remove(_selectedControl);
+                //SelectedControl = null;
+            }
         }
     }
 

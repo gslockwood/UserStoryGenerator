@@ -32,6 +32,12 @@ namespace UserStoryGenerator.View
 
             InitializeComponent();
 
+            this.flowLayoutPanelIssues.SelectedControlChanged += (s, e) =>
+            {
+                if( e is StretchedFlowLayoutPanel.IsSelectedEventArgs args )
+                    this.buttonDelete.Enabled = args.Selected;
+            };
+
             //settings = new Settings();  // testing
 
             this.settings = settings;
@@ -50,7 +56,7 @@ namespace UserStoryGenerator.View
             base.OnLoad(e);
             CenterToParent();
 
-            tabControl.SelectedIndex = 2;
+            //tabControl.SelectedIndex = 2; testing of isstypes control
 
         }
 
@@ -83,7 +89,10 @@ namespace UserStoryGenerator.View
 
             settings.Projects = this.listViewControl.GetItems();
 
-            settings.JiraIssueTypes = flowLayoutPanelIssues.GetJiraIssueTypes();
+            Dictionary<string, Settings.JiraIssueType>? jiraIssueTypes = flowLayoutPanelIssues.GetJiraIssueTypes();
+            if( jiraIssueTypes != null )
+                settings.JiraIssueTypes = jiraIssueTypes;
+
             //
         }
 
@@ -218,5 +227,14 @@ namespace UserStoryGenerator.View
 
         }
 
+        private void ButtonAdd_Click(object sender, EventArgs e)
+        {
+            flowLayoutPanelIssues.AddJiraIssueType();
+        }
+
+        private void ButtonDelete_Click(object sender, EventArgs e)
+        {
+            flowLayoutPanelIssues.RemoveSelectedItem();
+        }
     }
 }
