@@ -85,9 +85,9 @@ namespace UserStoryGenerator.View
 
         }
 
-        internal int SetValuesByIssue(List<IssueData.Issue> issues)
+        internal int UpdateCountersByIssues(List<IssueData.Issue> issues)
         {
-            //int total = 0;
+            Total = 0;
             int count = 0;
             GroupBoxEx? groupBoxExSubTask = null;
             foreach( Control control in Controls )

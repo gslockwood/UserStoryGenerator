@@ -138,6 +138,8 @@ namespace UserStoryGenerator.View
 
             groupBoxExPRD.Value = model.CreateUserStories();
 
+            comboBoxExStoryMin.SelectedIndex = 0;
+
             //PreferencesToolStripMenuItem_Click(this, new EventArgs());
             //
 #endif
@@ -152,6 +154,7 @@ namespace UserStoryGenerator.View
 
             else
             {
+                buttonConvert.Enabled = true;
                 stopwatchClockConvertRun.Stop();
                 TimeSpan duration = stopwatchClockConvertRun.ElapsedTime;
                 groupBoxExDuration.Value = $"{duration.Minutes}:{duration.Seconds}.{duration.Milliseconds}";
@@ -281,6 +284,7 @@ namespace UserStoryGenerator.View
         private async void Convert_Click(object? sender, EventArgs e)//async
         {
             ResetUI();
+            buttonConvert.Enabled = false;
 
             treeView.Nodes.Clear();
             buttonProcessStories.Enabled = false;
@@ -317,27 +321,36 @@ namespace UserStoryGenerator.View
         {
             if( issues == null ) return;
 
-            TreeNode? root = new(this.epicSelector.Value);
-            treeView.Nodes.Add(root);
+            try
+            {
+                treeView.Enabled = false;
 
-            Recursive(issues, root);
+                TreeNode? root = new(this.epicSelector.Value);
+                treeView.Nodes.Add(root);
 
-            //root.Checked = true;            //treeView.SelectAllNodes(false);
+                Recursive(issues, root);
 
-            treeView.Nodes[0].Expand();
-            if( treeView.Nodes.Count > 0 )
-                treeView.TopNode = treeView.Nodes[0];
-            treeView.Nodes[0].Checked = false;
+                //root.Checked = true;            //treeView.SelectAllNodes(false);
 
-            UpdateCountersUI(issues);
-            SetMenuItem(false);
+                treeView.Nodes[0].Expand();
+                if( treeView.Nodes.Count > 0 )
+                    treeView.TopNode = treeView.Nodes[0];
+                treeView.Nodes[0].Checked = false;
+
+                UpdateCountersUI(issues);
+                SetMenuItem(false);
+            }
+            finally
+            {
+                treeView.Enabled = true;
+            }
             //
         }
 
         private int UpdateCountersUI(List<IssueData.Issue> issues)
         {
             if( issues == null ) return 0;
-            return flowLayoutPanelExTotals.SetValuesByIssue(issues);
+            return flowLayoutPanelExTotals.UpdateCountersByIssues(issues);
             //
         }
         private int UpdateSelectedIssues(IssueCollector issueCollector)
@@ -409,8 +422,6 @@ namespace UserStoryGenerator.View
                 //
             }
         }
-
-
 
         private void ButtonSave_Click(object sender, EventArgs e)
         {
@@ -537,8 +548,8 @@ namespace UserStoryGenerator.View
         {
             OpenFileDialog dialog = new()
             {
-                //Filter = "CSV Files (*.csv)|*.csv|All Files (*.*)|*.*",
-                //FilterIndex = 1,
+                Filter = "Product Description Files (*.PRD)|*.prd|(*.TXT)|*.txt|All Files (*.*)|*.*",
+                FilterIndex = 1,
                 RestoreDirectory = true
             };
             if( dialog.ShowDialog() == DialogResult.OK )
@@ -701,12 +712,65 @@ namespace UserStoryGenerator.View
             if( e.Data.GetDataPresent(TREENODEDATA) )
                 e.Effect = DragDropEffects.Copy;
 
+            else if( e.Data.GetDataPresent(DataFormats.Text) )
+                e.Effect = DragDropEffects.Copy;
+
         }
         private void TreeView_DragDrop(object sender, DragEventArgs e)
         {
             if( e.Data == null ) return;
 
-            if( e.Data.GetDataPresent(TREENODEDATA) )
+            if( e.Data.GetDataPresent(DataFormats.Text) )
+            {
+                string? data = e.Data.GetData(DataFormats.Text) as string;
+                if( !string.IsNullOrEmpty(data) )
+                {
+                    data = data.Replace("\"", "");
+
+                    string[] summaries = data.Split(Environment.NewLine);
+
+                    int x = this.Left + ( this.Width / 2 ) - 200;
+                    int y = this.Top + ( this.Height / 2 ) - 100;
+
+                    string input = Microsoft.VisualBasic.Interaction.InputBox("Enter the Jira Project name (eg. 'PROJ')",
+                       "Information",
+                       "PROJ",
+                       x,
+                       y);
+
+                    if( string.IsNullOrEmpty(input) )
+                        return;
+
+                    List<Issue> issues = [];
+                    foreach( string summary in summaries )
+                    {
+                        string summary0 = summary.Trim();
+                        summary0 = summary0.TrimEnd(',');
+
+                        if( summary0.Length < 3 ) continue;
+
+                        Issue issue = new()
+                        {
+                            IssueType = "Story",
+                            Summary = summary0,
+                            Product = input
+                        };
+                        issues.Add(issue);
+                    }
+
+                    if( MessageBox.Show("Do you want to first clear the Tree?", "Instructions", MessageBoxButtons.YesNo, MessageBoxIcon.Error) == DialogResult.Yes )
+                        treeView.Nodes.Clear();
+
+                    TreeNode? root = new(this.epicSelector.Value);
+                    treeView.Nodes.Add(root);
+
+                    Recursive(issues, root);
+                    treeView.Nodes[0].Expand();
+                    //
+                }
+            }
+
+            else if( e.Data.GetDataPresent(TREENODEDATA) )
             {
                 try
                 {

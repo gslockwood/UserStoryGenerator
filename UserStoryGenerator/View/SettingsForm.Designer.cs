@@ -46,7 +46,11 @@
             buttonDelete = new Button();
             buttonAdd = new Button();
             tabPageMisc = new TabPage();
+            tableLayoutPanelMiscMain = new TableLayoutPanel();
+            groupBoxExFundamentalInstructions = new GroupBoxEx();
             groupBoxExGeminiKey = new GroupBoxEx();
+            groupBoxMsccModels = new GroupBox();
+            comboBoxMsccModels = new ComboBox();
             flowLayoutPanelButtons = new FlowLayoutPanel();
             buttonClose = new Button();
             buttonUse = new Button();
@@ -68,6 +72,8 @@
             tableLayoutPanelIssuesAndButtons.SuspendLayout();
             flowLayoutPanelIssuesButton.SuspendLayout();
             tabPageMisc.SuspendLayout();
+            tableLayoutPanelMiscMain.SuspendLayout();
+            groupBoxMsccModels.SuspendLayout();
             flowLayoutPanelButtons.SuspendLayout();
             menuStrip.SuspendLayout();
             SuspendLayout();
@@ -165,9 +171,9 @@
             // tabPageIssueProjectDefinition
             // 
             tabPageIssueProjectDefinition.Controls.Add(tableLayoutPanel);
-            tabPageIssueProjectDefinition.Location = new Point(4, 29);
+            tabPageIssueProjectDefinition.Location = new Point(4, 24);
             tabPageIssueProjectDefinition.Name = "tabPageIssueProjectDefinition";
-            tabPageIssueProjectDefinition.Size = new Size(1228, 1057);
+            tabPageIssueProjectDefinition.Size = new Size(1228, 1062);
             tabPageIssueProjectDefinition.TabIndex = 2;
             tabPageIssueProjectDefinition.Text = "Issue Project Definition";
             tabPageIssueProjectDefinition.UseVisualStyleBackColor = true;
@@ -185,16 +191,16 @@
             tableLayoutPanel.RowStyles.Add(new RowStyle(SizeType.Percent, 64.61684F));
             tableLayoutPanel.RowStyles.Add(new RowStyle(SizeType.Percent, 35.38316F));
             tableLayoutPanel.RowStyles.Add(new RowStyle(SizeType.Absolute, 20F));
-            tableLayoutPanel.Size = new Size(1228, 1057);
+            tableLayoutPanel.Size = new Size(1228, 1062);
             tableLayoutPanel.TabIndex = 1;
             // 
             // groupBoxProjects
             // 
             groupBoxProjects.Controls.Add(listViewControl);
             groupBoxProjects.Dock = DockStyle.Fill;
-            groupBoxProjects.Location = new Point(3, 686);
+            groupBoxProjects.Location = new Point(3, 689);
             groupBoxProjects.Name = "groupBoxProjects";
-            groupBoxProjects.Size = new Size(1222, 368);
+            groupBoxProjects.Size = new Size(1222, 370);
             groupBoxProjects.TabIndex = 7;
             groupBoxProjects.TabStop = false;
             groupBoxProjects.Text = "Jira Projects";
@@ -204,7 +210,7 @@
             listViewControl.Dock = DockStyle.Fill;
             listViewControl.Location = new Point(3, 23);
             listViewControl.Name = "listViewControl";
-            listViewControl.Size = new Size(1216, 342);
+            listViewControl.Size = new Size(1216, 344);
             listViewControl.TabIndex = 0;
             // 
             // groupBoxIssues
@@ -213,7 +219,7 @@
             groupBoxIssues.Dock = DockStyle.Fill;
             groupBoxIssues.Location = new Point(3, 3);
             groupBoxIssues.Name = "groupBoxIssues";
-            groupBoxIssues.Size = new Size(1222, 677);
+            groupBoxIssues.Size = new Size(1222, 680);
             groupBoxIssues.TabIndex = 8;
             groupBoxIssues.TabStop = false;
             groupBoxIssues.Text = "Issues Type Definitions";
@@ -230,7 +236,7 @@
             tableLayoutPanelIssuesAndButtons.RowCount = 2;
             tableLayoutPanelIssuesAndButtons.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
             tableLayoutPanelIssuesAndButtons.RowStyles.Add(new RowStyle(SizeType.Absolute, 43F));
-            tableLayoutPanelIssuesAndButtons.Size = new Size(1216, 651);
+            tableLayoutPanelIssuesAndButtons.Size = new Size(1216, 654);
             tableLayoutPanelIssuesAndButtons.TabIndex = 10;
             // 
             // flowLayoutPanelIssues
@@ -241,7 +247,7 @@
             flowLayoutPanelIssues.Location = new Point(3, 3);
             flowLayoutPanelIssues.Name = "flowLayoutPanelIssues";
             flowLayoutPanelIssues.SelectedControl = null;
-            flowLayoutPanelIssues.Size = new Size(1210, 602);
+            flowLayoutPanelIssues.Size = new Size(1210, 605);
             flowLayoutPanelIssues.TabIndex = 9;
             flowLayoutPanelIssues.WrapContents = false;
             // 
@@ -251,13 +257,14 @@
             flowLayoutPanelIssuesButton.Controls.Add(buttonAdd);
             flowLayoutPanelIssuesButton.Dock = DockStyle.Fill;
             flowLayoutPanelIssuesButton.FlowDirection = FlowDirection.RightToLeft;
-            flowLayoutPanelIssuesButton.Location = new Point(3, 611);
+            flowLayoutPanelIssuesButton.Location = new Point(3, 614);
             flowLayoutPanelIssuesButton.Name = "flowLayoutPanelIssuesButton";
             flowLayoutPanelIssuesButton.Size = new Size(1210, 37);
             flowLayoutPanelIssuesButton.TabIndex = 10;
             // 
             // buttonDelete
             // 
+            buttonDelete.Enabled = false;
             buttonDelete.Location = new Point(1121, 4);
             buttonDelete.Margin = new Padding(3, 4, 3, 4);
             buttonDelete.Name = "buttonDelete";
@@ -266,7 +273,6 @@
             buttonDelete.Text = "Delete";
             buttonDelete.UseVisualStyleBackColor = true;
             buttonDelete.Click +=  ButtonDelete_Click ;
-            buttonDelete.Enabled = false;
             // 
             // buttonAdd
             // 
@@ -281,30 +287,84 @@
             // 
             // tabPageMisc
             // 
-            tabPageMisc.Controls.Add(groupBoxExGeminiKey);
-            tabPageMisc.Location = new Point(4, 24);
+            tabPageMisc.Controls.Add(tableLayoutPanelMiscMain);
+            tabPageMisc.Location = new Point(4, 29);
             tabPageMisc.Name = "tabPageMisc";
-            tabPageMisc.Size = new Size(1228, 1062);
+            tabPageMisc.Size = new Size(1228, 1057);
             tabPageMisc.TabIndex = 3;
             tabPageMisc.Text = "Misc";
             tabPageMisc.UseVisualStyleBackColor = true;
+            // 
+            // tableLayoutPanelMiscMain
+            // 
+            tableLayoutPanelMiscMain.ColumnCount = 1;
+            tableLayoutPanelMiscMain.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
+            tableLayoutPanelMiscMain.Controls.Add(groupBoxExFundamentalInstructions, 0, 2);
+            tableLayoutPanelMiscMain.Controls.Add(groupBoxExGeminiKey, 0, 0);
+            tableLayoutPanelMiscMain.Controls.Add(groupBoxMsccModels, 0, 1);
+            tableLayoutPanelMiscMain.Dock = DockStyle.Fill;
+            tableLayoutPanelMiscMain.Location = new Point(0, 0);
+            tableLayoutPanelMiscMain.Name = "tableLayoutPanelMiscMain";
+            tableLayoutPanelMiscMain.RowCount = 3;
+            tableLayoutPanelMiscMain.RowStyles.Add(new RowStyle(SizeType.Absolute, 82F));
+            tableLayoutPanelMiscMain.RowStyles.Add(new RowStyle(SizeType.Absolute, 82F));
+            tableLayoutPanelMiscMain.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
+            tableLayoutPanelMiscMain.Size = new Size(1228, 1057);
+            tableLayoutPanelMiscMain.TabIndex = 4;
+            // 
+            // groupBoxExFundamentalInstructions
+            // 
+            groupBoxExFundamentalInstructions.CaptionText = "Fundamental Instructions";
+            groupBoxExFundamentalInstructions.Dock = DockStyle.Fill;
+            groupBoxExFundamentalInstructions.Location = new Point(3, 168);
+            groupBoxExFundamentalInstructions.Margin = new Padding(3, 4, 3, 4);
+            groupBoxExFundamentalInstructions.Multiline = true;
+            groupBoxExFundamentalInstructions.Name = "groupBoxExFundamentalInstructions";
+            groupBoxExFundamentalInstructions.PlaceholderText = "enter the Fundamental Instructions here";
+            groupBoxExFundamentalInstructions.ReadOnly = false;
+            groupBoxExFundamentalInstructions.Size = new Size(1222, 885);
+            groupBoxExFundamentalInstructions.TabIndex = 4;
+            groupBoxExFundamentalInstructions.TextAlign = HorizontalAlignment.Left;
+            groupBoxExFundamentalInstructions.TextBoxForeColor = SystemColors.WindowText;
+            groupBoxExFundamentalInstructions.UseSystemPasswordChar = false;
+            groupBoxExFundamentalInstructions.Value = "";
             // 
             // groupBoxExGeminiKey
             // 
             groupBoxExGeminiKey.CaptionText = "GeminiKey";
             groupBoxExGeminiKey.Dock = DockStyle.Fill;
-            groupBoxExGeminiKey.Location = new Point(0, 0);
+            groupBoxExGeminiKey.Location = new Point(3, 4);
             groupBoxExGeminiKey.Margin = new Padding(3, 4, 3, 4);
             groupBoxExGeminiKey.Multiline = false;
             groupBoxExGeminiKey.Name = "groupBoxExGeminiKey";
             groupBoxExGeminiKey.PlaceholderText = "";
             groupBoxExGeminiKey.ReadOnly = false;
-            groupBoxExGeminiKey.Size = new Size(1228, 1062);
+            groupBoxExGeminiKey.Size = new Size(1222, 74);
             groupBoxExGeminiKey.TabIndex = 3;
             groupBoxExGeminiKey.TextAlign = HorizontalAlignment.Left;
             groupBoxExGeminiKey.TextBoxForeColor = SystemColors.WindowText;
             groupBoxExGeminiKey.UseSystemPasswordChar = false;
             groupBoxExGeminiKey.Value = "";
+            // 
+            // groupBoxMsccModels
+            // 
+            groupBoxMsccModels.Controls.Add(comboBoxMsccModels);
+            groupBoxMsccModels.Location = new Point(3, 85);
+            groupBoxMsccModels.Name = "groupBoxMsccModels";
+            groupBoxMsccModels.Size = new Size(387, 76);
+            groupBoxMsccModels.TabIndex = 5;
+            groupBoxMsccModels.TabStop = false;
+            groupBoxMsccModels.Text = "Mscc Models";
+            // 
+            // comboBoxMsccModels
+            // 
+            comboBoxMsccModels.Anchor =   AnchorStyles.Top  |  AnchorStyles.Left   |  AnchorStyles.Right ;
+            comboBoxMsccModels.DisplayMember = "Name";
+            comboBoxMsccModels.FormattingEnabled = true;
+            comboBoxMsccModels.Location = new Point(30, 37);
+            comboBoxMsccModels.Name = "comboBoxMsccModels";
+            comboBoxMsccModels.Size = new Size(351, 28);
+            comboBoxMsccModels.TabIndex = 6;
             // 
             // flowLayoutPanelButtons
             // 
@@ -415,6 +475,8 @@
             tableLayoutPanelIssuesAndButtons.ResumeLayout(false);
             flowLayoutPanelIssuesButton.ResumeLayout(false);
             tabPageMisc.ResumeLayout(false);
+            tableLayoutPanelMiscMain.ResumeLayout(false);
+            groupBoxMsccModels.ResumeLayout(false);
             flowLayoutPanelButtons.ResumeLayout(false);
             menuStrip.ResumeLayout(false);
             menuStrip.PerformLayout();
@@ -452,5 +514,9 @@
         private FlowLayoutPanel flowLayoutPanelIssuesButton;
         private Button buttonDelete;
         private Button buttonAdd;
+        private TableLayoutPanel tableLayoutPanelMiscMain;
+        private GroupBoxEx groupBoxExFundamentalInstructions;
+        private GroupBox groupBoxMsccModels;
+        private ComboBox comboBoxMsccModels;
     }
 }

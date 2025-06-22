@@ -7,6 +7,11 @@ namespace UserStoryGenerator.Model
         public IssueGeneratorAllIssues(IssueGeneratorBaseInputArgs args) : base(args)
         {
             targetPrepend = "User Story: ";
+
+            if( args.Target == null ) throw new NullReferenceException(nameof(args.Target));
+            string query = BuildQuery(args.Target.Trim());
+            gfsGeminiClientHost.Query = query.Replace(Environment.NewLine, " ").Trim();
+
         }
     }
 

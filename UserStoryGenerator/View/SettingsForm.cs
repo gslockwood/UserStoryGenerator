@@ -1,4 +1,5 @@
-﻿using System.Text.Json;
+﻿using System.Reflection;
+using System.Text.Json;
 using UserStoryGenerator.Model;
 
 namespace UserStoryGenerator.View
@@ -32,15 +33,41 @@ namespace UserStoryGenerator.View
 
             InitializeComponent();
 
+            //settings = new Settings();  // testing
+
+            this.settings = settings;
+
+
             this.flowLayoutPanelIssues.SelectedControlChanged += (s, e) =>
             {
                 if( e is StretchedFlowLayoutPanel.IsSelectedEventArgs args )
                     this.buttonDelete.Enabled = args.Selected;
             };
 
-            //settings = new Settings();  // testing
 
-            this.settings = settings;
+            Type constantsType = typeof(Mscc.GenerativeAI.Model);
+
+            // Get all public static fields from the class
+            FieldInfo[] fields = constantsType.GetFields(BindingFlags.Public | BindingFlags.Static);
+
+            foreach( FieldInfo field in fields )
+            {
+                // Check if the field is a literal (i.e., a const) and is of type string
+                if( field.IsLiteral && !field.IsInitOnly && field.FieldType == typeof(string) )
+                {
+                    comboBoxMsccModels.Items.Add(field);
+                    /*
+                    // Get the constant string value
+                    object? temp = field.GetRawConstantValue();
+                    if( temp != null )
+                    {
+                        string constantValue = (string)temp;
+                        constantValue = field.Name;
+                    }
+                    */
+                }
+            }
+
 
             //if( settings == null ) buttonUse.Enabled = false;
 
@@ -75,6 +102,10 @@ namespace UserStoryGenerator.View
         {
             settings.Key = groupBoxExGeminiKey.Value;
 
+            FieldInfo? selectedItem = this.comboBoxMsccModels.SelectedItem as FieldInfo;
+            if( selectedItem != null )
+                settings.GeminiModel = selectedItem.Name;
+
             if( settings.UserStoryCoaching == null ) throw new NullReferenceException(nameof(settings.UserStoryCoaching));
 
             settings.UserStoryCoaching.IssueInstructions = aiCoachingUserControlUserStories.IssueInstructions;
@@ -93,6 +124,7 @@ namespace UserStoryGenerator.View
             if( jiraIssueTypes != null )
                 settings.JiraIssueTypes = jiraIssueTypes;
 
+            settings.FundamentalInstructions = groupBoxExFundamentalInstructions.Value;
             //
         }
 
@@ -125,11 +157,22 @@ namespace UserStoryGenerator.View
 
             }
 
+            int tempModel = comboBoxMsccModels.FindString(settings.GeminiModel);
+            if( tempModel == -1 )
+            {
+                settings.GeminiModel = "Gemini25Flash";
+                tempModel = comboBoxMsccModels.FindString(settings.GeminiModel);
+            }
+            comboBoxMsccModels.SelectedIndex = tempModel;
+
+
             if( settings.Projects != null )
                 this.listViewControl.SetItems(settings.Projects);
 
             if( settings.JiraIssueTypes != null )
                 flowLayoutPanelIssues.SetSettingsToUI(settings.JiraIssueTypes);
+
+            groupBoxExFundamentalInstructions.Value = settings.FundamentalInstructions;
 
         }
 

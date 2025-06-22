@@ -520,7 +520,7 @@ namespace UserStoryGenerator.View
             menuStrip.Padding = new Padding(7, 3, 0, 3);
             menuStrip.Size = new Size(2100, 25);
             menuStrip.TabIndex = 6;
-            menuStrip.Text = "menuStrip1";
+            menuStrip.Text = "menuStrip";
             // 
             // fileToolStripMenuItem
             // 
@@ -533,7 +533,7 @@ namespace UserStoryGenerator.View
             // 
             openToolStripMenuItem.Name = "openToolStripMenuItem";
             openToolStripMenuItem.Size = new Size(180, 22);
-            openToolStripMenuItem.Text = "&Open...";
+            openToolStripMenuItem.Text = "&Open Json...";
             openToolStripMenuItem.Click +=  OpenToolStripMenuItem_Click ;
             // 
             // openCSVToolStripMenuItem

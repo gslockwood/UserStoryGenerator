@@ -179,7 +179,7 @@ namespace UserStoryGenerator.Model
         }
         private static void SaveUserStoryResultsToJson(string fullFilePath, string result)
         {
-            //UserStoryGenerator.Utilities.Logger.Info(result);
+            //Utilities.Logger.Info(result);
             File.WriteAllText(fullFilePath, result);
         }
 
@@ -214,22 +214,23 @@ namespace UserStoryGenerator.Model
                 AICoaching = Settings.UserStoryCoaching,
                 MaxStories = maxStories,
                 JiraIssueTypes = Settings.JiraIssueTypes,
+                FundamentalInstructions = Settings.FundamentalInstructions,
             };
 
             IssueGeneratorUserStories? issueGenerator = new(issueGeneratorBaseInputArgs);
             issueGenerator.Completed += (args) =>
             {
+                GFSGeminiClientHost.Result result = args.Result;
                 try
                 {
-                    GFSGeminiClientHost.Result result = args.Result;
                     if( result == null ) throw new NullReferenceException(nameof(result));
                     if( result.Answer == null ) throw new NullReferenceException(nameof(result.Answer));
 
+                    //Logger.Info(result.Answer);
+
                     List<IssueData.Issue>? issues = ProcessIssues(result.Answer);
                     if( issues != null )
-                    {
                         args.Issues = issues;
-                    }
 
                 }
                 catch( Exception ex )
@@ -275,6 +276,7 @@ namespace UserStoryGenerator.Model
                     AICoaching = Settings.AllIssueCoaching,
                     MaxStories = maxStories,
                     JiraIssueTypes = Settings.JiraIssueTypes,
+                    FundamentalInstructions = Settings.FundamentalInstructions,
                 };
 
                 IssueGeneratorUserStories? issueGenerator = new(issueGeneratorBaseInputArgs);
@@ -348,6 +350,11 @@ namespace UserStoryGenerator.Model
             }
 
         }
+
+        //public Mscc.GenerativeAI.Model Gemini()
+        //{
+        //    return Mscc.GenerativeAI.Model;
+        //}
     }
 
     public class StoryPackage

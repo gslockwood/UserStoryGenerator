@@ -10,6 +10,11 @@
         //public List<string>? JiraIssueTypes { get; set; }
         public Dictionary<string, JiraIssueType>? JiraIssueTypes { get; set; }
 
+        public string? FundamentalInstructions { get; set; }
+
+        //[JsonIgnore]
+        public string? GeminiModel { get; set; }
+
         public class AICoaching
         {
             public string? IssueInstructions { get; set; }

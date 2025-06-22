@@ -1,6 +1,7 @@
 ﻿using System.Text;
 using System.Text.Json;
 using static UserStoryGenerator.Model.GFSGeminiClientHost;
+using static UserStoryGenerator.Model.Settings;
 
 namespace UserStoryGenerator.Model
 {
@@ -26,6 +27,7 @@ namespace UserStoryGenerator.Model
         protected readonly bool AddSubTasks;
         protected readonly int maxStories;
         private readonly Dictionary<string, Settings.JiraIssueType>? jiraIssueTypes;
+        private readonly string? fundamentalInstructions;
         protected readonly StringBuilder sbCoaching = new();
         protected String targetPrepend = "";
 
@@ -43,12 +45,10 @@ namespace UserStoryGenerator.Model
             this.AddSubTasks = args.AddSubTasks;
             this.maxStories = args.MaxStories;
             this.jiraIssueTypes = args.JiraIssueTypes;
+            this.fundamentalInstructions = args.FundamentalInstructions;
 
             gfsGeminiClientHost = new(key, AIType.GenerativeAI);
             gfsGeminiClientHost.LookupCompleted += LookupCompleted;
-
-            string query = BuildQuery(target.Trim());
-            gfsGeminiClientHost.Query = query.Replace(Environment.NewLine, " ").Trim();
 
         }
 
@@ -56,63 +56,37 @@ namespace UserStoryGenerator.Model
         {
             try
             {
-                Thread thread = new(async () =>
-                {
-                    try
-                    {
-                        //throw new HttpRequestException("ServiceUnavailable");
-
-                        await gfsGeminiClientHost.RequestAnswer();
-                    }
-                    catch( System.Net.Http.HttpRequestException ex )
-                    {
-                        //RequestFailed requestFailedTEST = new();//RequestFailed
-                        //requestFailedTEST.error = new RequestFailed.Error();
-                        //requestFailedTEST.error.message = "RequestFailed";
-                        //Error?.Invoke(requestFailedTEST);
-                        //return;
-
-                        if( ex.Message.Contains("ServiceUnavailable") )
-                        {
-                            string errorMsg = ex.Message.Replace("Request failed with Status Code: ServiceUnavailable", "");
-                            errorMsg = errorMsg.Replace("Request failed", "");
-
-                            RequestFailed? requestFailed = JsonSerializer.Deserialize<RequestFailed>(errorMsg);
-                            Error?.Invoke(requestFailed);
-                            //
-                        }
-                        else if( ex.Message.Contains("BadRequest") )
-                        {
-                            string errorMsg = ex.Message.Replace("Request failed with Status Code: BadRequest", "");
-                            errorMsg = errorMsg.Replace("Request failed", "");
-
-                            BadRequestError? badRequestError = JsonSerializer.Deserialize<BadRequestError>(errorMsg);
-                            Error?.Invoke(badRequestError);
-
-                        }
-                        else
-                        {
-                        }
-                    }
-                    catch( System.NullReferenceException )
-                    {
-                    }
-                    catch( System.ArgumentException )
-                    {
-                    }
-                    catch( Exception )
-                    {
-                    }
-                });
-                thread.Start();
-
+                _ = gfsGeminiClientHost.RequestAnswer();
             }
             catch( System.Net.Http.HttpRequestException ex )
             {
-                string errorMsg = ex.Message.Replace("Request failed with Status Code: BadRequest", "");
-                errorMsg = errorMsg.Replace("Request failed", "");
+                //RequestFailed requestFailedTEST = new();//RequestFailed
+                //requestFailedTEST.error = new RequestFailed.Error();
+                //requestFailedTEST.error.message = "RequestFailed";
+                //Error?.Invoke(requestFailedTEST);
+                //return;
 
-                BadRequestError? badRequestError = JsonSerializer.Deserialize<BadRequestError>(errorMsg);
+                if( ex.Message.Contains("ServiceUnavailable") )
+                {
+                    string errorMsg = ex.Message.Replace("Request failed with Status Code: ServiceUnavailable", "");
+                    errorMsg = errorMsg.Replace("Request failed", "");
+
+                    RequestFailed? requestFailed = JsonSerializer.Deserialize<RequestFailed>(errorMsg);
+                    Error?.Invoke(requestFailed);
+                    //
+                }
+                else if( ex.Message.Contains("BadRequest") )
+                {
+                    string errorMsg = ex.Message.Replace("Request failed with Status Code: BadRequest", "");
+                    errorMsg = errorMsg.Replace("Request failed", "");
+
+                    BadRequestError? badRequestError = JsonSerializer.Deserialize<BadRequestError>(errorMsg);
+                    Error?.Invoke(badRequestError);
+
+                }
+                else
+                {
+                }
             }
             catch( System.ArgumentException )
             {
@@ -134,30 +108,35 @@ namespace UserStoryGenerator.Model
             sbCoaching.AppendLine("");
 
             if( this.AICoaching != null && AICoaching.IssueInstructions != null && jiraIssueTypes != null )
-            {
-                string issueInstructions = AICoaching.IssueInstructions;
+                sbCoaching.AppendLine(this.AICoaching.IssueInstructions);
 
-                if( issueInstructions.Contains("ISSUETYPEDEFINITIONS") )
+            if( fundamentalInstructions != null )
+            {
+                sbCoaching.AppendLine("Beginning of Fundamental Instructions");
+                string tempFundamentalInstructions = fundamentalInstructions;
+
+                if( tempFundamentalInstructions.Contains("ISSUETYPEDEFINITIONS") )////\"Story\",\"Task\",\"Test\",\"Bug\"
                 {
                     StringBuilder issueTypeDefinitions = new();
 
-                    foreach( Settings.JiraIssueType jiraIssue in jiraIssueTypes.Values )
+                    if( jiraIssueTypes != null )
                     {
-                        if( jiraIssue.Order == 0 ) continue;
-
-                        issueTypeDefinitions.Append($"\"{jiraIssue.IssueType}\"" + ",");
+                        foreach( Settings.JiraIssueType? jiraIssue in jiraIssueTypes.Values )
+                        {
+                            if( jiraIssue.Order == 0 ) continue;
+                            issueTypeDefinitions.Append($"\"{jiraIssue.IssueType}\"" + ",");
+                        }
                     }
 
-                    issueInstructions = issueInstructions.Replace("ISSUETYPEDEFINITIONS", issueTypeDefinitions.ToString().TrimEnd(','));
+                    tempFundamentalInstructions = tempFundamentalInstructions.Replace("ISSUETYPEDEFINITIONS", issueTypeDefinitions.ToString().TrimEnd(','));
                     //
                 }
-                ////\"Story\",\"Task\",\"Test\",\"Bug\"
 
-                sbCoaching.AppendLine(issueInstructions);
-
-                //sbCoaching.AppendLine(this.AICoaching.IssueInstructions);
-                //
+                sbCoaching.AppendLine(tempFundamentalInstructions);
+                sbCoaching.AppendLine("Ending of Fundamental Instructions");
+                sbCoaching.AppendLine("");
             }
+
 
             // add any QATests or Subtasks if instructed
             AddAdditionalInstructions();
@@ -166,6 +145,8 @@ namespace UserStoryGenerator.Model
 
             if( result.Contains(NUMBEROFISSUES) )
                 result = result.Replace(NUMBEROFISSUES, maxStories.ToString());
+
+            //UserStoryGenerator.Utilities.Logger.Info(result);
 
             return result;
         }
@@ -202,19 +183,7 @@ namespace UserStoryGenerator.Model
 
         private void LookupCompleted(Result result)
         {
-            //IList<string>? answers = gfsGeminiClientHost.Answers;
-            //if( answers == null )
-            //{
-            //    //Completed?.Invoke(-1, null);//|| answers.Count == 0
-            //    OnCompleted(null);
-            //    return;
-            //}
-
-            //string answer = answers.First();
-
-            //Completed?.Invoke(userStoryKey, answer);
             OnCompleted(result);
-
         }
 
         protected virtual void OnCompleted(Result result)
@@ -230,6 +199,7 @@ namespace UserStoryGenerator.Model
         public string? Key { get; internal set; }
         public string? JiraProject { get; internal set; }
         public string? Target { get; internal set; }
+        public string? FundamentalInstructions { get; internal set; }
         public string? ProductName { get; internal set; }
         public bool AddQATests { get; internal set; }
         public bool AddSubTasks { get; internal set; }

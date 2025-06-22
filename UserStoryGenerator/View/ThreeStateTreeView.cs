@@ -298,7 +298,7 @@ namespace UserStoryGenerator.View
 
         protected override void OnBeforeCheck(TreeViewCancelEventArgs e)
         {
-            this.Enabled = false;
+            //this.Enabled = false;
             base.OnBeforeCheck(e);
         }
         protected override void OnAfterCheck(System.Windows.Forms.TreeViewEventArgs e)
@@ -333,7 +333,7 @@ namespace UserStoryGenerator.View
             //GetCheckedNodeCount(this.Nodes);
             GetAllCheckedNodes();
 
-            this.Enabled = true;
+            //this.Enabled = true;
             //
         }
 
@@ -446,22 +446,43 @@ namespace UserStoryGenerator.View
                 this.ContextMenuStrip = nodeContextMenu;
 
                 ToolStripMenuItem itemExpandChild = new($"Expand all child nodes");
-                if( !clickedNode.IsExpanded )
-                    nodeContextMenu.Items.Add(itemExpandChild);
-                itemExpandChild.Click += (sender, eventArgs) =>
                 {
-                    clickedNode.ExpandAll();
-                    this.TopNode = clickedNode;
-                };
+                    nodeContextMenu.Items.Add(itemExpandChild);
+                    itemExpandChild.Click += (sender, eventArgs) =>
+                    {
+                        clickedNode.ExpandAll();
+                        this.TopNode = clickedNode;
+                    };
+                }
 
                 ToolStripMenuItem itemChildCollapse = new($"Collapse all child nodes");
                 if( clickedNode.IsExpanded )
-                    nodeContextMenu.Items.Add(itemChildCollapse);
-                itemChildCollapse.Click += (sender, eventArgs) =>
                 {
-                    clickedNode.Collapse();
-                };
+                    nodeContextMenu.Items.Add(itemChildCollapse);
+                    itemChildCollapse.Click += (sender, eventArgs) =>
+                    {
+                        clickedNode.Collapse();
+                    };
+                }
 
+                ToolStripMenuItem menuItem = new($"Expand root node only");
+                if( clickedNode == this.Nodes[0] )
+                {
+                    nodeContextMenu.Items.Add(menuItem);
+                    menuItem.Click += (sender, eventArgs) =>
+                    {
+                        this.Nodes[0].Expand();
+                    };
+                }
+                menuItem = new($"Clear");
+                if( clickedNode == this.Nodes[0] )
+                {
+                    nodeContextMenu.Items.Add(menuItem);
+                    menuItem.Click += (sender, eventArgs) =>
+                    {
+                        this.Nodes.Clear();
+                    };
+                }
                 // Show the context menu at the mouse pointer's location
                 nodeContextMenu.Show(this, e.Location);
 
@@ -880,7 +901,7 @@ namespace UserStoryGenerator.View
                     }
 
                     resultNodes.Add(treeNodeEx); // Add the newly created node to the result list
-                    //
+                                                 //
                 }
                 // If the node is not checked and has no checked descendants, it is skipped.
             }
