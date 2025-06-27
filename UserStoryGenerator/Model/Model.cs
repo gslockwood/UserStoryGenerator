@@ -287,8 +287,6 @@ namespace UserStoryGenerator.Model
 
             int counter = list.Count;
 
-            //string key = "AIzaSyCOQCjU_DEqxDorDW_PwAUvx3tqPHMi06Y";
-
             foreach( StoryPackage storyPackage in list )
             {
                 if( storyPackage.JiraProduct == null ) continue;

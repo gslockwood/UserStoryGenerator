@@ -15,7 +15,7 @@
 		<Description>Tell me a story...\n\nThis app will generate user stories and associated issues (including sub-tasks) for importation into Jira.</Description>
 		<Copyright>© 2025</Copyright>
 		<Authors>G.S. Lockwood</Authors>
-		<AssemblyVersion>2.5.1.0</AssemblyVersion>
+		<AssemblyVersion>2.5.2.0</AssemblyVersion>
 		<ApplicationIcon>Light.ico</ApplicationIcon>
 
 	</PropertyGroup>
@@ -27,10 +27,6 @@
 	<ItemGroup>
 		<PackageReference Include="Google_GenerativeAI" Version="2.7.0" />
 		<PackageReference Include="Mscc.GenerativeAI" Version="2.6.4" />
-	</ItemGroup>
-
-	<ItemGroup>
-	  <ProjectReference Include="..\..\ATS\GFSGeminiClient\GFSGeminiClient.csproj" />
 	</ItemGroup>
 
 	<ItemGroup>
@@ -62,10 +58,10 @@
 			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</None>
 		<None Update="BulkCreate-configuration-UserStoryGeneratorFormat.txt">
-			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+			<CopyToOutputDirectory>Never</CopyToOutputDirectory>
 		</None>
 		<None Update="Simple To-Do List App.PRD">
-		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		  <CopyToOutputDirectory>Never</CopyToOutputDirectory>
 		</None>
 	</ItemGroup>
 

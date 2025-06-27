@@ -1,5 +1,4 @@
 ﻿using GenerativeAI;
-using UserStoryGenerator.Utilities;
 
 namespace UserStoryGenerator.Model
 {
@@ -185,7 +184,7 @@ namespace UserStoryGenerator.Model
                 if( geminiModel == null )
                     geminiModel = Mscc.GenerativeAI.Model.Gemini20Flash001;//  "Gemini20Flash001";//Gemini25Flash  Gemini20FlashLite001
                 else
-                    geminiModel = GeminiUtilities.GetGeminiModel(geminiModel);
+                    geminiModel = Utilities.GeminiUtilities.GetGeminiModel(geminiModel);
 
                 if( geminiModel != null )
                 {
