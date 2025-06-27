@@ -39,6 +39,8 @@ namespace UserStoryGenerator.Model
                 // testing
                 //json = UserStoryGenerator.Properties.Resources.Settings;
 
+                if( json == null ) throw new NullReferenceException(nameof(json));
+
                 Settings? temp = JsonSerializer.Deserialize<Settings>(json);
                 /*
                 temp.UserStoryCoaching = new Settings.AICoaching();
@@ -216,6 +218,7 @@ namespace UserStoryGenerator.Model
         {
             if( Settings == null ) throw new NullReferenceException(nameof(Settings));
             if( Settings.Key == null ) throw new NullReferenceException(nameof(Settings.Key));
+            if( Settings.JiraIssueTypes == null ) throw new NullReferenceException(nameof(Settings.JiraIssueTypes));
 
             IssueGeneratorBaseInputArgs issueGeneratorBaseInputArgs = new()
             {
@@ -239,13 +242,10 @@ namespace UserStoryGenerator.Model
                     if( result == null ) throw new NullReferenceException("The Result came back empty (null).");
                     if( result.Answer == null ) throw new NullReferenceException("The Result came back empty.");
 
-                    Logger.Info(result.Answer);
+                    //Logger.Info(result.Answer);
 
                     ProcessResults(args, result);
 
-                    //if( Utilities.JsonValidator.IsValidJson(result.Answer) )
-                    //    args.Issues = ProcessIssues(result.Answer);
-                    //
                 }
                 catch( Exception ex )
                 {
@@ -284,6 +284,7 @@ namespace UserStoryGenerator.Model
 
             if( Settings == null ) throw new NullReferenceException(nameof(Settings));
             if( Settings.Key == null ) throw new NullReferenceException(nameof(Settings.Key));
+            if( Settings.JiraIssueTypes == null ) throw new NullReferenceException(nameof(Settings.JiraIssueTypes));
 
             int counter = list.Count;
 
@@ -293,7 +294,6 @@ namespace UserStoryGenerator.Model
 
                 IssueGeneratorBaseInputArgs issueGeneratorBaseInputArgs = new()
                 {
-                    //Key = key,
                     Key = this.Settings.Key,
                     JiraProject = storyPackage.JiraProduct,
                     ProductName = productName,

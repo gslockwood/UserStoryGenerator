@@ -1,5 +1,4 @@
-﻿using UserStoryGenerator.Utilities;
-using static UserStoryGenerator.Model.GFSGeminiClientHost;
+﻿using static UserStoryGenerator.Model.GFSGeminiClientHost;
 
 namespace UserStoryGenerator.Model
 {
@@ -12,7 +11,7 @@ namespace UserStoryGenerator.Model
             if( args.Target == null ) throw new NullReferenceException(nameof(args.Target));
             string query = BuildQuery(args.Target.Trim());
 
-            Logger.Info(query);
+            //Logger.Info(query);
 
             gfsGeminiClientHost.MaxOutputTokens = 2 * 4096;
             gfsGeminiClientHost.Temperature = 0.7f;

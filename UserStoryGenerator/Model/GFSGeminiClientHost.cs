@@ -140,24 +140,24 @@ namespace UserStoryGenerator.Model
         //public float TopK { get; set; } = 30; // Moderate for variety within focus
         public int MaxOutputTokens
         {
-            get { return this.gfsGeminiClient.MaxOutputTokens; }
-            set { this.gfsGeminiClient.MaxOutputTokens = value; }
+            get { if( gfsGeminiClient == null ) return 4096; return this.gfsGeminiClient.MaxOutputTokens; }
+            set { if( gfsGeminiClient == null ) return; this.gfsGeminiClient.MaxOutputTokens = value; }
         }
 
         public float Temperature
         {
-            get { return this.gfsGeminiClient.Temperature; }
-            set { this.gfsGeminiClient.Temperature = value; }
+            get { if( gfsGeminiClient == null ) return 0.2f; return this.gfsGeminiClient.Temperature; }
+            set { if( gfsGeminiClient == null ) return; this.gfsGeminiClient.Temperature = value; }
         }
         public float TopP
         {
-            get { return this.gfsGeminiClient.TopP; }
-            set { this.gfsGeminiClient.TopP = value; }
+            get { if( gfsGeminiClient == null ) return 0.6f; return this.gfsGeminiClient.TopP; }
+            set { if( gfsGeminiClient == null ) return; this.gfsGeminiClient.TopP = value; }
         }
         public float TopK
         {
-            get { return this.gfsGeminiClient.TopK; }
-            set { this.gfsGeminiClient.TopK = value; }
+            get { if( gfsGeminiClient == null ) return 30; return this.gfsGeminiClient.TopK; }
+            set { if( gfsGeminiClient == null ) return; this.gfsGeminiClient.TopK = value; }
         }
 
 

@@ -37,6 +37,8 @@ namespace UserStoryGenerator.Model
         {
             string key = args.Key ?? throw new NullReferenceException(nameof(args.Key));
             string target = args.Target ?? throw new NullReferenceException(nameof(args.Target));
+            if( args.Settings == null ) throw new NullReferenceException(nameof(args.Settings));
+
             this.jiraProject = args.JiraProject ?? throw new NullReferenceException(nameof(args.JiraProject));
             this.productName = args.ProductName ?? throw new NullReferenceException(nameof(args.ProductName));
 
@@ -44,10 +46,10 @@ namespace UserStoryGenerator.Model
             this.AddQATests = args.AddQATests;
             this.AddSubTasks = args.AddSubTasks;
             this.maxStories = args.MaxStories;
-            this.jiraIssueTypes = args.JiraIssueTypes;
-            this.fundamentalInstructions = args.FundamentalInstructions;
+            this.jiraIssueTypes = args.Settings.JiraIssueTypes;// args.JiraIssueTypes;
+            this.fundamentalInstructions = args.Settings.FundamentalInstructions;//.FundamentalInstructions;
 
-            gfsGeminiClientHost = new(key, AIType.GenerativeAI);
+            gfsGeminiClientHost = new(key, AIType.GenerativeAI, args.Settings.GeminiModel);
             gfsGeminiClientHost.LookupCompleted += LookupCompleted;
 
         }
@@ -199,13 +201,11 @@ namespace UserStoryGenerator.Model
         public string? Key { get; internal set; }
         public string? JiraProject { get; internal set; }
         public string? Target { get; internal set; }
-        public string? FundamentalInstructions { get; internal set; }
         public string? ProductName { get; internal set; }
         public bool AddQATests { get; internal set; }
         public bool AddSubTasks { get; internal set; }
         public int MaxStories { get; internal set; }
-        public Dictionary<string, Settings.JiraIssueType>? JiraIssueTypes { get; internal set; }
-        public Settings Settings { get; internal set; }
+        public Settings? Settings { get; internal set; }
     }
 
 
