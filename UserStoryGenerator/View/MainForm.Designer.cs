@@ -697,19 +697,8 @@ namespace UserStoryGenerator.View
             // Set some default properties for the FlowLayoutPanel
             this.FlowDirection = FlowDirection.LeftToRight;
             this.WrapContents = false; // Important to ensure they lay out horizontally
-
-            //InitializePictureboxes();
             //
         }
-
-        //private void InitializePictureboxes()
-        //{
-        //    CreateImageControl(Properties.Resources.epic, "Epic");
-        //    CreateImageControl(Properties.Resources.story, "Story");
-        //    CreateImageControl(Properties.Resources.task, "Task");
-        //    CreateImageControl(Properties.Resources.test, "Test");
-        //    CreateImageControl(Properties.Resources.Sub_task, "Sub-task");
-        //}
 
         private void CreateImageControl(string issueType,Bitmap bitmap)
         {

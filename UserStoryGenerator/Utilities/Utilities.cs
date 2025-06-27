@@ -1,9 +1,37 @@
-﻿using System.Text.RegularExpressions;
+﻿using System.Reflection;
+using System.Text.RegularExpressions;
 using UserStoryGenerator.Model;
 using static UserStoryGenerator.Model.Settings;
 
 namespace UserStoryGenerator.Utilities
 {
+    public class GeminiUtilities
+    {
+        public static string? GetGeminiModel(string geminiModelStr)
+        {
+            Type constantsType = typeof(Mscc.GenerativeAI.Model);
+
+            // Get all public static fields from the class
+            FieldInfo[] fields = constantsType.GetFields(BindingFlags.Public | BindingFlags.Static);
+
+            foreach( FieldInfo field in fields )
+            {
+                // Check if the field is a literal (i.e., a const) and is of type string
+                if( field.IsLiteral && !field.IsInitOnly && field.FieldType == typeof(string) )
+                {
+                    if( field.Name.Equals(geminiModelStr) )
+                    {
+                        object? temp = field.GetRawConstantValue();
+                        if( temp != null )
+                            return (string)temp;
+                    }
+                }
+            }
+
+            return null;
+        }
+    }
+
     public class InputValidator
     {
         public static bool RegexValidation(string inputText)
@@ -75,6 +103,7 @@ namespace UserStoryGenerator.Utilities
             return ImageList.Images.IndexOfKey(first.IssueType);
 
         }
+
     }
 
 }

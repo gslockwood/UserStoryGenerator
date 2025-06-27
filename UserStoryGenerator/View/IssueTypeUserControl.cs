@@ -58,6 +58,8 @@ namespace UserStoryGenerator.View
         {
             OpenFileDialog form = new()
             {
+                //D:\repos\UserStoryGenerator\UserStoryGenerator\bin\Debug\net8.0-windows\Data\Resources
+                InitialDirectory = @"Data\Resources",
                 Filter = "Image Files|*.jpg;*.jpeg;*.png;*.gif;*.bmp;*.tif;*.tiff;*.webp;*.ico;*.svg|" +
                 "JPEG Images (*.jpg;*.jpeg;*.jfif;*.jpe)|*.jpg;*.jpeg;*.jfif;*.jpe|" +
                 "PNG Images (*.png)|*.png|" +
@@ -69,11 +71,12 @@ namespace UserStoryGenerator.View
                 "Icon Files (*.ico)|*.ico|" +
                 "All Files (*.*)|*.*",
                 FilterIndex = 1, // Sets the default selected filter to "Text Files"
-                RestoreDirectory = true, // Restores the directory to the previously selected one
+                //RestoreDirectory = true, // Restores the directory to the previously selected one
             };
 
             if( form.ShowDialog() == DialogResult.OK )
             {
+                form.RestoreDirectory = true;
                 try
                 {
                     Image? image = Utilities.ImageLoader.GetImageFromFilePath(form.FileName);
@@ -129,7 +132,7 @@ namespace UserStoryGenerator.View
             jiraIssue.ImagePath = pictureBoxImagePath.Tag.ToString();
 
             if( string.IsNullOrEmpty(jiraIssue.ImagePath) ) throw new IssueDefinitionException($"A blank ImagePath was enncountered.  Cannot proceed.");
-            if( jiraIssue.ImagePath.Equals($"{"./Resources"}/unknown.png") ) throw new IssueDefinitionException($"The Image was not updated.  Cannot proceed.");
+            if( jiraIssue.ImagePath.Equals($"{"./Data/Resources"}/unknown.png") ) throw new IssueDefinitionException($"The Image was not updated.  Cannot proceed.");
 
             jiraIssue.ForeColor = pictureBoxForeColor.BackColor.Name;
 

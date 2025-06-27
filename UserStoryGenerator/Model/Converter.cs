@@ -17,7 +17,8 @@ namespace UserStoryGenerator.Model
             SubTaskIssueType = subTaskIssueType;
 
             //string headerLine = "Project Key,ID,Parent ID,Summary,Issue Type,Description,Status, Reporter,Assignee";
-            string headerLine = "Project Key,ID,Parent ID,Link,Summary,Issue Type,Status";
+            //string headerLine = "Project Key,ID,Parent ID,Link,Summary,Issue Type,Status";
+            string headerLine = "Project Key,ID,Parent ID,Link,Summary,Issue Type,Description,Status";
 
             StringBuilder sbFile = new();
             sbFile.AppendLine(headerLine.TrimEnd(','));
@@ -48,6 +49,7 @@ namespace UserStoryGenerator.Model
                         Summary = epicText,
                         IssueType = epicIssueType,// JiraIssueTypes.EPIC,
                         Product = userStoryResults.Issues[0].Product,
+                        // do description for epics
                         Key = epicKey0,
                     };
 
@@ -137,6 +139,12 @@ namespace UserStoryGenerator.Model
             // IssueType
             sbLine.Append(subTask.IssueType + ",");
 
+            // Description
+            if( subTask.Description != null )
+                sbLine.Append(subTask.Description + ",");
+            else
+                sbLine.Append(',');
+
             // Status
             sbLine.Append("TODO");//OPEN
 
@@ -189,6 +197,12 @@ namespace UserStoryGenerator.Model
             // IssueType
             if( issue.IssueType != null )
                 sbLine.Append(issue.IssueType.ToString().Trim() + ",");
+            else
+                sbLine.Append(',');
+
+            // Description
+            if( issue.Description != null )
+                sbLine.Append(issue.Description + ",");
             else
                 sbLine.Append(',');
 

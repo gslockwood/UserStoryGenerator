@@ -182,15 +182,21 @@ namespace UserStoryGenerator.View
 
             else
             {
-                //Logger.Info($"model.IssueGeneratorCompleted : {args.UserStoryKey}");
-
-                if( args.UserStoryKey == -1 )
-                {
-                    MessageBox.Show("The IssueGenerator Completed with no value.", "Critical Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                    return;
-                }
                 try
                 {
+                    if( args.Result.ErrorCode != 0 )
+                    {
+                        string errorMsg = "";
+                        if( args.Result.ErrorCode == -1 )//|| args.UserStoryKey == -1
+                            errorMsg = "The IssueGenerator Completed with an unknown error state.";
+                        if( args.Result.ErrorCode == -99 )//|| args.UserStoryKey == -1
+                            errorMsg = "The IssueGenerator Completed with non json value.";
+
+                        MessageBox.Show(errorMsg, "Critical Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        return;
+                    }
+
+
                     if( args.Result == null ) throw new NullReferenceException(nameof(args.Result));
 
                     buttonProcessStories.Text = args.Counter.ToString();
@@ -525,14 +531,16 @@ namespace UserStoryGenerator.View
         {
             OpenFileDialog dialog = new()
             {
+                InitialDirectory = "Data",
                 Filter = "JSON Files (*.json)|*.json|All Files (*.*)|*.*",
                 FilterIndex = 1, // Sets the default selected filter to "Text Files"
-                RestoreDirectory = true // Restores the directory to the previously selected one
+                //RestoreDirectory = true // Restores the directory to the previously selected one
             };
             if( dialog.ShowDialog() == DialogResult.OK )
             {
                 try
                 {
+                    dialog.RestoreDirectory = true;
                     string json = File.ReadAllText(dialog.FileName) ?? throw new Exception($"{dialog.FileName} is blank.");
                     groupBoxExPRD.Value = model.CreateUserStories(json);
                 }
@@ -548,12 +556,14 @@ namespace UserStoryGenerator.View
         {
             OpenFileDialog dialog = new()
             {
+                InitialDirectory = "Data",
                 Filter = "Product Description Files (*.PRD)|*.prd|(*.TXT)|*.txt|All Files (*.*)|*.*",
                 FilterIndex = 1,
-                RestoreDirectory = true
+                //RestoreDirectory = true
             };
             if( dialog.ShowDialog() == DialogResult.OK )
             {
+                dialog.RestoreDirectory = true;
                 try
                 {
                     groupBoxExPRD.Value = File.ReadAllText(dialog.FileName);
@@ -571,12 +581,14 @@ namespace UserStoryGenerator.View
         {
             OpenFileDialog dialog = new()
             {
+                InitialDirectory = "Data",
                 Filter = "CSV Files (*.csv)|*.csv|All Files (*.*)|*.*",
                 FilterIndex = 1,
-                RestoreDirectory = true
+                //RestoreDirectory = true
             };
             if( dialog.ShowDialog() == DialogResult.OK )
             {
+                dialog.RestoreDirectory = true;
                 Process.Start(new ProcessStartInfo(dialog.FileName) { UseShellExecute = true });
             }
         }
@@ -585,13 +597,15 @@ namespace UserStoryGenerator.View
         {
             SaveFileDialog dialog = new()
             {
+                InitialDirectory = "Data",
                 Filter = "JSON Files (*.json)|*.json|All Files (*.*)|*.*",
                 FilterIndex = 1, // Sets the default selected filter to "Text Files"
-                RestoreDirectory = true // Restores the directory to the previously selected one
+                //RestoreDirectory = true // Restores the directory to the previously selected one
             };
 
             if( dialog.ShowDialog() == DialogResult.OK )
             {
+                dialog.RestoreDirectory = true;
                 // Get the selected file path
                 string filePath = dialog.FileName;
                 try
@@ -642,13 +656,15 @@ namespace UserStoryGenerator.View
 
             SaveFileDialog dialog = new()
             {
+                InitialDirectory = "Data",
                 Filter = "CSV Files (*.csv)|*.csv|All Files (*.*)|*.*",
                 FilterIndex = 1, // Sets the default selected filter to "Text Files"
-                RestoreDirectory = true // Restores the directory to the previously selected one
+                //RestoreDirectory = true // Restores the directory to the previously selected one
             };
 
             if( dialog.ShowDialog() == DialogResult.OK )
             {
+                dialog.RestoreDirectory = true;
                 // Get the selected file path
                 string filePath = dialog.FileName;
                 try

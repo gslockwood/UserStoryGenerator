@@ -1,4 +1,5 @@
-﻿using static UserStoryGenerator.Model.GFSGeminiClientHost;
+﻿using UserStoryGenerator.Utilities;
+using static UserStoryGenerator.Model.GFSGeminiClientHost;
 
 namespace UserStoryGenerator.Model
 {
@@ -10,7 +11,17 @@ namespace UserStoryGenerator.Model
 
             if( args.Target == null ) throw new NullReferenceException(nameof(args.Target));
             string query = BuildQuery(args.Target.Trim());
+
+            Logger.Info(query);
+
+            gfsGeminiClientHost.MaxOutputTokens = 2 * 4096;
+            gfsGeminiClientHost.Temperature = 0.7f;
+            gfsGeminiClientHost.TopP = 0.9f;
+            gfsGeminiClientHost.TopK = 80;
+
             gfsGeminiClientHost.Query = query.Replace(Environment.NewLine, " ").Trim();
+
+            //gfsGeminiClientHost.EstimateTextTokens();
 
         }
     }

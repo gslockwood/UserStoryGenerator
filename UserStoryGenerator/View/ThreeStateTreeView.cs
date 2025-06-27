@@ -1,7 +1,10 @@
 ﻿using System.Text.Json;
 using UserStoryGenerator.Model;
+using UserStoryGenerator.Utilities;
 namespace UserStoryGenerator.View
 {
+
+
     public class TriStateTreeView : System.Windows.Forms.TreeView
     {
         public class TreeNodeEx : TreeNode, Model.IIssue
@@ -9,13 +12,18 @@ namespace UserStoryGenerator.View
             public string? Product { get; set; }
             public string? Summary { get; set; }
             public string? IssueType { get; set; }
+            public string? Description { get; set; }
             public long Key { get; set; }
             public TreeNodeEx(IssueDataBase issue)
             {
-                Summary = issue.Summary?.Trim();
-                Product = issue.Product?.Trim();
-                IssueType = issue.IssueType?.Trim();
-                Key = issue.Key;
+                //Utilities.IssueUtilities.SetTreeNodeEx(issue, this);
+                UserStoryGenerator.Utilities.TreeNodeExExtensions.SetTreeNodeEx(this, issue);
+
+
+                //Summary = issue.Summary?.Trim();
+                //Product = issue.Product?.Trim();
+                //IssueType = issue.IssueType?.Trim();
+                //Key = issue.Key;
 
                 // for the TreeView
                 Text = Summary;
@@ -30,6 +38,16 @@ namespace UserStoryGenerator.View
                 Name = text;
             }
             public TreeNodeEx(string text, TreeNode[] children) : base(text, children) { }
+
+            public TreeNodeEx(TreeNodeEx treeNodeExRef)
+            {
+                TreeNodeExExtensions.SetTreeNodeExFromTreeNodeEx(treeNodeExRef, this);
+                //Summary = treeNodeExRef.Summary;
+                //IssueType = treeNodeExRef.IssueType;
+                //Product = treeNodeExRef.Product;
+                //Text = treeNodeExRef.Text;
+                //Description = treeNodeExRef.Description;
+            }
         }
 
         public class TreeNodeExSubTasks() : TreeNodeEx("Subtasks") { public static readonly string NodeName = "Subtasks"; }
@@ -47,6 +65,7 @@ namespace UserStoryGenerator.View
             public string? Product { get; set; }
             public string? Summary { get; set; }
             public string? IssueType { get; set; }
+            public string? Description { get; set; }
             public long Key { get; set; }
 
 
@@ -54,10 +73,12 @@ namespace UserStoryGenerator.View
 
             public DraggableNodeData() : base()
             {
-                Product = string.Empty;
-                Summary = string.Empty;
-                IssueType = string.Empty;
-                Key = -1;
+                DraggableNodeDataExtensions.ZeroSet(this);
+                //Product = string.Empty;
+                //Description = string.Empty;
+                //Summary = string.Empty;
+                //IssueType = string.Empty;
+                //Key = -1;
             }
 
 
@@ -80,12 +101,14 @@ namespace UserStoryGenerator.View
                     }
                 }
 
-
                 // Copy custom properties
-                Product = node.Product;
-                Summary = node.Summary;
-                IssueType = node.IssueType;
-                Key = node.Key;
+                UserStoryGenerator.Utilities.DraggableNodeDataExtensions.SetFromTreeNodeEx(this, node);
+
+                //Product = node.Product;
+                //Summary = node.Summary;
+                //IssueType = node.IssueType;
+                //Description = node.Description;
+                //Key = node.Key;
 
 
                 foreach( TreeNode childNode in node.Nodes )
@@ -107,14 +130,18 @@ namespace UserStoryGenerator.View
                 else
                 {
                     if( IssueType == null ) throw new NullReferenceException(nameof(IssueType));
-                    newNode = new(Text)
-                    {
-                        Product = Product,
-                        Summary = Summary,
-                        IssueType = IssueType,
-                        ImageIndex = UserStoryGenerator.Utilities.IssueUtilities.GetImageIndex(IssueType),
-                        Key = Key
-                    };
+                    newNode = new(Text);
+                    TreeNodeExExtensions.SetTreeNodeEx2(newNode, this);
+                    //newNode = new(Text)
+                    //{
+                    //    Product = Product,
+                    //    Summary = Summary,
+                    //    IssueType = IssueType,
+                    //    ImageIndex = UserStoryGenerator.Utilities.IssueUtilities.GetImageIndex(IssueType),
+                    //    Key = Key
+                    //};
+                    newNode.ImageIndex = UserStoryGenerator.Utilities.IssueUtilities.GetImageIndex(IssueType);
+
                 }
 
                 if( TagJson != null )
@@ -885,13 +912,13 @@ namespace UserStoryGenerator.View
                         else
                         {
                             TreeNodeEx treeNodeExRef = (TreeNodeEx)sourceNode;
-                            treeNodeEx = new()
-                            {
-                                Summary = treeNodeExRef.Summary,
-                                IssueType = treeNodeExRef.IssueType,
-                                Product = treeNodeExRef.Product,
-                                Text = treeNodeExRef.Text
-                            };
+                            treeNodeEx = new(treeNodeExRef);
+                            //{
+                            //    Summary = treeNodeExRef.Summary,
+                            //    IssueType = treeNodeExRef.IssueType,
+                            //    Product = treeNodeExRef.Product,
+                            //    Text = treeNodeExRef.Text
+                            //};
 
                         }
 

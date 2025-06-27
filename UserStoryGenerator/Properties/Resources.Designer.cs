@@ -111,21 +111,6 @@ namespace UserStoryGenerator.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to {
-        ///  &quot;Key&quot;: &quot;google cloud gemini Ai api key&quot;,
-        ///  &quot;GeneralAITraining&quot;: &quot;text to coach the ai to write jira issues&quot;,
-        ///  &quot;QATestsAITraining&quot;: &quot;text to coach the ai to write jira issues&quot;,
-        ///  &quot;SubTaskAITraining&quot;: &quot;text to coach the ai to write jira issues&quot;,
-        ///  &quot;Projects&quot;: [ &quot;Project A&quot;, &quot;Project B&quot; ]
-        ///}.
-        /// </summary>
-        internal static string Settings {
-            get {
-                return ResourceManager.GetString("Settings", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
         internal static System.Drawing.Bitmap story {

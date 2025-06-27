@@ -243,7 +243,7 @@ namespace UserStoryGenerator.View
                 IssueType = null,
                 Order = 1,
                 ForeColor = Color.GhostWhite.Name,
-                ImagePath = $"{"./Resources"}/unknown.png"
+                ImagePath = $"{"./Data/Resources"}/unknown.png"
             };
 
             IssueTypeUserControl uc = new(item)

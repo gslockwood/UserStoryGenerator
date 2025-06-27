@@ -160,7 +160,7 @@ namespace UserStoryGenerator.View
             int tempModel = comboBoxMsccModels.FindString(settings.GeminiModel);
             if( tempModel == -1 )
             {
-                settings.GeminiModel = "Gemini25Flash";
+                settings.GeminiModel = "Gemini20FlashLite001";//  "Gemini20Flash001";//Gemini25Flash
                 tempModel = comboBoxMsccModels.FindString(settings.GeminiModel);
             }
             comboBoxMsccModels.SelectedIndex = tempModel;
@@ -188,7 +188,6 @@ namespace UserStoryGenerator.View
         }
         private void ButtonSave_Click(object sender, EventArgs e)
         {
-            // currentFileName is correct
             SaveCurrentSettings();
         }
 
@@ -218,12 +217,14 @@ namespace UserStoryGenerator.View
         {
             OpenFileDialog dialog = new()
             {
+                InitialDirectory = "Data",
                 Filter = "JSON Files (*.json)|*.json|All Files (*.*)|*.*",
                 FilterIndex = 1, // Sets the default selected filter to "Text Files"
-                RestoreDirectory = true // Restores the directory to the previously selected one
+                //RestoreDirectory = true // Restores the directory to the previously selected one
             };
             if( dialog.ShowDialog() == DialogResult.OK )
             {
+                dialog.RestoreDirectory = true;
                 try
                 {
                     string json = File.ReadAllText(dialog.FileName) ?? throw new Exception($"{dialog.FileName} is blank.");
@@ -256,13 +257,15 @@ namespace UserStoryGenerator.View
             SaveFileDialog dialog = new()
             {
                 FileName = CurrentFileName,
+                InitialDirectory = "Data",
                 Filter = "JSON Files (*.json)|*.json|All Files (*.*)|*.*",
                 FilterIndex = 1, // Sets the default selected filter to "Text Files"
-                RestoreDirectory = true // Restores the directory to the previously selected one
+                //RestoreDirectory = true // Restores the directory to the previously selected one
             };
 
             if( dialog.ShowDialog() == DialogResult.OK )
             {
+                dialog.RestoreDirectory = true;
                 // Get the selected file path
                 CurrentFileName = dialog.FileName;
                 SaveCurrentSettings();

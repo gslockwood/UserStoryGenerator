@@ -1,4 +1,5 @@
 ﻿using GenerativeAI;
+using UserStoryGenerator.Utilities;
 
 namespace UserStoryGenerator.Model
 {
@@ -131,7 +132,36 @@ namespace UserStoryGenerator.Model
         public delegate void LookupCompletedEventHandler(Result result);//string text
         public event LookupCompletedEventHandler? LookupCompleted;
 
-        private readonly GFSGeminiClient.IGFSGeminiClient gfsGeminiClient;
+        //private readonly GFSGeminiClient.IGFSGeminiClient? gfsGeminiClient;
+        private readonly GFSGeminiClient.GFSGenerativeAIClient? gfsGeminiClient;
+
+        //public int MaxOutputTokens { get; set; } = 4096;
+        //public float Temperature { get; set; } = 0.2f; //0.2f, // Low for precision
+        //public float TopP { get; set; } = 0.6f; // Moderate to low for focus
+        //public float TopK { get; set; } = 30; // Moderate for variety within focus
+        public int MaxOutputTokens
+        {
+            get { return this.gfsGeminiClient.MaxOutputTokens; }
+            set { this.gfsGeminiClient.MaxOutputTokens = value; }
+        }
+
+        public float Temperature
+        {
+            get { return this.gfsGeminiClient.Temperature; }
+            set { this.gfsGeminiClient.Temperature = value; }
+        }
+        public float TopP
+        {
+            get { return this.gfsGeminiClient.TopP; }
+            set { this.gfsGeminiClient.TopP = value; }
+        }
+        public float TopK
+        {
+            get { return this.gfsGeminiClient.TopK; }
+            set { this.gfsGeminiClient.TopK = value; }
+        }
+
+
 
         public string? query;
         public string? Query
@@ -146,31 +176,58 @@ namespace UserStoryGenerator.Model
             DotnetGeminiSDK
         }
 
-        public GFSGeminiClientHost(string key, AIType aiType)
+        public GFSGeminiClientHost(string key, AIType aiType, string? geminiModel = null)
         {
-            if( aiType == AIType.DotnetGeminiSDK )
-                gfsGeminiClient = new GFSGeminiClient.GFSDotnetGeminiSDKClient(key);
-            else
-                gfsGeminiClient = new GFSGeminiClient.GFSGenerativeAIClient(key, Mscc.GenerativeAI.Model.Gemini25Flash);//Gemini20Flash001
-
-            gfsGeminiClient.Completed += (answer) =>
+            //if( aiType == AIType.DotnetGeminiSDK )
+            //    gfsGeminiClient = new GFSGeminiClient.GFSDotnetGeminiSDKClient(key);
+            //else
             {
-                //if( answer != null )
-                //    LookupCompleted?.Invoke(new(id, answer));
-                //else
-                //    LookupCompleted?.Invoke(new(id, null));
+                if( geminiModel == null )
+                    geminiModel = Mscc.GenerativeAI.Model.Gemini20Flash001;//  "Gemini20Flash001";//Gemini25Flash  Gemini20FlashLite001
+                else
+                    geminiModel = GeminiUtilities.GetGeminiModel(geminiModel);
 
-                LookupCompleted?.Invoke(new(id, answer));
-                this.id = null;
+                if( geminiModel != null )
+                {
+                    gfsGeminiClient = new GFSGeminiClient.GFSGenerativeAIClient(key, geminiModel)
+                    {
+                        MaxOutputTokens = 4096,
+                        Temperature = 0.2f, //0.2f, // Low for precision
+                        TopP = 0.6f, // Moderate to low for focus
+                        TopK = 30, // Moderate for variety within focus
+                    };
+                }
                 //
-            };
+            }
+
+            if( gfsGeminiClient != null )
+            {
+                gfsGeminiClient.Completed += (answer) =>
+                {
+                    LookupCompleted?.Invoke(new(id, answer));
+                    this.id = null;
+                };
+            }
             //
+        }
+
+        /**/
+        public async void EstimateTextTokens()
+        {
+            if( query == null ) return;
+            if( gfsGeminiClient == null ) return;
+
+            GFSGeminiClient.CountTokensResponse? countTokensResponse = await gfsGeminiClient.EstimateTextTokens(query);
+            if( countTokensResponse != null )
+            {
+            }
         }
 
         object? id = null;
         internal async Task RequestAnswer(object? id = null)
         {
             if( query == null ) return;
+            if( gfsGeminiClient == null ) return;
 
             this.id = id;
 
@@ -182,7 +239,7 @@ namespace UserStoryGenerator.Model
         {
             public object? Id { get; } = id;
             public string? Answer { get; } = answer;
-
+            public int ErrorCode { get; internal set; } = 0;
         }
     }
 

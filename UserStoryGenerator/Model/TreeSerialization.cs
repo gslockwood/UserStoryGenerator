@@ -17,12 +17,14 @@ namespace UserStoryGenerator.Model
             List<IssueData.Issue> serializableIssues = [];
             foreach( TriStateTreeView.TreeNodeEx node in treeNodes.Cast<TriStateTreeView.TreeNodeEx>() )
             {
-                IssueData.Issue issue = new()
-                {
-                    Summary = node.Summary,
-                    IssueType = node.IssueType,
-                    Product = node.Product
-                };
+                //IssueData.Issue issue = new()
+                //{
+                //    Summary = node.Summary,
+                //    IssueType = node.IssueType,
+                //    Product = node.Product
+                //};
+
+                IssueData.Issue issue = Utilities.IssueDataBaseExtensions.CreateIssueFromTreeNodeEx(node);
 
                 serializableIssues.Add(issue);
 
@@ -30,17 +32,17 @@ namespace UserStoryGenerator.Model
                 {
                     foreach( TriStateTreeView.TreeNodeEx treeNodeEx in node.Nodes )
                     {
-                        //if( treeNodeEx is TriStateTreeView.TreeNodeExSubTasks )// collection node with this text
                         if( treeNodeEx.Text.Equals(TriStateTreeView.TreeNodeExSubTasks.NodeName) )// collection node with this text
                         {
                             foreach( TriStateTreeView.TreeNodeEx subTaskNode in treeNodeEx.Nodes )
                             {
-                                IssueData.SubTask subIssue = new()
-                                {
-                                    Summary = subTaskNode.Summary,
-                                    IssueType = subTaskNode.IssueType,
-                                    Product = subTaskNode.Product
-                                };
+                                IssueData.SubTask subIssue = Utilities.SubTaskExtensions.CreateSubTaskIssueFromTreeNodeEx(subTaskNode);
+                                //IssueData.SubTask subIssue = new()
+                                //{
+                                //    Summary = subTaskNode.Summary,
+                                //    IssueType = subTaskNode.IssueType,
+                                //    Product = subTaskNode.Product
+                                //};
                                 issue.Subtasks ??= [];
                                 issue.Subtasks.Add(subIssue);
                             }
@@ -66,12 +68,15 @@ namespace UserStoryGenerator.Model
             foreach( TreeNode node in treeNodes )
             {
                 View.TriStateTreeView.TreeNodeEx treeNodeEx = (View.TriStateTreeView.TreeNodeEx)node;
-                IssueData.Issue issue = new()
-                {
-                    Summary = treeNodeEx.Summary,
-                    IssueType = treeNodeEx.IssueType,
-                    Product = treeNodeEx.Product
-                };
+
+                IssueData.Issue issue = Utilities.IssueDataBaseExtensions.CreateIssueFromTreeNodeEx(treeNodeEx);
+
+                //IssueData.Issue issue = new()
+                //{
+                //    Summary = treeNodeEx.Summary,
+                //    IssueType = treeNodeEx.IssueType,
+                //    Product = treeNodeEx.Product
+                //};
                 if( node.Nodes.Count > 0 )
                 {
                     // Convert TreeNodeCollection to List<TreeNode> before recursive call

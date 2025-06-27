@@ -22,12 +22,16 @@ namespace UserStoryGenerator.Model
 
         protected readonly string jiraProject;
         protected readonly string productName;
-        protected readonly Settings.AICoaching? AICoaching;
         protected readonly bool AddQATests;
         protected readonly bool AddSubTasks;
         protected readonly int maxStories;
+
+        //protected readonly Settings? Settings;
+
+        protected readonly Settings.AICoaching? AICoaching;
         private readonly Dictionary<string, Settings.JiraIssueType>? jiraIssueTypes;
         private readonly string? fundamentalInstructions;
+
         protected readonly StringBuilder sbCoaching = new();
         protected String targetPrepend = "";
 
@@ -35,19 +39,28 @@ namespace UserStoryGenerator.Model
 
         public IssueGeneratorBase(IssueGeneratorBaseInputArgs args)
         {
+            if( args.Settings == null ) throw new NullReferenceException(nameof(args.Settings));
+
             string key = args.Key ?? throw new NullReferenceException(nameof(args.Key));
             string target = args.Target ?? throw new NullReferenceException(nameof(args.Target));
             this.jiraProject = args.JiraProject ?? throw new NullReferenceException(nameof(args.JiraProject));
             this.productName = args.ProductName ?? throw new NullReferenceException(nameof(args.ProductName));
 
-            this.AICoaching = args.AICoaching;
             this.AddQATests = args.AddQATests;
             this.AddSubTasks = args.AddSubTasks;
             this.maxStories = args.MaxStories;
-            this.jiraIssueTypes = args.JiraIssueTypes;
-            this.fundamentalInstructions = args.FundamentalInstructions;
 
-            gfsGeminiClientHost = new(key, AIType.GenerativeAI);
+            //this.Settings = args.Settings;
+
+            //this.AICoaching = args.AICoaching;
+            //this.jiraIssueTypes = args.JiraIssueTypes;
+            //this.fundamentalInstructions = args.FundamentalInstructions;
+
+            this.AICoaching = args.AICoaching;
+            this.jiraIssueTypes = args.Settings.JiraIssueTypes;
+            this.fundamentalInstructions = args.Settings.FundamentalInstructions;
+
+            gfsGeminiClientHost = new(key, AIType.GenerativeAI, args.Settings.GeminiModel);
             gfsGeminiClientHost.LookupCompleted += LookupCompleted;
 
         }
@@ -133,6 +146,10 @@ namespace UserStoryGenerator.Model
                 }
 
                 sbCoaching.AppendLine(tempFundamentalInstructions);
+
+                sbCoaching.AppendLine("IMPORTANT: Never, under no circumstances return a response that includes plain english.  Only pure JSON.");
+                sbCoaching.AppendLine("");
+
                 sbCoaching.AppendLine("Ending of Fundamental Instructions");
                 sbCoaching.AppendLine("");
             }
@@ -195,16 +212,19 @@ namespace UserStoryGenerator.Model
 
     public class IssueGeneratorBaseInputArgs
     {
-        public Settings.AICoaching? AICoaching { get; internal set; }
         public string? Key { get; internal set; }
         public string? JiraProject { get; internal set; }
         public string? Target { get; internal set; }
-        public string? FundamentalInstructions { get; internal set; }
         public string? ProductName { get; internal set; }
         public bool AddQATests { get; internal set; }
         public bool AddSubTasks { get; internal set; }
         public int MaxStories { get; internal set; }
-        public Dictionary<string, Settings.JiraIssueType>? JiraIssueTypes { get; internal set; }
+        public Settings.AICoaching? AICoaching { get; internal set; }
+
+        public Settings? Settings { get; internal set; }
+
+        //public string? FundamentalInstructions { get; internal set; }
+        //public Dictionary<string, Settings.JiraIssueType>? JiraIssueTypes { get; internal set; }
     }
 
 

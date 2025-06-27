@@ -10,6 +10,11 @@ namespace UserStoryGenerator.Model
 
             if( args.Target == null ) throw new NullReferenceException(nameof(args.Target));
             string query = BuildQuery(args.Target.Trim());
+
+            //Utilities.Logger.Info(query);
+
+            gfsGeminiClientHost.MaxOutputTokens = 2 * 4096;
+
             gfsGeminiClientHost.Query = query.Replace(Environment.NewLine, " ").Trim();
 
         }
