@@ -67,6 +67,13 @@ namespace UserStoryGenerator.View
                 }
             }
 
+            Image? imageCircle = Utilities.ImageLoader.GetImageFromFilePath(@"./data/resources/circle.png");
+            if( imageCircle != null )
+            {
+                treeView.ImageList.Images.Add("Circle", imageCircle);
+            }
+
+
             Utilities.IssueUtilities.SetImageList(treeView.ImageList);
             Utilities.IssueUtilities.SetJiraIssueTypes(treeView.JiraIssueTypes);
 
@@ -105,7 +112,7 @@ namespace UserStoryGenerator.View
             if( model.Settings == null ) throw new NullReferenceException(nameof(model.Settings));
             if( model.Settings.Key == null ) throw new NullReferenceException(nameof(model.Settings.Key));
 
-            form = new SettingsForm(model.Settings);
+            form = new SettingsForm(model.Settings, model.SettingsFileName);
 
 
             comboBoxExStoryMin.DataSource = new int[] { 10, 20, 30, 40, 50, 75 };
@@ -161,14 +168,33 @@ namespace UserStoryGenerator.View
 
                 buttonProcessStories.Enabled = true;
 
-                if( args.Issues != null )
+                if( args.Result.ErrorCode != 0 )
                 {
-                    treeView.Nodes.Clear();
-                    PopulateUI(args.Issues);
+                    string errorMsg = "";
+                    if( args.Result.ErrorCode == -1 )//|| args.UserStoryKey == -1
+                        errorMsg = "The IssueGenerator Completed with an unknown error state.";
+                    else if( args.Result.ErrorCode == -2 )//|| args.UserStoryKey == -1
+                        errorMsg = "The IssueGenerator Completed with an unknown error state.";
+                    else if( args.Result.ErrorCode == -99 )//|| args.UserStoryKey == -1
+                        errorMsg = "The IssueGenerator Completed with non json value.";
+
+                    MessageBox.Show(errorMsg, "Critical Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+
+                    //model.UserStoryMaxOutputTokens = 5;
+
+                    return;
                 }
                 else
                 {
-                    MessageBox.Show("The Issue Generator Completed with no value.", "Critical Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    if( args.Issues != null )
+                    {
+                        treeView.Nodes.Clear();
+                        PopulateUI(args.Issues);
+                    }
+                    else
+                    {
+                        MessageBox.Show("The Issue Generator Completed with no value.", "Critical Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    }
                 }
                 //
             }
@@ -189,10 +215,13 @@ namespace UserStoryGenerator.View
                         string errorMsg = "";
                         if( args.Result.ErrorCode == -1 )//|| args.UserStoryKey == -1
                             errorMsg = "The IssueGenerator Completed with an unknown error state.";
-                        if( args.Result.ErrorCode == -99 )//|| args.UserStoryKey == -1
+                        else if( args.Result.ErrorCode == -2 )//|| args.UserStoryKey == -1
+                            errorMsg = "The IssueGenerator Completed with an unknown error state.";
+                        else if( args.Result.ErrorCode == -99 )//|| args.UserStoryKey == -1
                             errorMsg = "The IssueGenerator Completed with non json value.";
 
                         MessageBox.Show(errorMsg, "Critical Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+
                         return;
                     }
 
@@ -309,7 +338,7 @@ namespace UserStoryGenerator.View
 
             if( comboBoxExStoryMin.SelectedItem == null ) throw new NullReferenceException(nameof(comboBoxExStoryMin.SelectedItem));
 
-            await model.ProduceUserStories(project, groupBoxExProductFeature.Value, testProdDesc, this.checkBoxAddQATests.Checked, checkBoxAddSubTasks.Checked, (int)comboBoxExStoryMin.SelectedItem);
+            await model.ProduceUserStories(project, groupBoxExProductFeature.Value, testProdDesc, this.checkBoxAddQATests.Checked, checkBoxAddSubTasks.Checked, checkBox1AddDescriptions.Checked, (int)comboBoxExStoryMin.SelectedItem);
             //
         }
 
@@ -386,11 +415,20 @@ namespace UserStoryGenerator.View
                             issueNode.ForeColor = Color.FromName(foreColor);
                     }
 
-                    //issueNode.ImageIndex = treeView.ImageList.Images.IndexOfKey(issue.IssueType);
                     issueNode.ImageIndex = Utilities.IssueUtilities.GetImageIndex(issue.IssueType);
                 }
 
                 node.Nodes.Add(issueNode);
+
+                if( !string.IsNullOrEmpty(issue.Description) )
+                {
+                    TreeNode treeNode = new(issue.Description)
+                    {
+                        ImageIndex = treeView.ImageList.Images.IndexOfKey("Circle")
+                    };
+
+                    issueNode.Nodes.Add(treeNode);
+                }
 
                 TreeNodeExSubTasks subtasksNode = new()
                 {
@@ -512,7 +550,7 @@ namespace UserStoryGenerator.View
             {
                 if( groupBoxExProductFeature.Value == null ) throw new NullReferenceException(nameof(groupBoxExProductFeature));
                 if( comboBoxExStoryMin.SelectedItem == null ) throw new NullReferenceException(nameof(comboBoxExStoryMin.SelectedItem));
-                await model.ProcessStoryList(groupBoxExProductFeature.Value, checkBoxAddQATests.Checked, checkBoxAddSubTasks.Checked, (int)comboBoxExStoryMin.SelectedItem, list);//await
+                await model.ProcessStoryList(groupBoxExProductFeature.Value, checkBoxAddQATests.Checked, checkBoxAddSubTasks.Checked, checkBox1AddDescriptions.Checked, (int)comboBoxExStoryMin.SelectedItem, list);//await
                 //Logger.Info("ButtonProcessStories_ClickAsync");
                 buttonProcessStories.Text = "Running";
             }
@@ -608,6 +646,7 @@ namespace UserStoryGenerator.View
                 dialog.RestoreDirectory = true;
                 // Get the selected file path
                 string filePath = dialog.FileName;
+                //again:
                 try
                 {
                     SaveData();
@@ -618,6 +657,9 @@ namespace UserStoryGenerator.View
                 {
                     MessageBox.Show(ex.Message, "Information", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 }
+
+                //goto again;
+
 
             }
         }

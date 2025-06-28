@@ -4,7 +4,7 @@ namespace UserStoryGenerator.Model
 {
     public class IssueGeneratorAllIssues : IssueGeneratorBase
     {
-        public IssueGeneratorAllIssues(IssueGeneratorBaseInputArgs args) : base(args)
+        public IssueGeneratorAllIssues(IssueGeneratorBaseInputArgs args, int maxOutputTokens) : base(args)
         {
             targetPrepend = "User Story: ";
 
@@ -13,7 +13,7 @@ namespace UserStoryGenerator.Model
 
             //Utilities.Logger.Info(query);
 
-            gfsGeminiClientHost.MaxOutputTokens = 2 * 4096;
+            gfsGeminiClientHost.MaxOutputTokens = 500000;
 
             gfsGeminiClientHost.Query = query.Replace(Environment.NewLine, " ").Trim();
 

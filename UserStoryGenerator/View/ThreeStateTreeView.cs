@@ -696,6 +696,8 @@ namespace UserStoryGenerator.View
         {
             foreach( TreeNode sourceNode in sourceNodes )
             {
+                if( sourceNode is not TreeNodeEx ) continue;
+
                 // If the current source node is checked, create a new node for it
                 // and add it to the target collection.
                 if( sourceNode.Checked )
@@ -898,8 +900,11 @@ namespace UserStoryGenerator.View
 
                     //if( sourceNode is TreeNodeExSubTasks )continue; 
 
-                    TreeNodeEx treeNodeEx = (TreeNodeEx)sourceNode;
+                    //TreeNodeEx treeNodeEx = (TreeNodeEx)sourceNode;
 
+                    if( sourceNode is not TreeNodeEx ) continue;
+
+                    TreeNodeEx treeNodeEx = (TreeNodeEx)sourceNode;
                     if( full )
                     {
 
@@ -992,6 +997,7 @@ namespace UserStoryGenerator.View
             {
                 if( node == null ) continue;
                 if( !node.Checked ) continue;
+                if( node is not TreeNodeEx ) continue;
 
                 // skip to exclude these nodes' text
                 if( node is TreeNodeExSubTasks || node is TreeNodeExLinkedIssues ) continue;

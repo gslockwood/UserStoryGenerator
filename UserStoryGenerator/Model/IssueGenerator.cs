@@ -15,8 +15,9 @@ namespace UserStoryGenerator.Model
         public event CompletedInErrorEventHandler? Error;
 
         protected const string ADDITIONALINSTRUCTIONS = "Additional Instructions";
-        protected const string QATESTSTRUCTIONS = "Under no circumstances generate 'Test' issues";
-        protected const string NOSUBTASKINSTRUCTIONS = "Under no circumstances generate 'Sub-task' issues";
+        protected const string QATESTSTRUCTIONS = "OVERRIDE earlier instruction: Under no circumstances generate 'Test' issues. \n";
+        protected const string NOSUBTASKINSTRUCTIONS = "OVERRIDE earlier instruction: Under no circumstances generate 'Sub-task' issues. \n";
+        protected const string NODESCRIPTIONSINSTRUCTIONS = "OVERRIDE earlier instruction: Do not, under any circumstances, create description text for the \"Description\" field of any \"Standard\" or \"Sub-task\" Issue. Set the \"Description\" field to null. \n";
         protected const string NUMBEROFISSUES = "NUMBEROFISSUES";
 
 
@@ -25,6 +26,7 @@ namespace UserStoryGenerator.Model
         protected readonly Settings.AICoaching? AICoaching;
         protected readonly bool AddQATests;
         protected readonly bool AddSubTasks;
+        protected readonly bool AddDescriptions;
         protected readonly int maxStories;
         private readonly Dictionary<string, Settings.JiraIssueType>? jiraIssueTypes;
         private readonly string? fundamentalInstructions;
@@ -45,6 +47,7 @@ namespace UserStoryGenerator.Model
             this.AICoaching = args.AICoaching;
             this.AddQATests = args.AddQATests;
             this.AddSubTasks = args.AddSubTasks;
+            this.AddDescriptions = args.AddDescriptions;
             this.maxStories = args.MaxStories;
             this.jiraIssueTypes = args.Settings.JiraIssueTypes;// args.JiraIssueTypes;
             this.fundamentalInstructions = args.Settings.FundamentalInstructions;//.FundamentalInstructions;
@@ -98,6 +101,19 @@ namespace UserStoryGenerator.Model
             }
 
         }
+        private void LookupCompleted(Result result)
+        {
+            IssueGeneratorBaseArgs args = new(result);
+            Completed?.Invoke(args);
+
+            //OnCompleted(result);
+        }
+
+        //protected virtual void OnCompleted(Result result)
+        //{
+        //    IssueGeneratorBaseArgs args = new(result);
+        //    Completed?.Invoke(args);
+        //}
 
         protected virtual string BuildQuery(string? target)
         {
@@ -125,8 +141,8 @@ namespace UserStoryGenerator.Model
                     {
                         foreach( Settings.JiraIssueType? jiraIssue in jiraIssueTypes.Values )
                         {
-                            if( jiraIssue.Order == 0 ) continue;
-                            issueTypeDefinitions.Append($"\"{jiraIssue.IssueType}\"" + ",");
+                            if( jiraIssue.Order == 1 )
+                                issueTypeDefinitions.Append($"\"{jiraIssue.IssueType}\"" + ",");
                         }
                     }
 
@@ -177,22 +193,15 @@ namespace UserStoryGenerator.Model
                     else
                         sbCoaching.AppendLine(NOSUBTASKINSTRUCTIONS);
 
+                    if( !AddDescriptions )
+                        sbCoaching.AppendLine(NODESCRIPTIONSINSTRUCTIONS);
+
                     sbCoaching.AppendLine($"End of {ADDITIONALINSTRUCTIONS}");
 
                 }
             }
         }
 
-        private void LookupCompleted(Result result)
-        {
-            OnCompleted(result);
-        }
-
-        protected virtual void OnCompleted(Result result)
-        {
-            IssueGeneratorBaseArgs args = new(result);
-            Completed?.Invoke(args);
-        }
     }
 
     public class IssueGeneratorBaseInputArgs
@@ -206,6 +215,7 @@ namespace UserStoryGenerator.Model
         public bool AddSubTasks { get; internal set; }
         public int MaxStories { get; internal set; }
         public Settings? Settings { get; internal set; }
+        public bool AddDescriptions { get; internal set; }
     }
 
 

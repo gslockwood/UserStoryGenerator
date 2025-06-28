@@ -67,6 +67,7 @@ namespace UserStoryGenerator.View
             menuStrip = new MenuStrip();
             fileToolStripMenuItem = new ToolStripMenuItem();
             openToolStripMenuItem = new ToolStripMenuItem();
+            openPRDToolStripMenuItem = new ToolStripMenuItem();
             openCSVToolStripMenuItem = new ToolStripMenuItem();
             saveStoriesAsJsonToolStripMenuItem = new ToolStripMenuItem();
             saveStoriesAsCSVToolStripMenuItem = new ToolStripMenuItem();
@@ -74,7 +75,7 @@ namespace UserStoryGenerator.View
             preferencesToolStripMenuItem = new ToolStripMenuItem();
             settingsToolStripMenuItem = new ToolStripMenuItem();
             aboutToolStripMenuItem = new ToolStripMenuItem();
-            openPRDToolStripMenuItem = new ToolStripMenuItem();
+            checkBox1AddDescriptions = new CheckBox();
             tableLayoutPanelData.SuspendLayout();
             tableLayoutPanelEntryControl.SuspendLayout();
             groupBoxStoryMin.SuspendLayout();
@@ -224,6 +225,7 @@ namespace UserStoryGenerator.View
             // 
             flowLayoutPanelCheckBoxes.Controls.Add(checkBoxAddSubTasks);
             flowLayoutPanelCheckBoxes.Controls.Add(checkBoxAddQATests);
+            flowLayoutPanelCheckBoxes.Controls.Add(checkBox1AddDescriptions);
             flowLayoutPanelCheckBoxes.Dock = DockStyle.Fill;
             flowLayoutPanelCheckBoxes.Location = new Point(3, 4);
             flowLayoutPanelCheckBoxes.Margin = new Padding(3, 4, 3, 4);
@@ -297,7 +299,7 @@ namespace UserStoryGenerator.View
             treeView.Location = new Point(3, 122);
             treeView.Margin = new Padding(3, 4, 3, 4);
             treeView.Name = "treeView";
-            treeView.SelectedImageIndex = 1;
+            treeView.SelectedImageIndex = 0;
             treeView.ShowNodeToolTips = true;
             treeView.Size = new Size(1300, 670);
             treeView.TabIndex = 2;
@@ -532,14 +534,21 @@ namespace UserStoryGenerator.View
             // openToolStripMenuItem
             // 
             openToolStripMenuItem.Name = "openToolStripMenuItem";
-            openToolStripMenuItem.Size = new Size(180, 22);
+            openToolStripMenuItem.Size = new Size(178, 22);
             openToolStripMenuItem.Text = "&Open Json...";
             openToolStripMenuItem.Click +=  OpenToolStripMenuItem_Click ;
+            // 
+            // openPRDToolStripMenuItem
+            // 
+            openPRDToolStripMenuItem.Name = "openPRDToolStripMenuItem";
+            openPRDToolStripMenuItem.Size = new Size(178, 22);
+            openPRDToolStripMenuItem.Text = "Open &PRD...";
+            openPRDToolStripMenuItem.Click +=  OpenPRDToolStripMenuItem_Click ;
             // 
             // openCSVToolStripMenuItem
             // 
             openCSVToolStripMenuItem.Name = "openCSVToolStripMenuItem";
-            openCSVToolStripMenuItem.Size = new Size(180, 22);
+            openCSVToolStripMenuItem.Size = new Size(178, 22);
             openCSVToolStripMenuItem.Text = "&Open &CSV...";
             openCSVToolStripMenuItem.Click +=  OpenCSVToolStripMenuItem_Click ;
             // 
@@ -547,7 +556,7 @@ namespace UserStoryGenerator.View
             // 
             saveStoriesAsJsonToolStripMenuItem.Enabled = false;
             saveStoriesAsJsonToolStripMenuItem.Name = "saveStoriesAsJsonToolStripMenuItem";
-            saveStoriesAsJsonToolStripMenuItem.Size = new Size(180, 22);
+            saveStoriesAsJsonToolStripMenuItem.Size = new Size(178, 22);
             saveStoriesAsJsonToolStripMenuItem.Text = "&Save as Json...";
             saveStoriesAsJsonToolStripMenuItem.Click +=  SaveStoriesAsJsonToolStripMenuItem_Click ;
             // 
@@ -555,7 +564,7 @@ namespace UserStoryGenerator.View
             // 
             saveStoriesAsCSVToolStripMenuItem.Enabled = false;
             saveStoriesAsCSVToolStripMenuItem.Name = "saveStoriesAsCSVToolStripMenuItem";
-            saveStoriesAsCSVToolStripMenuItem.Size = new Size(180, 22);
+            saveStoriesAsCSVToolStripMenuItem.Size = new Size(178, 22);
             saveStoriesAsCSVToolStripMenuItem.Text = "Save &as CSV...";
             saveStoriesAsCSVToolStripMenuItem.Click +=  SaveStoriesAsCSVToolStripMenuItem_Click ;
             // 
@@ -563,7 +572,7 @@ namespace UserStoryGenerator.View
             // 
             getUserStoryListToolStripMenuItem.Enabled = false;
             getUserStoryListToolStripMenuItem.Name = "getUserStoryListToolStripMenuItem";
-            getUserStoryListToolStripMenuItem.Size = new Size(180, 22);
+            getUserStoryListToolStripMenuItem.Size = new Size(178, 22);
             getUserStoryListToolStripMenuItem.Text = "&Get User Story List...";
             getUserStoryListToolStripMenuItem.Click +=  GetUserStoryListToolStripMenuItem_Click ;
             // 
@@ -588,12 +597,18 @@ namespace UserStoryGenerator.View
             aboutToolStripMenuItem.Text = "About...";
             aboutToolStripMenuItem.Click +=  AboutToolStripMenuItem_Click ;
             // 
-            // openPRDToolStripMenuItem
+            // checkBox1AddDescriptions
             // 
-            openPRDToolStripMenuItem.Name = "openPRDToolStripMenuItem";
-            openPRDToolStripMenuItem.Size = new Size(180, 22);
-            openPRDToolStripMenuItem.Text = "Open &PRD...";
-            openPRDToolStripMenuItem.Click +=  OpenPRDToolStripMenuItem_Click ;
+            checkBox1AddDescriptions.AutoSize = true;
+            checkBox1AddDescriptions.Checked = true;
+            checkBox1AddDescriptions.CheckState = CheckState.Checked;
+            checkBox1AddDescriptions.Location = new Point(249, 4);
+            checkBox1AddDescriptions.Margin = new Padding(3, 4, 3, 4);
+            checkBox1AddDescriptions.Name = "checkBox1AddDescriptions";
+            checkBox1AddDescriptions.Size = new Size(142, 24);
+            checkBox1AddDescriptions.TabIndex = 2;
+            checkBox1AddDescriptions.Text = "Add Descriptions";
+            checkBox1AddDescriptions.UseVisualStyleBackColor = true;
             // 
             // MainForm
             // 
@@ -671,6 +686,7 @@ namespace UserStoryGenerator.View
         private ResizableGroupBoxFlowLayoutPanelEx flowLayoutPanelExTotals;
         private ToolStripMenuItem openCSVToolStripMenuItem;
         private ToolStripMenuItem openPRDToolStripMenuItem;
+        private CheckBox checkBox1AddDescriptions;
     }
 
     public interface IReset

@@ -24,7 +24,7 @@ namespace UserStoryGenerator.View
             }
         }
 
-        public SettingsForm(Settings settings)// = null
+        public SettingsForm(Settings settings, string settingsFileName)// = null
         {
             if( settings == null ) throw new NullReferenceException(nameof(settings));
             if( settings.Key == null ) throw new NullReferenceException(nameof(settings.Key));
@@ -74,7 +74,7 @@ namespace UserStoryGenerator.View
             SetSettingsToUI(this.settings);
 
             Tag = "Settings Form - ";
-            CurrentFileName = @$"Settings.json";
+            CurrentFileName = settingsFileName;// @$"Settings.json";
             //
         }
 
@@ -97,7 +97,6 @@ namespace UserStoryGenerator.View
             Hide();
 
         }
-
         private void GetSettingsFromUI()
         {
             settings.Key = groupBoxExGeminiKey.Value;
@@ -127,7 +126,6 @@ namespace UserStoryGenerator.View
             settings.FundamentalInstructions = groupBoxExFundamentalInstructions.Value;
             //
         }
-
         private void SetSettingsToUI(Settings settings)
         {
             if( settings == null ) throw new NullReferenceException(nameof(settings));
@@ -250,7 +248,6 @@ namespace UserStoryGenerator.View
             e.Cancel = true;
             Hide();
         }
-
 
         private void SaveasToolStripMenuItem_Click(object sender, EventArgs e)
         {
