@@ -1,4 +1,5 @@
-﻿using System.Text;
+﻿using System.Net.Mime;
+using System.Text;
 using System.Text.Json;
 using static UserStoryGenerator.Model.GFSGeminiClientHost;
 using static UserStoryGenerator.Model.Settings;
@@ -40,6 +41,7 @@ namespace UserStoryGenerator.Model
             string key = args.Key ?? throw new NullReferenceException(nameof(args.Key));
             string target = args.Target ?? throw new NullReferenceException(nameof(args.Target));
             if( args.Settings == null ) throw new NullReferenceException(nameof(args.Settings));
+            if( args.Settings.GeminiModel == null ) throw new NullReferenceException(nameof(args.Settings.GeminiModel));
 
             this.jiraProject = args.JiraProject ?? throw new NullReferenceException(nameof(args.JiraProject));
             this.productName = args.ProductName ?? throw new NullReferenceException(nameof(args.ProductName));
@@ -53,6 +55,10 @@ namespace UserStoryGenerator.Model
             this.fundamentalInstructions = args.Settings.FundamentalInstructions;//.FundamentalInstructions;
 
             gfsGeminiClientHost = new(key, AIType.GenerativeAI, args.Settings.GeminiModel);
+
+            if( args.Settings.GeminiModel.Contains("Gemma", StringComparison.CurrentCultureIgnoreCase) )
+                gfsGeminiClientHost.ResponseMimeType = MediaTypeNames.Text.Plain;// "text/plain";
+
             gfsGeminiClientHost.LookupCompleted += LookupCompleted;
 
         }
@@ -133,7 +139,7 @@ namespace UserStoryGenerator.Model
                 sbCoaching.AppendLine("Beginning of Fundamental Instructions");
                 string tempFundamentalInstructions = fundamentalInstructions;
 
-                if( tempFundamentalInstructions.Contains("ISSUETYPEDEFINITIONS") )////\"Story\",\"Task\",\"Test\",\"Bug\"
+                if( tempFundamentalInstructions.Contains("ISSUETYPEDEFINITIONS") )
                 {
                     StringBuilder issueTypeDefinitions = new();
 

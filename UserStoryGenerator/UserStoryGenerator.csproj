@@ -15,7 +15,7 @@
 		<Description>Tell me a story...\n\nThis app will generate user stories and associated issues (including sub-tasks) for importation into Jira.</Description>
 		<Copyright>© 2025</Copyright>
 		<Authors>G.S. Lockwood</Authors>
-		<AssemblyVersion>2.5.4.0</AssemblyVersion>
+		<AssemblyVersion>2.6.0</AssemblyVersion>
 		<ApplicationIcon>Light.ico</ApplicationIcon>
 
 	</PropertyGroup>

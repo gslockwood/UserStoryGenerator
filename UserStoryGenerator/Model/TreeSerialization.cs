@@ -2,7 +2,7 @@
 
 namespace UserStoryGenerator.Model
 {
-    public class TreeSerialization
+    public partial class TreeSerialization
     {
         public static List<IssueData.Issue> Convert(List<TreeNode> treeNodes)
         {
@@ -89,13 +89,6 @@ namespace UserStoryGenerator.Model
 
             return serializableIssues;
             //
-        }
-
-        public class IssueResults
-        {
-            public string? ProductDescription { get; set; }
-            public List<string>? UserStoryList { get; set; }
-            public List<IssueData.Issue>? Issues { get; set; }
         }
 
     }

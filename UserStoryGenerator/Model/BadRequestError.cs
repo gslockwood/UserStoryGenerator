@@ -1,7 +1,6 @@
 ﻿namespace UserStoryGenerator.Model
 {
 #pragma warning disable IDE1006 // Naming Styles
-
     public interface IError
     {
         int code { get; set; }
@@ -42,8 +41,6 @@
         }
     }
 
-
-
     public class RequestFailed : IRequestFailed
     {
         public IError? error { get; set; }
@@ -55,7 +52,6 @@
             public string? status { get; set; }
         }
     }
-
 #pragma warning restore IDE1006 // Naming Styles
 
 }

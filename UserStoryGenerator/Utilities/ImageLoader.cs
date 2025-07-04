@@ -52,58 +52,6 @@
             }
         }
 
-        //// Example of how to use the method (for demonstration purposes)
-        //public static void Main(string[] args)
-        //{
-        //    string validImagePath = "C:\\Users\\Public\\Pictures\\Sample Pictures\\Koala.jpg"; // Replace with a valid path to an image on your system
-        //    string invalidImagePath = "C:\\path\\to\\nonexistent\\image.png";
-        //    string nonImageFilePath = "C:\\Windows\\System32\\notepad.exe"; // A path to a non-image file
-
-        //    // Test with a valid image path
-        //    Image myImage = GetImageFromFilePath(validImagePath);
-        //    if( myImage != null )
-        //    {
-        //        Console.WriteLine($"Successfully loaded image: {myImage.Width}x{myImage.Height}");
-        //        // Don't forget to dispose the image when you are done with it to release resources.
-        //        myImage.Dispose();
-        //    }
-        //    else
-        //    {
-        //        Console.WriteLine("Failed to load image from valid path.");
-        //    }
-
-        //    Console.WriteLine("\n--- Testing with an invalid path ---");
-        //    // Test with an invalid path
-        //    Image noImage = GetImageFromFilePath(invalidImagePath);
-        //    if( noImage == null )
-        //    {
-        //        Console.WriteLine("Correctly handled non-existent file.");
-        //    }
-
-        //    Console.WriteLine("\n--- Testing with a non-image file ---");
-        //    // Test with a non-image file
-        //    Image nonImage = GetImageFromFilePath(nonImageFilePath);
-        //    if( nonImage == null )
-        //    {
-        //        Console.WriteLine("Correctly handled non-image file.");
-        //    }
-
-        //    Console.WriteLine("\n--- Testing with a null path ---");
-        //    // Test with a null path
-        //    Image nullImage = GetImageFromFilePath(null);
-        //    if( nullImage == null )
-        //    {
-        //        Console.WriteLine("Correctly handled null path.");
-        //    }
-
-        //    Console.WriteLine("\n--- Testing with an empty path ---");
-        //    // Test with an empty path
-        //    Image emptyImage = GetImageFromFilePath("");
-        //    if( emptyImage == null )
-        //    {
-        //        Console.WriteLine("Correctly handled empty path.");
-        //    }
-        //}
     }
 
 }

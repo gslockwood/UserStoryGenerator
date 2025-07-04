@@ -5,13 +5,25 @@
         public EpicSelector()
         {
             InitializeComponent();
-
-#if DEBUG
-            groupBoxExEpic.Value = "An epic Epic";
-#endif
         }
 
         public string? Value { get { return groupBoxExEpic.Value; } }
+
+        public string? EpicNameOrKey
+        {
+            set
+            {
+                radioButtonJiraKey.Checked = false;
+                radioButtonEpicName.Checked = true;
+
+                if( value == null ) return;
+
+                groupBoxExEpic.Value = value;
+                radioButtonJiraKey.Checked = Utilities.InputValidator.IsJiraKey(value);
+                GroupBoxExEpic_ValueChanged(this, new EventArgs());
+
+            }
+        }
 
         private void GroupBoxExEpic_ValueChanged(object sender, EventArgs e)
         {
@@ -24,36 +36,25 @@
                 if( currentText.Length == 0 )//|| currentText.Length> 8
                 {
                     groupBoxExEpic.TextBoxForeColor = SystemColors.ControlText;
-                    //TextControls_TextChanged(sender, new EventArgs());
                     return;
                 }
 
                 bool found = Utilities.InputValidator.RegexContainsValidation(currentText);
                 if( found )
                 {
-                    bool isValid = Utilities.InputValidator.RegexValidation(currentText);
+                    bool isValid = Utilities.InputValidator.IsJiraKey(currentText);
 
                     // Update the label based on the validation result
                     if( isValid )
-                    {
                         groupBoxExEpic.TextBoxForeColor = SystemColors.ControlText;
-                        //TextControls_TextChanged(sender, new EventArgs());
-                        return;
-                    }
                     else
-                    {
                         groupBoxExEpic.TextBoxForeColor = System.Drawing.Color.Red;
-                        //buttonConvert.Enabled = false;
-                        return;
-                    }
                 }
                 else
-                {
                     groupBoxExEpic.TextBoxForeColor = System.Drawing.Color.Red;
-                    //groupBoxExEpic.TextBoxForeColor = SystemColors.ControlText;
-                    //TextControls_TextChanged(sender, new EventArgs());
-                }
             }
+            else
+                groupBoxExEpic.TextBoxForeColor = SystemColors.ControlText;
         }
 
         private void RadioButton_Click(object sender, EventArgs e)

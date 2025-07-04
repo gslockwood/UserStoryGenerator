@@ -1,4 +1,5 @@
 ﻿using GenerativeAI;
+using System.Net.Mime;
 
 namespace UserStoryGenerator.Model
 {
@@ -159,7 +160,12 @@ namespace UserStoryGenerator.Model
             get { if( gfsGeminiClient == null ) return 30; return this.gfsGeminiClient.TopK; }
             set { if( gfsGeminiClient == null ) return; this.gfsGeminiClient.TopK = value; }
         }
-
+        public string ResponseMimeType
+        {
+            //"application/json",//"text/plain",//"text/html",
+            get { if( gfsGeminiClient == null ) return MediaTypeNames.Application.Json; return this.gfsGeminiClient.ResponseMimeType; }
+            set { if( gfsGeminiClient == null ) return; this.gfsGeminiClient.ResponseMimeType = value; }
+        }
 
 
         public string? query;
@@ -194,6 +200,7 @@ namespace UserStoryGenerator.Model
                         Temperature = 0.2f, //0.2f, // Low for precision
                         TopP = 0.6f, // Moderate to low for focus
                         TopK = 30, // Moderate for variety within focus
+                        ResponseMimeType = MediaTypeNames.Application.Json,//"application/json",//"text/plain",//"text/html",
                     };
                 }
                 //
@@ -201,12 +208,14 @@ namespace UserStoryGenerator.Model
 
             if( gfsGeminiClient != null )
             {
-                gfsGeminiClient.Completed += (answer) =>
+                gfsGeminiClient.Completed += (result) =>
                 {
-                    LookupCompleted?.Invoke(new(id, answer));
+                    LookupCompleted?.Invoke(new(id, result));
                     this.id = null;
                 };
             }
+            else
+                throw new NullReferenceException("gfsGeminiClient failed to initialize.");
             //
         }
 
@@ -234,11 +243,10 @@ namespace UserStoryGenerator.Model
             _ = gfsGeminiClient.Request(query);
         }
 
-        public class Result(object? id, string? answer)
+        public class Result(object? id, object? answer)
         {
             public object? Id { get; } = id;
-            public string? Answer { get; } = answer;
-            public int ErrorCode { get; internal set; } = 0;
+            public object? Answer { get; } = answer;
         }
     }
 

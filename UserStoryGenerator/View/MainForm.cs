@@ -2,6 +2,7 @@ using System.Diagnostics;
 using UserStoryGenerator.Model;
 using UserStoryGenerator.Utilities;
 using static UserStoryGenerator.Model.IssueData;
+using static UserStoryGenerator.Model.Settings;
 using static UserStoryGenerator.View.TriStateTreeView;
 
 namespace UserStoryGenerator.View
@@ -10,7 +11,6 @@ namespace UserStoryGenerator.View
     {
         private readonly Model.Model model;
         private SettingsForm? form;
-        private const string TREENODEDATA = "TREEVIEWDRAGDROPDATA";
 
 
         public MainForm()
@@ -67,11 +67,9 @@ namespace UserStoryGenerator.View
                 }
             }
 
-            Image? imageCircle = Utilities.ImageLoader.GetImageFromFilePath(@"./data/resources/circle.png");
+            Image? imageCircle = Properties.Resources.circle;
             if( imageCircle != null )
-            {
                 treeView.ImageList.Images.Add("Circle", imageCircle);
-            }
 
 
             Utilities.IssueUtilities.SetImageList(treeView.ImageList);
@@ -134,17 +132,16 @@ namespace UserStoryGenerator.View
 
 
 #if DEBUG
-            //this.epicSelector.Value = "An epic Epic";
+            TreeSerialization.IssueResults? issueResults = model.CreateUserStories();
+            if( issueResults == null )
+                throw new NullReferenceException(nameof(issueResults));
+
+            groupBoxExPRD.Value = issueResults.ProductDescription;
+            groupBoxExProductFeature.Value = issueResults.ProductOrFeature;
+            epicSelector.EpicNameOrKey = issueResults.EpicNameOrKey;
+
             checkBoxAddQATests.Checked = true;
             checkBoxAddSubTasks.Checked = true;
-
-
-            //string testProdDesc = "Implement a mobile-first, fully responsive e-commerce platform for our online store, enabling users to browse products, add them to a shopping cart, and complete secure online purchases. The platform should offer a streamlined checkout process, diverse payment options, and robust order tracking capabilities. We need to ensure that the platform is user-friendly, accessible, and highly performant, with a focus on a seamless user experience across all devices.  Please include this task: Create a Database table called \"Customer\".   Add the \"Name\" and \"Phone number\" and other relevant columns to the \"Customer\" table.";
-            //textBoxPRD.Value = testProdDesc;
-            groupBoxExProductFeature.Value = "Feature X";
-
-            groupBoxExPRD.Value = model.CreateUserStories();
-
             comboBoxExStoryMin.SelectedIndex = 0;
 
             //PreferencesToolStripMenuItem_Click(this, new EventArgs());
@@ -168,19 +165,9 @@ namespace UserStoryGenerator.View
 
                 buttonProcessStories.Enabled = true;
 
-                if( args.Result.ErrorCode != 0 )
+                if( args.ErrorCode != 0 )
                 {
-                    string errorMsg = "";
-                    if( args.Result.ErrorCode == -1 )//|| args.UserStoryKey == -1
-                        errorMsg = "The IssueGenerator Completed with an unknown error state.";
-                    else if( args.Result.ErrorCode == -2 )//|| args.UserStoryKey == -1
-                        errorMsg = "The IssueGenerator Completed with an unknown error state.";
-                    else if( args.Result.ErrorCode == -99 )//|| args.UserStoryKey == -1
-                        errorMsg = "The IssueGenerator Completed with non json value.";
-
-                    MessageBox.Show(errorMsg, "Critical Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-
-                    //model.UserStoryMaxOutputTokens = 5;
+                    MessageBox.Show(args.ErrorMsg, "Critical Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
 
                     return;
                 }
@@ -210,17 +197,24 @@ namespace UserStoryGenerator.View
             {
                 try
                 {
-                    if( args.Result.ErrorCode != 0 )
+                    if( args.ErrorCode != 0 )
                     {
-                        string errorMsg = "";
-                        if( args.Result.ErrorCode == -1 )//|| args.UserStoryKey == -1
-                            errorMsg = "The IssueGenerator Completed with an unknown error state.";
-                        else if( args.Result.ErrorCode == -2 )//|| args.UserStoryKey == -1
-                            errorMsg = "The IssueGenerator Completed with an unknown error state.";
-                        else if( args.Result.ErrorCode == -99 )//|| args.UserStoryKey == -1
-                            errorMsg = "The IssueGenerator Completed with non json value.";
+                        MessageBox.Show(args.ErrorMsg, "Critical Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
 
-                        MessageBox.Show(errorMsg, "Critical Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        TreeNode[] userStoryNodeArray = treeView.Nodes[0].Nodes.Find(args.UserStoryKey.ToString(), false);
+                        if( userStoryNodeArray.Length > 0 )
+                        {
+                            TreeNode userStoryNode = userStoryNodeArray.First();
+                            string parentText = userStoryNode.Text;
+
+                            Color temp = userStoryNode.BackColor;
+                            userStoryNode.BackColor = Color.Red;
+                            userStoryNode.ForeColor = temp;
+
+                            labelStatus.Text = $"Failed to build LinkedIssues for Story: {parentText} {args.Counter}";
+                            labelStatus.ForeColor = Color.Red;
+
+                        }
 
                         return;
                     }
@@ -233,20 +227,19 @@ namespace UserStoryGenerator.View
                     if( args.Issues == null || args.Issues.Count == 0 )
                     {
                         TreeNode[] userStoryNodeArray = treeView.Nodes[0].Nodes.Find(args.UserStoryKey.ToString(), false);
-                        string parentText = "";
                         if( userStoryNodeArray.Length > 0 )
                         {
                             TreeNode userStoryNode = userStoryNodeArray.First();
-                            parentText = userStoryNode.Text;
+                            string parentText = userStoryNode.Text;
 
                             Color temp = userStoryNode.BackColor;
                             userStoryNode.BackColor = Color.Red;
                             userStoryNode.ForeColor = temp;
-                        }
 
-                        //StringTrimming stringTrimming = new()
-                        labelStatus.Text = $"Failed to build LinkedIssues for Story: {parentText} {args.Counter}";
-                        labelStatus.ForeColor = Color.Red;
+                            //StringTrimming stringTrimming = new()
+                            labelStatus.Text = $"Failed to build LinkedIssues for Story: {parentText} {args.Counter}";
+                            labelStatus.ForeColor = Color.Red;
+                        }
 
                     }
                     else
@@ -338,7 +331,17 @@ namespace UserStoryGenerator.View
 
             if( comboBoxExStoryMin.SelectedItem == null ) throw new NullReferenceException(nameof(comboBoxExStoryMin.SelectedItem));
 
-            await model.ProduceUserStories(project, groupBoxExProductFeature.Value, testProdDesc, this.checkBoxAddQATests.Checked, checkBoxAddSubTasks.Checked, checkBox1AddDescriptions.Checked, (int)comboBoxExStoryMin.SelectedItem);
+
+            try
+            {
+                await model.ProduceUserStories(project, groupBoxExProductFeature.Value, testProdDesc, this.checkBoxAddQATests.Checked, checkBoxAddSubTasks.Checked, checkBox1AddDescriptions.Checked, (int)comboBoxExStoryMin.SelectedItem);
+
+            }
+            catch( Exception ex )
+            {
+                MessageBox.Show(ex.Message, "Critical Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                buttonConvert.Enabled = true;
+            }
             //
         }
 
@@ -360,7 +363,10 @@ namespace UserStoryGenerator.View
             {
                 treeView.Enabled = false;
 
-                TreeNode? root = new(this.epicSelector.Value);
+                TreeNode? root = new(this.epicSelector.Value)
+                {
+                    ImageIndex = Utilities.IssueUtilities.GetImageIndex(JiraIssueType.Epic)
+                };
                 treeView.Nodes.Add(root);
 
                 Recursive(issues, root);
@@ -565,7 +571,7 @@ namespace UserStoryGenerator.View
             form.ShowDialog();
         }
 
-        private void OpenToolStripMenuItem_Click(object sender, EventArgs e)
+        private void OpenJsonToolStripMenuItem_Click(object sender, EventArgs e)
         {
             OpenFileDialog dialog = new()
             {
@@ -580,7 +586,11 @@ namespace UserStoryGenerator.View
                 {
                     dialog.RestoreDirectory = true;
                     string json = File.ReadAllText(dialog.FileName) ?? throw new Exception($"{dialog.FileName} is blank.");
-                    groupBoxExPRD.Value = model.CreateUserStories(json);
+                    TreeSerialization.IssueResults? issueResults = model.CreateUserStories(json) ?? throw new NullReferenceException($"Reading the json file {dialog.FileName} gave null results.");
+                    groupBoxExPRD.Value = issueResults.ProductDescription;
+                    groupBoxExProductFeature.Value = issueResults.ProductOrFeature;
+                    epicSelector.EpicNameOrKey = issueResults.EpicNameOrKey;
+                    //
                 }
                 catch( Exception ex )
                 {
@@ -748,32 +758,22 @@ namespace UserStoryGenerator.View
 
         }
 
-        private void TreeView_ItemDrag(object sender, ItemDragEventArgs e)
-        {
-            if( e.Item is TreeNodeEx node )
-            {
-                DraggableNodeData nodeData = new(node);
-                string jsonNodeData = System.Text.Json.JsonSerializer.Serialize(nodeData);
+        //private void TreeView_ItemDrag(object sender, ItemDragEventArgs e)
+        //{
+        //    if( e.Item is TreeNodeEx node )
+        //    {
+        //        DraggableNodeData nodeData = new(node);
+        //        string jsonNodeData = System.Text.Json.JsonSerializer.Serialize(nodeData);
 
-                DataObject data = new();
-                data.SetData(TREENODEDATA, jsonNodeData); // Use a unique custom format string
+        //        DataObject data = new();
+        //        data.SetData(TriStateTreeView.TREENODEDATA, jsonNodeData); // Use a unique custom format string
 
-                ( (TreeView)sender ).DoDragDrop(data, DragDropEffects.Copy);
-                //
-            }
-        }
+        //        ( (TreeView)sender ).DoDragDrop(data, DragDropEffects.Copy);
+        //        //
+        //    }
+        //}
 
-        private void TreeView_DragEnter(object sender, DragEventArgs e)
-        {
-            if( e.Data == null ) return;
 
-            if( e.Data.GetDataPresent(TREENODEDATA) )
-                e.Effect = DragDropEffects.Copy;
-
-            else if( e.Data.GetDataPresent(DataFormats.Text) )
-                e.Effect = DragDropEffects.Copy;
-
-        }
         private void TreeView_DragDrop(object sender, DragEventArgs e)
         {
             if( e.Data == null ) return;
@@ -809,12 +809,13 @@ namespace UserStoryGenerator.View
 
                         Issue issue = new()
                         {
-                            IssueType = "Story",
+                            IssueType = Model.Settings.JiraIssueType.Story,
                             Summary = summary0,
                             Product = input
                         };
                         issues.Add(issue);
                     }
+
 
                     if( MessageBox.Show("Do you want to first clear the Tree?", "Instructions", MessageBoxButtons.YesNo, MessageBoxIcon.Error) == DialogResult.Yes )
                         treeView.Nodes.Clear();
@@ -828,12 +829,12 @@ namespace UserStoryGenerator.View
                 }
             }
 
-            else if( e.Data.GetDataPresent(TREENODEDATA) )
+            else if( e.Data.GetDataPresent(TriStateTreeView.TREENODEDATA) )
             {
                 try
                 {
                     // Retrieve the serialized data string
-                    string? jsonNodeData = e.Data.GetData(TREENODEDATA) as string;
+                    string? jsonNodeData = e.Data.GetData(TriStateTreeView.TREENODEDATA) as string;
                     if( !string.IsNullOrEmpty(jsonNodeData) )
                     {
                         // Deserialize it back into your DraggableNodeData object
@@ -845,9 +846,37 @@ namespace UserStoryGenerator.View
                             if( droppedNode != null )
                             {
                                 //Logger.Info("DragDrop: Successfully deserialized custom node data.");
-                                var root = this.treeView.Nodes[0];
-                                root.Nodes.Add(droppedNode);
-                                droppedNode.Checked = true;
+                                // Convert the screen coordinates of the drop to client coordinates
+                                Point clientPoint = treeView.PointToClient(new Point(e.X, e.Y));
+
+                                // Get the node at the drop location
+                                TreeNode droppedUponNode = treeView.GetNodeAt(clientPoint);
+
+                                TreeNodeEx droppedUponNodeEx = (TreeNodeEx)droppedUponNode;
+
+                                TreeNodeEx? nodeToUse = null;
+                                if( droppedUponNode == treeView.Nodes[0] )
+                                {
+                                    nodeToUse = (TreeNodeEx?)this.treeView.Nodes[0];
+                                }
+                                else
+                                {
+                                    // check that it is a story then put them into the LinkedIssues collection
+                                    if( droppedUponNodeEx.Level == 1 )
+                                    {
+                                        TreeNode[] linkedIssueNode = droppedUponNodeEx.Nodes.Find(TreeNodeExLinkedIssues.NodeName, false);
+                                        if( linkedIssueNode.Length > 0 )
+                                        {
+                                            nodeToUse = (TreeNodeEx?)linkedIssueNode.First();
+                                        }
+                                    }
+
+                                }
+                                if( nodeToUse != null )
+                                {
+                                    nodeToUse.Nodes.Add(droppedNode);
+                                    droppedUponNodeEx.Expand();
+                                }
                             }
                         }
 

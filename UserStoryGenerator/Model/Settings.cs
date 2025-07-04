@@ -26,6 +26,9 @@
 
         public class JiraIssueType
         {
+            public readonly static string Epic = "Epic";
+            public readonly static string Story = "Story";
+            public readonly static string Sub_task = "Sub-task";
             public string? IssueType { get; set; }
             public string? ForeColor { get; set; }
             public string? ImagePath { get; set; }
@@ -36,8 +39,8 @@
         public Settings()
         {
             JiraIssueTypes = [];
-            JiraIssueTypes.Add("Epic", new JiraIssueType() { IssueType = "Epic", Order = 0 });
-            JiraIssueTypes.Add("Sub-task", new JiraIssueType() { IssueType = "Sub-task", Order = 2 });
+            JiraIssueTypes.Add(JiraIssueType.Epic, new JiraIssueType() { IssueType = JiraIssueType.Epic, Order = 0 });
+            JiraIssueTypes.Add("Sub-task", new JiraIssueType() { IssueType = JiraIssueType.Sub_task, Order = 2 });
         }
     }
 

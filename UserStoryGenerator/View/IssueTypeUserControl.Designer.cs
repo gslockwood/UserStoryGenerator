@@ -1,4 +1,6 @@
-﻿namespace UserStoryGenerator.View
+﻿using static UserStoryGenerator.Model.Settings;
+
+namespace UserStoryGenerator.View
 {
     partial class IssueTypeUserControl
     {
@@ -96,7 +98,7 @@
             radioButtonSubtask.Size = new Size(84, 24);
             radioButtonSubtask.TabIndex = 2;
             radioButtonSubtask.Tag = 2;
-            radioButtonSubtask.Text = "Sub-task";
+            radioButtonSubtask.Text = JiraIssueType.Sub_task;
             radioButtonSubtask.UseVisualStyleBackColor = true;
             // 
             // buttonFilePath

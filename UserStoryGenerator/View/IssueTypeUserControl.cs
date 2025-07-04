@@ -14,7 +14,7 @@ namespace UserStoryGenerator.View
 
             if( jiraIssue == null ) return;
             if( jiraIssue.ForeColor == null ) return;
-            if( jiraIssue.ImagePath == null ) return;
+            //if( jiraIssue.ImagePath == null ) return;
 
             this.Click += UserControlX_Click; // Subscribe to its own Click event
             foreach( Control control in this.Controls )
@@ -28,7 +28,17 @@ namespace UserStoryGenerator.View
 
             groupBoxExIssueName.Value = jiraIssue.IssueType;
 
-            Image? image = Utilities.ImageLoader.GetImageFromFilePath(jiraIssue.ImagePath);
+            Image? image = null;
+            if( jiraIssue.ImagePath == null )
+            {
+                image = Properties.Resources.unknown;
+                jiraIssue.ImagePath = "unknown";
+            }
+            else
+                image = Utilities.ImageLoader.GetImageFromFilePath(jiraIssue.ImagePath);
+
+
+            //Image? image = Utilities.ImageLoader.GetImageFromFilePath(jiraIssue.ImagePath);
             pictureBoxImagePath.Image = image;
             pictureBoxImagePath.Tag = jiraIssue.ImagePath;
 
@@ -132,7 +142,8 @@ namespace UserStoryGenerator.View
             jiraIssue.ImagePath = pictureBoxImagePath.Tag.ToString();
 
             if( string.IsNullOrEmpty(jiraIssue.ImagePath) ) throw new IssueDefinitionException($"A blank ImagePath was enncountered.  Cannot proceed.");
-            if( jiraIssue.ImagePath.Equals($"{"./Data/Resources"}/unknown.png") ) throw new IssueDefinitionException($"The Image was not updated.  Cannot proceed.");
+            if( jiraIssue.ImagePath.Contains($"unknown") ) throw new IssueDefinitionException($"The Image was not updated.  Cannot proceed.");
+            //if( jiraIssue.ImagePath.Equals($"{"./Data/Resources"}/unknown.png") ) throw new IssueDefinitionException($"The Image was not updated.  Cannot proceed.");
 
             jiraIssue.ForeColor = pictureBoxForeColor.BackColor.Name;
 

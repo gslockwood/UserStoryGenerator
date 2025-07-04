@@ -48,6 +48,17 @@ namespace UserStoryGenerator.Utilities
             treeNodeEx.Key = draggableNodeData.Key;
 
             treeNodeEx.Text = draggableNodeData.Text;
+
+            if( !string.IsNullOrEmpty(draggableNodeData.Description) )
+            {
+                TreeNode treeNode = new(draggableNodeData.Description)
+                {
+                    ImageIndex = Utilities.IssueUtilities.GetImageIndex("Circle")
+                };
+
+                treeNodeEx.Nodes.Add(treeNode);
+            }
+
         }
         internal static void SetTreeNodeExFromTreeNodeEx(TreeNodeEx source, TreeNodeEx destination)
         {

@@ -16,14 +16,7 @@ namespace UserStoryGenerator.View
             public long Key { get; set; }
             public TreeNodeEx(IssueDataBase issue)
             {
-                //Utilities.IssueUtilities.SetTreeNodeEx(issue, this);
                 UserStoryGenerator.Utilities.TreeNodeExExtensions.SetTreeNodeEx(this, issue);
-
-
-                //Summary = issue.Summary?.Trim();
-                //Product = issue.Product?.Trim();
-                //IssueType = issue.IssueType?.Trim();
-                //Key = issue.Key;
 
                 // for the TreeView
                 Text = Summary;
@@ -104,13 +97,6 @@ namespace UserStoryGenerator.View
                 // Copy custom properties
                 UserStoryGenerator.Utilities.DraggableNodeDataExtensions.SetFromTreeNodeEx(this, node);
 
-                //Product = node.Product;
-                //Summary = node.Summary;
-                //IssueType = node.IssueType;
-                //Description = node.Description;
-                //Key = node.Key;
-
-
                 foreach( TreeNode childNode in node.Nodes )
                     if( childNode is TreeNodeEx childEx )
                         Children.Add(new DraggableNodeData(childEx));
@@ -132,14 +118,7 @@ namespace UserStoryGenerator.View
                     if( IssueType == null ) throw new NullReferenceException(nameof(IssueType));
                     newNode = new(Text);
                     TreeNodeExExtensions.SetTreeNodeEx2(newNode, this);
-                    //newNode = new(Text)
-                    //{
-                    //    Product = Product,
-                    //    Summary = Summary,
-                    //    IssueType = IssueType,
-                    //    ImageIndex = UserStoryGenerator.Utilities.IssueUtilities.GetImageIndex(IssueType),
-                    //    Key = Key
-                    //};
+
                     newNode.ImageIndex = UserStoryGenerator.Utilities.IssueUtilities.GetImageIndex(IssueType);
 
                 }
@@ -163,6 +142,17 @@ namespace UserStoryGenerator.View
                 {
                     TreeNodeEx? child = childData.ToTreeNodeEx();
                     if( child == null ) continue;
+
+                    //if( !string.IsNullOrEmpty(child.Description) )
+                    //{
+                    //    TreeNode treeNode = new(child.Description)
+                    //    {
+                    //        ImageIndex = Utilities.IssueUtilities.GetImageIndex("Circle")
+                    //    };
+
+                    //    child.Nodes.Add(treeNode);
+                    //}
+
                     newNode.Nodes.Add(child);
                 }
                 return newNode;
@@ -234,8 +224,12 @@ namespace UserStoryGenerator.View
             }
         }
 
+        public readonly static string TREENODEDATA = "TREEVIEWDRAGDROPDATA";
+
+
         public TriStateTreeView() : base()
         {
+            this.LabelEdit = true;
             this.CheckBoxes = true;
             this.DrawMode = TreeViewDrawMode.Normal;
             TriStateStyleProperty = TriStateTreeView.TriStateStyles.Standard;
@@ -308,7 +302,6 @@ namespace UserStoryGenerator.View
             IgnoreClickAction--;
         }
 
-
         public void SelectAllNodes(bool isChecked)
         {
             foreach( TreeNode node in this.Nodes )
@@ -321,6 +314,83 @@ namespace UserStoryGenerator.View
             if( node.Nodes.Count > 0 )
                 foreach( TreeNode childNode in node.Nodes )
                     SelectNodeRecursive(childNode, isChecked);
+        }
+
+        //protected override void OnDragEnter(DragEventArgs drgevent)
+        //{
+        //    base.OnDragEnter(drgevent);
+        //}
+        protected override void OnDragOver(DragEventArgs e)//drgevent
+        {
+            base.OnDragOver(e);
+
+            if( e.Data == null ) return;
+            if( e.Data.GetDataPresent(TREENODEDATA) )
+            {
+                // Convert the screen coordinates of the drop to client coordinates
+                Point clientPoint = PointToClient(new Point(e.X, e.Y));
+
+                // Get the node at the drop location
+                TreeNode droppedUponNode = GetNodeAt(clientPoint);
+
+                if( droppedUponNode == null )
+                    e.Effect = DragDropEffects.None;
+
+                else if( droppedUponNode.Level != 1 )
+                    e.Effect = DragDropEffects.None;
+                else
+                    e.Effect = DragDropEffects.Copy;
+            }
+
+            else if( e.Data.GetDataPresent(DataFormats.Text) )
+                e.Effect = DragDropEffects.Copy;
+
+        }
+
+        protected override void OnItemDrag(ItemDragEventArgs e)
+        {
+            base.OnItemDrag(e);
+
+            if( e.Item is TreeNodeEx node )
+            {
+                DraggableNodeData nodeData = new(node);
+                string jsonNodeData = System.Text.Json.JsonSerializer.Serialize(nodeData);
+
+                DataObject data = new();
+                data.SetData(TriStateTreeView.TREENODEDATA, jsonNodeData); // Use a unique custom format string
+
+                DoDragDrop(data, DragDropEffects.Copy);
+                //( (TreeView)sender ).DoDragDrop(data, DragDropEffects.Copy);
+                //
+            }
+
+        }
+
+        protected override void OnAfterSelect(TreeViewEventArgs e)
+        {
+            base.OnAfterSelect(e);
+
+            if( e.Node == null ) return;
+
+            TreeNodeEx? node = e.Node as TreeNodeEx;
+            if( node == null ) { e.Node.SelectedImageIndex = e.Node.ImageIndex; }
+            if( node == null ) return;
+
+            if( node.IssueType != null )
+                node.ImageIndex = UserStoryGenerator.Utilities.IssueUtilities.GetImageIndex(node.IssueType);
+
+            node.SelectedImageIndex = node.ImageIndex;
+            //
+        }
+
+        protected override void OnAfterLabelEdit(NodeLabelEditEventArgs e)
+        {
+            base.OnAfterLabelEdit(e);
+
+            if( e.Node == null ) return;
+            if( e.Node is not TreeNodeEx node ) return;
+
+            node.Summary = e.Label;
         }
 
         protected override void OnBeforeCheck(TreeViewCancelEventArgs e)
@@ -434,29 +504,6 @@ namespace UserStoryGenerator.View
                 //
             }
         }
-
-
-        //private int GetCheckedNodeCount(TreeNodeCollection nodes, List<TreeNodeEx> storyNodes)
-        //{
-        //    int count = 0;
-        //    foreach( TreeNode node in nodes )
-        //    {
-        //        if( node.StateImageIndex == (int)CheckedState.Checked || node.StateImageIndex == (int)CheckedState.Mixed )
-        //        {
-        //            count++;
-        //        }
-        //        // Recursively call for child nodes
-        //        if( node.Nodes.Count > 0 )
-        //        {
-        //            count += GetCheckedNodeCount(node.Nodes);
-        //        }
-        //    }
-
-        //    Checked?.Invoke(count);
-
-        //    return count;
-        //    //
-        //}
 
         protected override void OnMouseDown(MouseEventArgs e)
         {
@@ -991,7 +1038,7 @@ namespace UserStoryGenerator.View
             }
             return strings;
         }
-        private void GetCheckedNodesRecursive(TreeNodeCollection nodes, List<string> strings)
+        private static void GetCheckedNodesRecursive(TreeNodeCollection nodes, List<string> strings)
         {
             foreach( TreeNode node in nodes )
             {

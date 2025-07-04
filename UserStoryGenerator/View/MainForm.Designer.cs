@@ -304,9 +304,9 @@ namespace UserStoryGenerator.View
             treeView.Size = new Size(1300, 670);
             treeView.TabIndex = 2;
             treeView.TriStateStyleProperty = TriStateTreeView.TriStateStyles.Standard;
-            treeView.ItemDrag +=  TreeView_ItemDrag ;
+            //treeView.ItemDrag +=  TreeView_ItemDrag ;
             treeView.DragDrop +=  TreeView_DragDrop ;
-            treeView.DragEnter +=  TreeView_DragEnter ;
+            //treeView.DragEnter +=  TreeView_DragEnter ;
             // 
             // panelResults
             // 
@@ -536,7 +536,7 @@ namespace UserStoryGenerator.View
             openToolStripMenuItem.Name = "openToolStripMenuItem";
             openToolStripMenuItem.Size = new Size(178, 22);
             openToolStripMenuItem.Text = "&Open Json...";
-            openToolStripMenuItem.Click +=  OpenToolStripMenuItem_Click ;
+            openToolStripMenuItem.Click +=  OpenJsonToolStripMenuItem_Click ;
             // 
             // openPRDToolStripMenuItem
             // 

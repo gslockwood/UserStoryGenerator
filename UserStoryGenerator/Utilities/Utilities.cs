@@ -34,7 +34,7 @@ namespace UserStoryGenerator.Utilities
 
     public class InputValidator
     {
-        public static bool RegexValidation(string inputText)
+        public static bool IsJiraKey(string inputText)
         {
             string pattern = @"^[A-Z]{3,4}-\d+$";
             return Regex.IsMatch(inputText, pattern);

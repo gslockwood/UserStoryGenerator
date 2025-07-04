@@ -4,7 +4,7 @@ namespace UserStoryGenerator.Model
 {
     public class IssueGeneratorAllIssues : IssueGeneratorBase
     {
-        public IssueGeneratorAllIssues(IssueGeneratorBaseInputArgs args, int maxOutputTokens) : base(args)
+        public IssueGeneratorAllIssues(IssueGeneratorBaseInputArgs args) : base(args)
         {
             targetPrepend = "User Story: ";
 

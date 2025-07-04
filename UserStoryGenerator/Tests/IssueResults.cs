@@ -1,6 +1,7 @@
 ﻿using System.Text.Json;
 using UserStoryGenerator.Model;
 using UserStoryGenerator.Utilities;
+using static UserStoryGenerator.Model.Settings;
 
 namespace UserStoryGenerator.Tests
 {
@@ -29,7 +30,7 @@ namespace UserStoryGenerator.Tests
         internal static void Generate(string testName, string? epicName, TreeSerialization.IssueResults? userStoryResults)
         {
 
-            string csv = Converter.ToCSV(epicName, "Epic", "Sub-task", userStoryResults);
+            string csv = Converter.ToCSV(epicName, JiraIssueType.Epic, JiraIssueType.Sub_task, userStoryResults);
 
             Logger.Info(csv);
             File.WriteAllText($"./{testName} Issues.csv", csv);

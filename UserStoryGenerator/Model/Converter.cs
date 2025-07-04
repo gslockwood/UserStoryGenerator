@@ -33,7 +33,7 @@ namespace UserStoryGenerator.Model
                 // is either a proper reference to a persumably existing Epic in Jira
                 // or a text string to be used as a summary for a new epic issue
 
-                bool isValid = Utilities.InputValidator.RegexValidation(epicText);
+                bool isValid = Utilities.InputValidator.IsJiraKey(epicText);
                 if( isValid )
                     epicKey = epicText;
 

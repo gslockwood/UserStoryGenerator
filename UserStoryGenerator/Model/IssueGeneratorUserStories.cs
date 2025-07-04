@@ -4,7 +4,7 @@ namespace UserStoryGenerator.Model
 {
     public class IssueGeneratorUserStories : IssueGeneratorBase
     {
-        public IssueGeneratorUserStories(IssueGeneratorBaseInputArgs args, int maxOutputTokens) : base(args)
+        public IssueGeneratorUserStories(IssueGeneratorBaseInputArgs args) : base(args)
         {
             targetPrepend = "Product Description: ";
 
@@ -18,8 +18,6 @@ namespace UserStoryGenerator.Model
             gfsGeminiClientHost.TopP = 0.9f;
             gfsGeminiClientHost.TopK = 80;
 
-            //return;
-
             gfsGeminiClientHost.Query = query.Replace(Environment.NewLine, " ").Trim();
 
             //gfsGeminiClientHost.EstimateTextTokens();
@@ -31,6 +29,9 @@ namespace UserStoryGenerator.Model
     {
         public Result Result { get; } = result;
         public List<IssueData.Issue>? Issues { get; internal set; }
+        public string? ErrorMsg { get; internal set; }
+        public int ErrorCode { get; internal set; } = 0;
+
     }
 
 }
