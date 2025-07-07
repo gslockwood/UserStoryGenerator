@@ -66,7 +66,7 @@ namespace UserStoryGenerator.View
             tableLayoutPanelMain = new TableLayoutPanel();
             menuStrip = new MenuStrip();
             fileToolStripMenuItem = new ToolStripMenuItem();
-            openToolStripMenuItem = new ToolStripMenuItem();
+            openJsonToolStripMenuItem = new ToolStripMenuItem();
             openPRDToolStripMenuItem = new ToolStripMenuItem();
             openCSVToolStripMenuItem = new ToolStripMenuItem();
             saveStoriesAsJsonToolStripMenuItem = new ToolStripMenuItem();
@@ -526,17 +526,17 @@ namespace UserStoryGenerator.View
             // 
             // fileToolStripMenuItem
             // 
-            fileToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { openToolStripMenuItem, openPRDToolStripMenuItem, openCSVToolStripMenuItem, saveStoriesAsJsonToolStripMenuItem, saveStoriesAsCSVToolStripMenuItem, getUserStoryListToolStripMenuItem });
+            fileToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { openJsonToolStripMenuItem, openPRDToolStripMenuItem, openCSVToolStripMenuItem, saveStoriesAsJsonToolStripMenuItem, saveStoriesAsCSVToolStripMenuItem, getUserStoryListToolStripMenuItem });
             fileToolStripMenuItem.Name = "fileToolStripMenuItem";
             fileToolStripMenuItem.Size = new Size(37, 19);
             fileToolStripMenuItem.Text = "&File";
             // 
             // openToolStripMenuItem
             // 
-            openToolStripMenuItem.Name = "openToolStripMenuItem";
-            openToolStripMenuItem.Size = new Size(178, 22);
-            openToolStripMenuItem.Text = "&Open Json...";
-            openToolStripMenuItem.Click +=  OpenJsonToolStripMenuItem_Click ;
+            openJsonToolStripMenuItem.Name = "openJsonToolStripMenuItem";
+            openJsonToolStripMenuItem.Size = new Size(178, 22);
+            openJsonToolStripMenuItem.Text = "&Open Json...";
+            openJsonToolStripMenuItem.Click +=  OpenJsonToolStripMenuItem_Click ; 
             // 
             // openPRDToolStripMenuItem
             // 
@@ -676,7 +676,7 @@ namespace UserStoryGenerator.View
         private ToolStripMenuItem fileToolStripMenuItem;
         private ToolStripMenuItem settingsToolStripMenuItem;
         private ToolStripMenuItem aboutToolStripMenuItem;
-        private ToolStripMenuItem openToolStripMenuItem;
+        private ToolStripMenuItem openJsonToolStripMenuItem;
         private ToolStripMenuItem saveStoriesAsJsonToolStripMenuItem;
         private ToolStripMenuItem saveStoriesAsCSVToolStripMenuItem;
         private ToolStripMenuItem getUserStoryListToolStripMenuItem;

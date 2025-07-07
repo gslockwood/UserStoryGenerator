@@ -143,6 +143,11 @@ namespace UserStoryGenerator.Model
 
             if( Settings.JiraIssueTypes == null ) return false;
 
+            //userStoryResults.ProductOrFeature = productFeature;
+            //userStoryResults.EpicNameOrKey = epicNameOrKey;
+            //userStoryResults.ProductDescription = productDescription;
+
+
             string? epicIssueType = null;
             IEnumerable<KeyValuePair<string, Settings.JiraIssueType>> any = Settings.JiraIssueTypes.Where(type => type.Value.Order == 0);
             if( any.Any() )
@@ -168,10 +173,14 @@ namespace UserStoryGenerator.Model
             throw new NullReferenceException("subTaskIssueType is missing");
 
         }
-        public bool SaveUserStoryResultsAsJson(string fullFilePath, string? productDescription)
+        public bool SaveUserStoryResultsAsJson(string fullFilePath, string? productDescription, string productFeature, string epicNameOrKey)
         {
             if( userStoryResults.UserStoryList == null || userStoryResults.UserStoryList.Count == 0 ) return false;
+
+            userStoryResults.ProductOrFeature = productFeature;
+            userStoryResults.EpicNameOrKey = epicNameOrKey;
             userStoryResults.ProductDescription = productDescription;
+
             string result = JsonSerializer.Serialize(userStoryResults, options);
             SaveUserStoryResultsToJson(fullFilePath, result);
             return true;
@@ -179,6 +188,9 @@ namespace UserStoryGenerator.Model
         private static void SaveUserStoryResultsToJson(string fullFilePath, string result)
         {
             //Utilities.Logger.Info(result);
+
+            //return;
+
             File.WriteAllText(fullFilePath, result);
         }
 

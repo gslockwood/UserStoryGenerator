@@ -119,31 +119,16 @@ namespace UserStoryGenerator.Model
             sbLine.Append(',');
 
             // Summary
-            if( subTask.Summary != null )
-            {
-                string temp = subTask.Summary.ToString().Trim();
+            sbLine.Append(ProcessString(subTask.Summary));
 
-                //temp = "He said, \"Special item with double quotes\" then left.";   testing only
-
-                if( temp.Contains(',') )
-                {
-                    temp = temp.Replace("\"", "\"\"");
-                    temp = $"\"{temp}\"";
-                }
-
-                sbLine.Append(temp + ",");
-            }
-            else
-                sbLine.Append(',');
 
             // IssueType
             sbLine.Append(subTask.IssueType + ",");
 
+
             // Description
-            if( subTask.Description != null )
-                sbLine.Append(subTask.Description + ",");
-            else
-                sbLine.Append(',');
+            sbLine.Append(ProcessString(subTask.Description));
+
 
             // Status
             sbLine.Append("TODO");//OPEN
@@ -151,18 +136,36 @@ namespace UserStoryGenerator.Model
             return sbLine.ToString().TrimEnd(',').Trim();
         }
 
+        private static string? ProcessString(string? temp)//value
+        {
+            if( temp == null ) return ",";
+
+            temp = temp.Trim();
+            if( temp.Contains(',') )
+            {
+                temp = temp.Replace("\"", "\"\"");
+                temp = $"\"{temp}\"";
+                //temp + ",";
+            }
+
+            return temp + ",";
+
+        }
+
         private static string CreateLine(IssueData.Issue issue, string parentID, string linedToId)
         {
             StringBuilder sbLine = new();
 
             if( issue.Product != null )
-                sbLine.Append(issue.Product.ToString().Trim() + ",");
+                sbLine.Append(issue.Product.Trim() + ",");
             else
                 sbLine.Append(',');
 
             // ID
             long issueKey = issue.Key;
             sbLine.Append(issueKey.ToString() + ",");
+
+            //issue is IssueData.SubTask
 
             // Parent ID
             if( issue.IssueType != null && issue.IssueType.Equals(SubTaskIssueType) )//JiraIssueTypes.SUBTASK
@@ -176,35 +179,18 @@ namespace UserStoryGenerator.Model
             else
                 sbLine.Append(linedToId + ",");
 
+
             // Summary
-            if( issue.Summary != null )
-            {
-                string temp = issue.Summary.ToString().Trim();
+            sbLine.Append(ProcessString(issue.Summary));
 
-                //temp = "He said, \"Special item with double quotes\" then left.";   testing only
-
-                if( temp.Contains(',') )
-                {
-                    temp = temp.Replace("\"", "\"\"");
-                    temp = $"\"{temp}\"";
-                }
-
-                sbLine.Append(temp + ",");
-            }
-            else
-                sbLine.Append(',');
 
             // IssueType
-            if( issue.IssueType != null )
-                sbLine.Append(issue.IssueType.ToString().Trim() + ",");
-            else
-                sbLine.Append(',');
+            sbLine.Append(ProcessString(issue.IssueType));
+
 
             // Description
-            if( issue.Description != null )
-                sbLine.Append(issue.Description + ",");
-            else
-                sbLine.Append(',');
+            sbLine.Append(ProcessString(issue.Description));
+
 
             // Status
             sbLine.Append("TODO");//OPEN

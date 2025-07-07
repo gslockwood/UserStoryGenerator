@@ -584,9 +584,12 @@ namespace UserStoryGenerator.View
             {
                 try
                 {
+                    labelStatus.Text = $"Loading {dialog.FileName}";
                     dialog.RestoreDirectory = true;
                     string json = File.ReadAllText(dialog.FileName) ?? throw new Exception($"{dialog.FileName} is blank.");
                     TreeSerialization.IssueResults? issueResults = model.CreateUserStories(json) ?? throw new NullReferenceException($"Reading the json file {dialog.FileName} gave null results.");
+
+                    labelStatus.Text = null;
                     groupBoxExPRD.Value = issueResults.ProductDescription;
                     groupBoxExProductFeature.Value = issueResults.ProductOrFeature;
                     epicSelector.EpicNameOrKey = issueResults.EpicNameOrKey;
@@ -660,7 +663,11 @@ namespace UserStoryGenerator.View
                 try
                 {
                     SaveData();
-                    bool success = model.SaveUserStoryResultsAsJson(filePath, groupBoxExPRD.Value);
+
+                    if( groupBoxExProductFeature.Value == null ) throw new NullReferenceException(nameof(groupBoxExProductFeature.Value));
+                    if( epicSelector.Value == null ) throw new NullReferenceException(nameof(epicSelector.Value));
+
+                    bool success = model.SaveUserStoryResultsAsJson(filePath, groupBoxExPRD.Value, groupBoxExProductFeature.Value, epicSelector.Value);
                     if( !success ) MessageBox.Show("Problem with SaveUserStoryResults.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
                 catch( Exception ex )
@@ -757,22 +764,6 @@ namespace UserStoryGenerator.View
             }
 
         }
-
-        //private void TreeView_ItemDrag(object sender, ItemDragEventArgs e)
-        //{
-        //    if( e.Item is TreeNodeEx node )
-        //    {
-        //        DraggableNodeData nodeData = new(node);
-        //        string jsonNodeData = System.Text.Json.JsonSerializer.Serialize(nodeData);
-
-        //        DataObject data = new();
-        //        data.SetData(TriStateTreeView.TREENODEDATA, jsonNodeData); // Use a unique custom format string
-
-        //        ( (TreeView)sender ).DoDragDrop(data, DragDropEffects.Copy);
-        //        //
-        //    }
-        //}
-
 
         private void TreeView_DragDrop(object sender, DragEventArgs e)
         {
