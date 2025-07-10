@@ -18,7 +18,8 @@ namespace UserStoryGenerator.Model
 
             //string headerLine = "Project Key,ID,Parent ID,Summary,Issue Type,Description,Status, Reporter,Assignee";
             //string headerLine = "Project Key,ID,Parent ID,Link,Summary,Issue Type,Status";
-            string headerLine = "Project Key,ID,Parent ID,Link,Summary,Issue Type,Description,Status";
+            //string headerLine = "Project Key,ID,Parent ID,Link,Summary,Issue Type,Description,Status";
+            string headerLine = "Project Key,ID,Parent ID,Link,Summary,Issue Type,Description,Status,StoryPoints,OriginalEstimate";
 
             StringBuilder sbFile = new();
             sbFile.AppendLine(headerLine.TrimEnd(','));
@@ -130,26 +131,19 @@ namespace UserStoryGenerator.Model
             sbLine.Append(ProcessString(subTask.Description));
 
 
-            // Status
-            sbLine.Append("TODO");//OPEN
+            // Status //OPEN
+            sbLine.Append("TODO");
+            sbLine.Append(',');
+
+            //StoryPoints
+            sbLine.Append(subTask.StoryPoints);
+            sbLine.Append(',');
+
+            //OriginalEstimate
+            sbLine.Append(1 * subTask.OriginalEstimate);//3600
+
 
             return sbLine.ToString().TrimEnd(',').Trim();
-        }
-
-        private static string? ProcessString(string? temp)//value
-        {
-            if( temp == null ) return ",";
-
-            temp = temp.Trim();
-            if( temp.Contains(',') )
-            {
-                temp = temp.Replace("\"", "\"\"");
-                temp = $"\"{temp}\"";
-                //temp + ",";
-            }
-
-            return temp + ",";
-
         }
 
         private static string CreateLine(IssueData.Issue issue, string parentID, string linedToId)
@@ -191,12 +185,36 @@ namespace UserStoryGenerator.Model
             // Description
             sbLine.Append(ProcessString(issue.Description));
 
+            // Status//OPEN
+            sbLine.Append("TODO");
+            sbLine.Append(',');
 
-            // Status
-            sbLine.Append("TODO");//OPEN
+
+            //StoryPoints
+            sbLine.Append(issue.StoryPoints);
+            sbLine.Append(',');
+
+            //OriginalEstimate
+            sbLine.Append(1 * issue.OriginalEstimate);//3600
+
 
             return sbLine.ToString().TrimEnd(',').Trim();
             //
         }
+        private static string? ProcessString(string? temp)//value
+        {
+            if( temp == null ) return ",";
+
+            temp = temp.Trim();
+            if( temp.Contains(',') || temp.Contains('"') || temp.Contains('\r') || temp.Contains('\n') )
+            {
+                temp = temp.Replace("\"", "\"\"");
+                temp = $"\"{temp}\"";
+            }
+
+            return temp + ",";
+
+        }
+
     }
 }

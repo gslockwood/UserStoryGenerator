@@ -3,8 +3,6 @@ using UserStoryGenerator.Model;
 using UserStoryGenerator.Utilities;
 namespace UserStoryGenerator.View
 {
-
-
     public class TriStateTreeView : System.Windows.Forms.TreeView
     {
         public class TreeNodeEx : TreeNode, Model.IIssue
@@ -14,6 +12,9 @@ namespace UserStoryGenerator.View
             public string? IssueType { get; set; }
             public string? Description { get; set; }
             public long Key { get; set; }
+            public uint StoryPoints { get; set; }
+            public float OriginalEstimate { get; set; }
+
             public TreeNodeEx(IssueDataBase issue)
             {
                 UserStoryGenerator.Utilities.TreeNodeExExtensions.SetTreeNodeEx(this, issue);
@@ -35,11 +36,6 @@ namespace UserStoryGenerator.View
             public TreeNodeEx(TreeNodeEx treeNodeExRef)
             {
                 TreeNodeExExtensions.SetTreeNodeExFromTreeNodeEx(treeNodeExRef, this);
-                //Summary = treeNodeExRef.Summary;
-                //IssueType = treeNodeExRef.IssueType;
-                //Product = treeNodeExRef.Product;
-                //Text = treeNodeExRef.Text;
-                //Description = treeNodeExRef.Description;
             }
         }
 
@@ -60,6 +56,8 @@ namespace UserStoryGenerator.View
             public string? IssueType { get; set; }
             public string? Description { get; set; }
             public long Key { get; set; }
+            public uint StoryPoints { get; set; }
+            public float OriginalEstimate { get; set; }
 
 
             public List<DraggableNodeData> Children { get; set; } = [];
@@ -243,8 +241,6 @@ namespace UserStoryGenerator.View
                 ImageSize = new Size(16, 16),
                 TransparentColor = Color.Transparent
             };
-
-
 
             StateImageList = new System.Windows.Forms.ImageList();
 
@@ -954,7 +950,6 @@ namespace UserStoryGenerator.View
                     TreeNodeEx treeNodeEx = (TreeNodeEx)sourceNode;
                     if( full )
                     {
-
                         if( sourceNode is TreeNodeExSubTasks )
                             treeNodeEx = new TreeNodeExSubTasks();
 
@@ -965,13 +960,6 @@ namespace UserStoryGenerator.View
                         {
                             TreeNodeEx treeNodeExRef = (TreeNodeEx)sourceNode;
                             treeNodeEx = new(treeNodeExRef);
-                            //{
-                            //    Summary = treeNodeExRef.Summary,
-                            //    IssueType = treeNodeExRef.IssueType,
-                            //    Product = treeNodeExRef.Product,
-                            //    Text = treeNodeExRef.Text
-                            //};
-
                         }
 
                         foreach( TreeNode child in relevantChildren )

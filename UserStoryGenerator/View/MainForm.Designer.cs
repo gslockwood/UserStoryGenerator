@@ -45,6 +45,7 @@ namespace UserStoryGenerator.View
             flowLayoutPanelCheckBoxes = new FlowLayoutPanel();
             checkBoxAddSubTasks = new CheckBox();
             checkBoxAddQATests = new CheckBox();
+            checkBoxAddDescriptions = new CheckBox();
             groupBoxExPRD = new GroupBoxEx();
             epicSelector = new EpicSelector();
             treeView = new TriStateTreeView();
@@ -75,7 +76,7 @@ namespace UserStoryGenerator.View
             preferencesToolStripMenuItem = new ToolStripMenuItem();
             settingsToolStripMenuItem = new ToolStripMenuItem();
             aboutToolStripMenuItem = new ToolStripMenuItem();
-            checkBox1AddDescriptions = new CheckBox();
+            checkBoxEstimates = new CheckBox();
             tableLayoutPanelData.SuspendLayout();
             tableLayoutPanelEntryControl.SuspendLayout();
             groupBoxStoryMin.SuspendLayout();
@@ -225,7 +226,8 @@ namespace UserStoryGenerator.View
             // 
             flowLayoutPanelCheckBoxes.Controls.Add(checkBoxAddSubTasks);
             flowLayoutPanelCheckBoxes.Controls.Add(checkBoxAddQATests);
-            flowLayoutPanelCheckBoxes.Controls.Add(checkBox1AddDescriptions);
+            flowLayoutPanelCheckBoxes.Controls.Add(checkBoxAddDescriptions);
+            flowLayoutPanelCheckBoxes.Controls.Add(checkBoxEstimates);
             flowLayoutPanelCheckBoxes.Dock = DockStyle.Fill;
             flowLayoutPanelCheckBoxes.Location = new Point(3, 4);
             flowLayoutPanelCheckBoxes.Margin = new Padding(3, 4, 3, 4);
@@ -258,6 +260,19 @@ namespace UserStoryGenerator.View
             checkBoxAddQATests.TabIndex = 1;
             checkBoxAddQATests.Text = "Add QA Tests";
             checkBoxAddQATests.UseVisualStyleBackColor = true;
+            // 
+            // checkBoxAddDescriptions
+            // 
+            checkBoxAddDescriptions.AutoSize = true;
+            checkBoxAddDescriptions.Checked = true;
+            checkBoxAddDescriptions.CheckState = CheckState.Checked;
+            checkBoxAddDescriptions.Location = new Point(249, 4);
+            checkBoxAddDescriptions.Margin = new Padding(3, 4, 3, 4);
+            checkBoxAddDescriptions.Name = "checkBoxAddDescriptions";
+            checkBoxAddDescriptions.Size = new Size(142, 24);
+            checkBoxAddDescriptions.TabIndex = 2;
+            checkBoxAddDescriptions.Text = "Add Descriptions";
+            checkBoxAddDescriptions.UseVisualStyleBackColor = true;
             // 
             // groupBoxExPRD
             // 
@@ -296,6 +311,7 @@ namespace UserStoryGenerator.View
             treeView.AllowDrop = true;
             treeView.Dock = DockStyle.Fill;
             treeView.ImageIndex = 0;
+            treeView.LabelEdit = true;
             treeView.Location = new Point(3, 122);
             treeView.Margin = new Padding(3, 4, 3, 4);
             treeView.Name = "treeView";
@@ -304,9 +320,7 @@ namespace UserStoryGenerator.View
             treeView.Size = new Size(1300, 670);
             treeView.TabIndex = 2;
             treeView.TriStateStyleProperty = TriStateTreeView.TriStateStyles.Standard;
-            //treeView.ItemDrag +=  TreeView_ItemDrag ;
             treeView.DragDrop +=  TreeView_DragDrop ;
-            //treeView.DragEnter +=  TreeView_DragEnter ;
             // 
             // panelResults
             // 
@@ -531,12 +545,12 @@ namespace UserStoryGenerator.View
             fileToolStripMenuItem.Size = new Size(37, 19);
             fileToolStripMenuItem.Text = "&File";
             // 
-            // openToolStripMenuItem
+            // openJsonToolStripMenuItem
             // 
             openJsonToolStripMenuItem.Name = "openJsonToolStripMenuItem";
             openJsonToolStripMenuItem.Size = new Size(178, 22);
             openJsonToolStripMenuItem.Text = "&Open Json...";
-            openJsonToolStripMenuItem.Click +=  OpenJsonToolStripMenuItem_Click ; 
+            openJsonToolStripMenuItem.Click +=  OpenJsonToolStripMenuItem_Click ;
             // 
             // openPRDToolStripMenuItem
             // 
@@ -597,18 +611,18 @@ namespace UserStoryGenerator.View
             aboutToolStripMenuItem.Text = "About...";
             aboutToolStripMenuItem.Click +=  AboutToolStripMenuItem_Click ;
             // 
-            // checkBox1AddDescriptions
+            // checkBoxEstimates
             // 
-            checkBox1AddDescriptions.AutoSize = true;
-            checkBox1AddDescriptions.Checked = true;
-            checkBox1AddDescriptions.CheckState = CheckState.Checked;
-            checkBox1AddDescriptions.Location = new Point(249, 4);
-            checkBox1AddDescriptions.Margin = new Padding(3, 4, 3, 4);
-            checkBox1AddDescriptions.Name = "checkBox1AddDescriptions";
-            checkBox1AddDescriptions.Size = new Size(142, 24);
-            checkBox1AddDescriptions.TabIndex = 2;
-            checkBox1AddDescriptions.Text = "Add Descriptions";
-            checkBox1AddDescriptions.UseVisualStyleBackColor = true;
+            checkBoxEstimates.AutoSize = true;
+            checkBoxEstimates.Checked = true;
+            checkBoxEstimates.CheckState = CheckState.Checked;
+            checkBoxEstimates.Location = new Point(397, 4);
+            checkBoxEstimates.Margin = new Padding(3, 4, 3, 4);
+            checkBoxEstimates.Name = "checkBoxEstimates";
+            checkBoxEstimates.Size = new Size(143, 24);
+            checkBoxEstimates.TabIndex = 3;
+            checkBoxEstimates.Text = "Include Estimates";
+            checkBoxEstimates.UseVisualStyleBackColor = true;
             // 
             // MainForm
             // 
@@ -686,7 +700,8 @@ namespace UserStoryGenerator.View
         private ResizableGroupBoxFlowLayoutPanelEx flowLayoutPanelExTotals;
         private ToolStripMenuItem openCSVToolStripMenuItem;
         private ToolStripMenuItem openPRDToolStripMenuItem;
-        private CheckBox checkBox1AddDescriptions;
+        private CheckBox checkBoxAddDescriptions;
+        private CheckBox checkBoxEstimates;
     }
 
     public interface IReset

@@ -15,11 +15,12 @@ namespace UserStoryGenerator.Model
         public delegate void CompletedInErrorEventHandler(object? error);
         public event CompletedInErrorEventHandler? Error;
 
-        protected const string ADDITIONALINSTRUCTIONS = "Additional Instructions";
-        protected const string QATESTSTRUCTIONS = "OVERRIDE earlier instruction: Under no circumstances generate 'Test' issues. \n";
-        protected const string NOSUBTASKINSTRUCTIONS = "OVERRIDE earlier instruction: Under no circumstances generate 'Sub-task' issues. \n";
-        protected const string NODESCRIPTIONSINSTRUCTIONS = "OVERRIDE earlier instruction: Do not, under any circumstances, create description text for the \"Description\" field of any \"Standard\" or \"Sub-task\" Issue. Set the \"Description\" field to null. \n";
-        protected const string NUMBEROFISSUES = "NUMBEROFISSUES";
+        protected const string ADDITIONAL_INSTRUCTIONS = "Additional Instructions";
+        protected const string QATESTS_INSTRUCTIONS = "OVERRIDE earlier instruction: Under no circumstances generate 'Test' issues. \n";
+        protected const string NO_SUBTASKS_INSTRUCTIONS = "OVERRIDE earlier instruction: Under no circumstances generate 'Sub-task' issues. \n";
+        protected const string NO_DESCRIPTIONS_INSTRUCTIONS = "OVERRIDE earlier instruction: Do not, under any circumstances, create description text for the \"Description\" field of any \"Standard\" or \"Sub-task\" Issue. Set the \"Description\" field to null. \n";
+        protected const string NO_ESTIMATES_INSTRUCTIONS = "OVERRIDE earlier instruction: Do not, under any circumstances, generate StoryPoint estimates for the \"StoryPoints\" field of any issue. Set the \"StoryPoints\" field to 0. \n";
+        protected const string NUMBER_OF_ISSUES = "NUMBEROFISSUES";
 
 
         protected readonly string jiraProject;
@@ -28,6 +29,7 @@ namespace UserStoryGenerator.Model
         protected readonly bool AddQATests;
         protected readonly bool AddSubTasks;
         protected readonly bool AddDescriptions;
+        protected readonly bool AddEstimates;
         protected readonly int maxStories;
         private readonly Dictionary<string, Settings.JiraIssueType>? jiraIssueTypes;
         private readonly string? fundamentalInstructions;
@@ -42,14 +44,17 @@ namespace UserStoryGenerator.Model
             string target = args.Target ?? throw new NullReferenceException(nameof(args.Target));
             if( args.Settings == null ) throw new NullReferenceException(nameof(args.Settings));
             if( args.Settings.GeminiModel == null ) throw new NullReferenceException(nameof(args.Settings.GeminiModel));
+            if( args.Customization == null ) throw new NullReferenceException(nameof(args.Customization));
 
             this.jiraProject = args.JiraProject ?? throw new NullReferenceException(nameof(args.JiraProject));
             this.productName = args.ProductName ?? throw new NullReferenceException(nameof(args.ProductName));
 
             this.AICoaching = args.AICoaching;
-            this.AddQATests = args.AddQATests;
-            this.AddSubTasks = args.AddSubTasks;
-            this.AddDescriptions = args.AddDescriptions;
+            this.AddQATests = args.Customization.AddQATests;
+            this.AddSubTasks = args.Customization.AddSubTasks;
+            this.AddDescriptions = args.Customization.AddDescriptions;
+            this.AddEstimates = args.Customization.AddEstimates;
+
             this.maxStories = args.MaxStories;
             this.jiraIssueTypes = args.Settings.JiraIssueTypes;// args.JiraIssueTypes;
             this.fundamentalInstructions = args.Settings.FundamentalInstructions;//.FundamentalInstructions;
@@ -167,8 +172,8 @@ namespace UserStoryGenerator.Model
 
             string result = sbCoaching.ToString();
 
-            if( result.Contains(NUMBEROFISSUES) )
-                result = result.Replace(NUMBEROFISSUES, maxStories.ToString());
+            if( result.Contains(NUMBER_OF_ISSUES) )
+                result = result.Replace(NUMBER_OF_ISSUES, maxStories.ToString());
 
             //UserStoryGenerator.Utilities.Logger.Info(result);
 
@@ -185,29 +190,40 @@ namespace UserStoryGenerator.Model
                     ( AICoaching.SubTaskInstructions != null )
                     )
                 {
-                    sbCoaching.AppendLine($"Beginning of {ADDITIONALINSTRUCTIONS}");
+                    sbCoaching.AppendLine($"Beginning of {ADDITIONAL_INSTRUCTIONS}");
 
                     if( AddQATests )
                         sbCoaching.AppendLine(AICoaching.QATestInstructions);
                     else
-                        sbCoaching.AppendLine(QATESTSTRUCTIONS);
+                        sbCoaching.AppendLine(QATESTS_INSTRUCTIONS);
 
                     sbCoaching.AppendLine("");
 
                     if( AddSubTasks )
                         sbCoaching.AppendLine(AICoaching.SubTaskInstructions);
                     else
-                        sbCoaching.AppendLine(NOSUBTASKINSTRUCTIONS);
+                        sbCoaching.AppendLine(NO_SUBTASKS_INSTRUCTIONS);
 
                     if( !AddDescriptions )
-                        sbCoaching.AppendLine(NODESCRIPTIONSINSTRUCTIONS);
+                        sbCoaching.AppendLine(NO_DESCRIPTIONS_INSTRUCTIONS);
 
-                    sbCoaching.AppendLine($"End of {ADDITIONALINSTRUCTIONS}");
+                    if( !AddEstimates )
+                        sbCoaching.AppendLine(NO_ESTIMATES_INSTRUCTIONS);
+
+                    sbCoaching.AppendLine($"End of {ADDITIONAL_INSTRUCTIONS}");
 
                 }
             }
         }
 
+    }
+
+    public class Customization
+    {
+        public bool AddQATests { get; internal set; }
+        public bool AddSubTasks { get; internal set; }
+        public bool AddDescriptions { get; internal set; }
+        public bool AddEstimates { get; internal set; }
     }
 
     public class IssueGeneratorBaseInputArgs
@@ -217,11 +233,13 @@ namespace UserStoryGenerator.Model
         public string? JiraProject { get; internal set; }
         public string? Target { get; internal set; }
         public string? ProductName { get; internal set; }
-        public bool AddQATests { get; internal set; }
-        public bool AddSubTasks { get; internal set; }
+        //public bool AddQATests { get; internal set; }
+        //public bool AddSubTasks { get; internal set; }
+        //public bool AddDescriptions { get; internal set; }
+
         public int MaxStories { get; internal set; }
         public Settings? Settings { get; internal set; }
-        public bool AddDescriptions { get; internal set; }
+        public Customization? Customization { get; internal set; }
     }
 
 

@@ -13,6 +13,8 @@ namespace UserStoryGenerator.Utilities
             draggableNodeData.IssueType = string.Empty;
             draggableNodeData.Description = string.Empty;
             draggableNodeData.Key = -1;
+            draggableNodeData.StoryPoints = 0;
+            draggableNodeData.OriginalEstimate = 0.0f;
 
         }
 
@@ -23,6 +25,8 @@ namespace UserStoryGenerator.Utilities
             draggableNodeData.IssueType = node.IssueType;
             draggableNodeData.Description = node.Description;
             draggableNodeData.Key = node.Key;
+            draggableNodeData.StoryPoints = node.StoryPoints;
+            draggableNodeData.OriginalEstimate = node.OriginalEstimate;
         }
     }
     public static class TreeNodeExExtensions
@@ -34,6 +38,8 @@ namespace UserStoryGenerator.Utilities
             treeNodeEx.IssueType = issue.IssueType?.Trim();
             treeNodeEx.Description = issue.Description?.Trim();
             treeNodeEx.Key = issue.Key;
+            treeNodeEx.StoryPoints = issue.StoryPoints;
+            treeNodeEx.OriginalEstimate = issue.OriginalEstimate;
 
             treeNodeEx.Text = issue.Summary;
 
@@ -46,6 +52,8 @@ namespace UserStoryGenerator.Utilities
             treeNodeEx.IssueType = draggableNodeData.IssueType?.Trim();
             treeNodeEx.Description = draggableNodeData.Description?.Trim();
             treeNodeEx.Key = draggableNodeData.Key;
+            treeNodeEx.StoryPoints = draggableNodeData.StoryPoints;
+            treeNodeEx.OriginalEstimate = draggableNodeData.OriginalEstimate;
 
             treeNodeEx.Text = draggableNodeData.Text;
 
@@ -67,6 +75,8 @@ namespace UserStoryGenerator.Utilities
             destination.IssueType = source.IssueType?.Trim();
             destination.Description = source.Description?.Trim();
             destination.Key = source.Key;
+            destination.StoryPoints = source.StoryPoints;
+            destination.OriginalEstimate = source.OriginalEstimate;
 
             destination.Text = source.Summary;
         }
@@ -82,6 +92,10 @@ namespace UserStoryGenerator.Utilities
                 Summary = node.Summary,
                 IssueType = node.IssueType,
                 Description = node.Description,
+                StoryPoints = node.StoryPoints,
+                OriginalEstimate = node.OriginalEstimate,
+                // should Key be set here too?
+                Key = node.Key,
             };
 
             return issue;
@@ -97,6 +111,10 @@ namespace UserStoryGenerator.Utilities
                 Summary = node.Summary,
                 IssueType = node.IssueType,
                 Description = node.Description,
+                StoryPoints = node.StoryPoints,
+                OriginalEstimate = node.OriginalEstimate,
+                // should Key be set here too?
+                Key = node.Key,
             };
 
             return issue;

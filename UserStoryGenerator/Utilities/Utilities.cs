@@ -1,4 +1,5 @@
 ﻿using System.Reflection;
+using System.Text;
 using System.Text.RegularExpressions;
 using UserStoryGenerator.Model;
 using static UserStoryGenerator.Model.Settings;
@@ -104,6 +105,44 @@ namespace UserStoryGenerator.Utilities
 
         }
 
+        public static string FormatEstimateTime(float timeInSeconds)
+        {
+            // Ensure the time is non-negative
+            if( timeInSeconds < 0 )
+                timeInSeconds = 0;
+
+            // Calculate total minutes from seconds
+            int totalMinutes = (int)Math.Floor(timeInSeconds / 60);
+
+            // Calculate minutes component (remainder after hours)
+            int minutes = totalMinutes % 60;
+
+            // Calculate total hours from total minutes
+            int totalHours = totalMinutes / 60;
+
+            // Calculate hours component (remainder after days)
+            int hours = totalHours % 24;
+
+            // Calculate days component
+            int days = totalHours / 24;
+
+            // Use StringBuilder for efficient string construction
+            StringBuilder resultBuilder = new();
+
+            // Conditionally append days if greater than 0
+            if( days > 0 )
+                resultBuilder.Append($"{days}d ");
+
+            // Conditionally append hours if greater than 0
+            if( hours > 0 )
+                resultBuilder.Append($"{hours}h ");
+
+            // Always append minutes
+            resultBuilder.Append($"{minutes}m");
+
+            // Return the final formatted string
+            return resultBuilder.ToString();
+        }
     }
 
 }
