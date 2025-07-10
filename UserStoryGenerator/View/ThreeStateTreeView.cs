@@ -39,6 +39,17 @@ namespace UserStoryGenerator.View
             }
         }
 
+        public class TreeNodeExSubTask : TreeNodeEx
+        {
+            public TreeNodeExSubTask(IssueDataBase issue) : base(issue)
+            {
+                IssueType = Settings.JiraIssueType.Sub_task;
+                ToolTipText = IssueType;
+                ImageIndex = Utilities.IssueUtilities.GetImageIndex(IssueType);
+            }
+        }
+
+
         public class TreeNodeExSubTasks() : TreeNodeEx("Subtasks") { public static readonly string NodeName = "Subtasks"; }
 
         public class TreeNodeExLinkedIssues() : TreeNodeEx("LinkedIssues") { public static readonly string NodeName = "LinkedIssues"; }

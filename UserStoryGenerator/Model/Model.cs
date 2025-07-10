@@ -167,10 +167,11 @@ namespace UserStoryGenerator.Model
             throw new NullReferenceException("subTaskIssueType is missing");
 
         }
-        public bool SaveUserStoryResultsAsJson(string fullFilePath, string? productDescription, string productFeature, string epicNameOrKey)
+        public bool SaveUserStoryResultsAsJson(string fullFilePath, string? jiraProject, string? productDescription, string productFeature, string epicNameOrKey)
         {
             if( userStoryResults.UserStoryList == null || userStoryResults.UserStoryList.Count == 0 ) return false;
 
+            userStoryResults.JiraProject = jiraProject;
             userStoryResults.ProductOrFeature = productFeature;
             userStoryResults.EpicNameOrKey = epicNameOrKey;
             userStoryResults.ProductDescription = productDescription;

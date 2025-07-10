@@ -1,5 +1,4 @@
 using System.Diagnostics;
-using System.Text;
 using UserStoryGenerator.Model;
 using UserStoryGenerator.Utilities;
 using static UserStoryGenerator.Model.IssueData;
@@ -315,196 +314,6 @@ namespace UserStoryGenerator.View
             }
         }
 
-        private class RecursiveWorker(Dictionary<string, JiraIssueType>? jiraIssueTypes, int descriptionImageIndex)//(Model.Model model, TriStateTreeView treeView)
-        {
-            readonly List<TreeNodeEx> IssuesWithSubtasksInError = [];
-            readonly List<TreeNodeEx> IssuesWithLinkedIssuesInError = [];
-            private const string errorMsg = "Errors of this type will cause problems if included in the import of the CSV to Jira.\n\nRegenerate isses or be sure to exclude (leave unchecked) the issues marked in red.\n\n";
-
-
-            public void CreateNodes(IList<Model.IssueData.Issue> issues, TreeNode node, bool allIssue = false)
-            {
-                if( jiraIssueTypes == null ) throw new NullReferenceException(nameof(jiraIssueTypes));
-
-                CreateNodesInternal(issues, node, allIssue);
-
-                if( IssuesWithSubtasksInError.Count > 0 )
-                {
-                    StringBuilder sb = new();
-                    foreach( TreeNodeEx treeNodeEx in IssuesWithSubtasksInError )
-                    {
-                        if( treeNodeEx.Summary == null ) continue;
-                        if( treeNodeEx.IssueType == null ) continue;
-
-                        int maxLength = 80;
-                        if( treeNodeEx.Summary.Length < maxLength )
-                            maxLength = treeNodeEx.Summary.Length;
-
-                        sb.Append(treeNodeEx.Summary[..maxLength] + "...");
-                        sb.Append(" - ");
-                        sb.Append(treeNodeEx.IssueType);
-                        sb.AppendLine();
-
-                        //Color temp = treeNodeEx.BackColor;
-                        treeNodeEx.BackColor = Color.Red;
-                        treeNodeEx.ForeColor = Color.White;
-
-                        TreeNodeEx parent = treeNodeEx;
-                        while( parent.Level > 1 )
-                            parent = (TreeNodeEx)parent.Parent;
-
-                        parent?.ExpandAll();
-
-                    }
-
-                    MessageBox.Show(
-                        $"There are {IssuesWithSubtasksInError.Count} Issues With non {JiraIssueType.Sub_task} issues in the Subtasks collection.\n\n{sb}\n\n{errorMsg}",
-                        "Critical Error",
-                        MessageBoxButtons.OK,//YesNo
-                        MessageBoxIcon.Error);
-
-                }
-                if( IssuesWithLinkedIssuesInError.Count > 0 )
-                {
-                    StringBuilder sb = new();
-                    foreach( TreeNodeEx treeNodeEx in IssuesWithLinkedIssuesInError )
-                    {
-                        if( treeNodeEx.Summary == null ) continue;
-                        if( treeNodeEx.IssueType == null ) continue;
-
-                        int maxLength = 80;
-                        if( treeNodeEx.Summary.Length < maxLength )
-                            maxLength = treeNodeEx.Summary.Length;
-
-                        sb.Append(treeNodeEx.Summary[..maxLength] + "...");
-                        sb.Append(" - ");
-                        sb.Append(treeNodeEx.IssueType);
-                        sb.AppendLine();
-
-                        //Color temp = treeNodeEx.BackColor;
-                        treeNodeEx.BackColor = Color.Red;
-                        treeNodeEx.ForeColor = Color.White;
-
-                        TreeNodeEx parent = treeNodeEx;
-                        while( parent.Level > 1 )
-                            parent = (TreeNodeEx)parent.Parent;
-
-                        parent?.ExpandAll();
-                    }
-
-                    MessageBox.Show($"There are {IssuesWithLinkedIssuesInError.Count} Issues With {JiraIssueType.Sub_task} issues in the LinkedIssues collection.\n\n{sb}\n\n{errorMsg}",
-                        "Critical Error",
-                        MessageBoxButtons.OK,//YesNo
-                        MessageBoxIcon.Error);
-
-                }
-            }
-
-            private void CreateNodesInternal(IList<Model.IssueData.Issue> issues, TreeNode node, bool allIssue = false)
-            {
-                foreach( Model.IssueData.Issue issue in issues )
-                {
-                    if( issue.Summary == null ) continue;
-                    if( issue.IssueType == null ) continue;
-
-                    string toolTipText;
-                    if( issue.IssueType.Equals(JiraIssueType.Story) )
-                        toolTipText = $"Issue Type={issue.IssueType} StoryPoints={issue.StoryPoints}";
-                    else
-                        toolTipText = $"Issue Type={issue.IssueType} OriginalEstimate={IssueUtilities.FormatEstimateTime(issue.OriginalEstimate)}";
-
-                    TriStateTreeView.TreeNodeEx? issueNode = new(issue)
-                    {
-                        ToolTipText = toolTipText,
-
-                        // mark the issue as generated by userStory generation  (false) or 'all issue' run for a user story (true)
-                        Tag = allIssue,
-                    };
-
-                    if( node is TreeNodeExLinkedIssues )
-                    {
-                        if( issueNode.IssueType != null && issueNode.IssueType.Equals(JiraIssueType.Sub_task) )
-                            IssuesWithLinkedIssuesInError.Add(issueNode);
-                    }
-
-
-                    if( issue.IssueType != null )
-                    {
-                        //if( model.Settings != null && model.Settings.JiraIssueTypes != null && model.Settings.JiraIssueTypes[issue.IssueType].ForeColor != null )
-                        if( jiraIssueTypes != null && jiraIssueTypes[issue.IssueType].ForeColor != null )
-                        {
-                            string? foreColor = jiraIssueTypes[issue.IssueType].ForeColor;
-                            if( foreColor != null )
-                                issueNode.ForeColor = Color.FromName(foreColor);
-                        }
-
-                        issueNode.ImageIndex = Utilities.IssueUtilities.GetImageIndex(issue.IssueType);
-                    }
-
-                    node.Nodes.Add(issueNode);
-
-                    if( !string.IsNullOrEmpty(issue.Description) )
-                    {
-                        TreeNode treeNode = new(issue.Description)
-                        {
-                            ImageIndex = descriptionImageIndex,
-                            //ImageIndex = treeView.ImageList.Images.IndexOfKey("Circle")
-                        };
-
-                        issueNode.Nodes.Add(treeNode);
-                    }
-
-                    TreeNodeExSubTasks subtasksNode = new()
-                    {
-                        ImageIndex = Utilities.IssueUtilities.GetSubTaskImageIndex()// 4
-                    };
-                    issueNode.Nodes.Add(subtasksNode);
-
-                    TreeNodeExLinkedIssues linkedIssuesNode = new()
-                    {
-                        ImageIndex = Utilities.IssueUtilities.GetImageIndex("Task")
-                    };
-                    issueNode.Nodes.Add(linkedIssuesNode);
-
-
-                    if( issue.Subtasks != null )
-                    {
-                        //List<SubTask> nonSubtaskList = issue.Subtasks.Where(issue => issue.IssueType != null && !issue.IssueType.Equals(JiraIssueType.Sub_task)).ToList();
-                        //if( nonSubtaskList != null && nonSubtaskList.Count>0 )
-                        //    IssuesWithSubtasksInError.Add(nonSubtaskList);
-
-                        foreach( Model.IssueData.SubTask subTask in issue.Subtasks )
-                        {
-                            if( subTask.IssueType == null ) throw new NullReferenceException(nameof(subTask.IssueType));
-                            TriStateTreeView.TreeNodeEx? newNodeSub = new(subTask)
-                            {
-                                ToolTipText = subTask.IssueType,
-                                ImageIndex = Utilities.IssueUtilities.GetImageIndex(subTask.IssueType),
-                            };
-
-                            if( !subTask.IssueType.Equals(JiraIssueType.Sub_task) )
-                                IssuesWithSubtasksInError.Add(newNodeSub);
-
-                            subtasksNode.Nodes.Add(newNodeSub);
-                        }
-                    }
-
-                    if( issue.LinkedIssues != null )
-                    {
-                        //if( issue.LinkedIssues.Where(issue => issue.IssueType != null && issue.IssueType.Equals(JiraIssueType.Sub_task)).Any() )
-                        //    IssuesWithLinkedIssuesInError.Add(issueNode);
-
-
-                        if( issue.LinkedIssues != null )
-                            CreateNodesInternal(issue.LinkedIssues, linkedIssuesNode, allIssue);
-                    }
-                    //
-                }
-            }
-
-
-        }
-
         private async void Convert_Click(object? sender, EventArgs e)//async
         {
             ResetUI();
@@ -550,8 +359,6 @@ namespace UserStoryGenerator.View
             }
             //
         }
-
-
 
         private void ResetUI()
         {
@@ -736,6 +543,11 @@ namespace UserStoryGenerator.View
                     groupBoxExPRD.Value = issueResults.ProductDescription;
                     groupBoxExProductFeature.Value = issueResults.ProductOrFeature;
                     epicSelector.EpicNameOrKey = issueResults.EpicNameOrKey;
+                    string? jiraProject = issueResults.JiraProject;
+                    int index = comboBoxJiraProjects.FindString(jiraProject);
+                    if( index == -1 )
+                        index = 0;
+                    this.comboBoxJiraProjects.SelectedIndex = index;
                     //
                 }
                 catch( Exception ex )
@@ -810,7 +622,7 @@ namespace UserStoryGenerator.View
                     if( groupBoxExProductFeature.Value == null ) throw new NullReferenceException(nameof(groupBoxExProductFeature.Value));
                     if( epicSelector.Value == null ) throw new NullReferenceException(nameof(epicSelector.Value));
 
-                    bool success = model.SaveUserStoryResultsAsJson(filePath, groupBoxExPRD.Value, groupBoxExProductFeature.Value, epicSelector.Value);
+                    bool success = model.SaveUserStoryResultsAsJson(filePath, comboBoxJiraProjects.CurrentSelectedItem.ToString(), groupBoxExPRD.Value, groupBoxExProductFeature.Value, epicSelector.Value);
                     if( !success ) MessageBox.Show("Problem with SaveUserStoryResults.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
                 catch( Exception ex )
