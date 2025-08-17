@@ -12,9 +12,14 @@ namespace UserStoryGenerator.Utilities
             draggableNodeData.Summary = string.Empty;
             draggableNodeData.IssueType = string.Empty;
             draggableNodeData.Description = string.Empty;
+
             draggableNodeData.Key = -1;
             draggableNodeData.StoryPoints = 0;
             draggableNodeData.OriginalEstimate = 0.0f;
+
+            if( draggableNodeData is DraggableNodeDataTask task )
+            {
+            }
 
         }
 
@@ -27,6 +32,18 @@ namespace UserStoryGenerator.Utilities
             draggableNodeData.Key = node.Key;
             draggableNodeData.StoryPoints = node.StoryPoints;
             draggableNodeData.OriginalEstimate = node.OriginalEstimate;
+
+            //if( node is TreeNodeExTask task )
+            //{
+            ////( (DraggableNodeDataTask)draggableNodeData ).Component = task.Component;
+            //fuck:
+            //    DraggableNodeDataTask draggableNodeDataTask = draggableNodeData as DraggableNodeDataTask;
+            //    if( draggableNodeDataTask != null )
+            //        draggableNodeDataTask.Component = task.Component;
+
+            //    //goto fuck;
+            //}
+
         }
     }
     public static class TreeNodeExExtensions
@@ -38,10 +55,15 @@ namespace UserStoryGenerator.Utilities
             treeNodeEx.IssueType = issue.IssueType?.Trim();
             treeNodeEx.Description = issue.Description?.Trim();
             treeNodeEx.Key = issue.Key;
-            treeNodeEx.StoryPoints = issue.StoryPoints;
-            treeNodeEx.OriginalEstimate = issue.OriginalEstimate;
+            treeNodeEx.StoryPoints = ( issue.StoryPoints != null ) ? issue.StoryPoints.Value : 0;
+            treeNodeEx.OriginalEstimate = ( issue.OriginalEstimate != null ) ? issue.OriginalEstimate.Value : 0;
 
             treeNodeEx.Text = issue.Summary;
+
+            treeNodeEx.ToolTipText = treeNodeEx.IssueType;
+            treeNodeEx.ImageIndex = Utilities.IssueUtilities.GetImageIndex(treeNodeEx.IssueType);
+
+            treeNodeEx.Name = issue.Key.ToString();
 
         }
 
@@ -86,6 +108,30 @@ namespace UserStoryGenerator.Utilities
     {
         internal static IssueData.Issue CreateIssueFromTreeNodeEx(TriStateTreeView.TreeNodeEx node)
         {
+            if( node is TriStateTreeView.TreeNodeExTask )
+            {
+                IssueData.TaskIssue task = new()
+                {
+                    Product = node.Product,
+                    Summary = node.Summary,
+                    IssueType = node.IssueType,
+                    Description = node.Description,
+                    StoryPoints = node.StoryPoints,
+                    OriginalEstimate = node.OriginalEstimate,
+                    // should Key be set here too?
+                    Key = node.Key,
+
+                    Component = ( (TriStateTreeView.TreeNodeExTask)node ).Component,
+                };
+
+                return task;
+
+            }
+
+            if( node is TriStateTreeView.TreeNodeExTest )
+            {
+            }
+
             IssueData.Issue issue = new()
             {
                 Product = node.Product,
@@ -97,6 +143,8 @@ namespace UserStoryGenerator.Utilities
                 // should Key be set here too?
                 Key = node.Key,
             };
+
+
 
             return issue;
         }

@@ -26,9 +26,12 @@
 
         public class JiraIssueType
         {
-            public readonly static string Epic = "Epic";
-            public readonly static string Story = "Story";
-            public readonly static string Sub_task = "Sub-task";
+            public const string Epic = "Epic";
+            public const string Story = "Story";
+            public const string Task = "Task";
+            public const string Test = "Test";
+            public const string Sub_task = "Sub-task";
+
             public string? IssueType { get; set; }
             public string? ForeColor { get; set; }
             public string? ImagePath { get; set; }

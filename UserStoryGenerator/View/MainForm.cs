@@ -220,6 +220,7 @@ namespace UserStoryGenerator.View
                         }
 
                         return;
+                        //
                     }
 
 
@@ -614,7 +615,6 @@ namespace UserStoryGenerator.View
                 dialog.RestoreDirectory = true;
                 // Get the selected file path
                 string filePath = dialog.FileName;
-                //again:
                 try
                 {
                     SaveData();
@@ -630,9 +630,6 @@ namespace UserStoryGenerator.View
                     MessageBox.Show(ex.Message, "Information", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 }
 
-                //goto again;
-
-
             }
         }
         private void SaveData()
@@ -645,6 +642,8 @@ namespace UserStoryGenerator.View
             List<TreeNode> checkedHierarchy = treeView.GetCheckedNodesHierarchy(true);
 
             string epicText = string.Empty;
+
+            //var adfa = checkedHierarchy[0].Nodes[1].Nodes[0] is TreeNodeExTask;
 
             if( epicSelector.Value != null )
                 epicText = epicSelector.Value;
@@ -667,7 +666,6 @@ namespace UserStoryGenerator.View
                 if( !proceed ) return;
                 //
             }
-
 
             SaveFileDialog dialog = new()
             {
@@ -785,6 +783,55 @@ namespace UserStoryGenerator.View
                     string? jsonNodeData = e.Data.GetData(TriStateTreeView.TREENODEDATA) as string;
                     if( !string.IsNullOrEmpty(jsonNodeData) )
                     {
+                        TreeNodeEx? treeNodeEx = System.Text.Json.JsonSerializer.Deserialize<TreeNodeEx>(jsonNodeData);
+
+                        if( treeNodeEx != null && treeNodeEx.Nodes[1].Nodes[0] is TreeNodeExTask task )
+                        {
+                            Logger.Info(task.Component.Name);
+                            Logger.Info(task.Component.SubComponent);
+
+                        }
+
+
+                        if( treeNodeEx != null )
+                        {
+                            Point clientPoint = treeView.PointToClient(new Point(e.X, e.Y));
+                            TreeNode droppedUponNode = treeView.GetNodeAt(clientPoint);
+
+                            TreeNodeEx droppedUponNodeEx = (TreeNodeEx)droppedUponNode;
+
+                            TreeNodeEx? nodeToUse = null;
+                            if( droppedUponNode == treeView.Nodes[0] )
+                            {
+                                // use the root (the epic) node to drop upon
+                                nodeToUse = (TreeNodeEx?)this.treeView.Nodes[0];
+                            }
+                            else
+                            {
+                                // check that it is a story then put them into the LinkedIssues collection
+                                if( droppedUponNodeEx.Level == 1 )
+                                {
+                                    TreeNode[] linkedIssueNode = droppedUponNodeEx.Nodes.Find(TreeNodeExLinkedIssues.NodeName, false);
+                                    if( linkedIssueNode.Length > 0 )
+                                    {
+                                        nodeToUse = (TreeNodeEx?)linkedIssueNode.First();
+                                    }
+                                }
+                            }
+
+                            if( nodeToUse != null )
+                            {
+                                nodeToUse.Nodes.Add(treeNodeEx);
+                                droppedUponNodeEx.ExpandAll();
+                            }
+
+                        }
+
+                        return;
+
+
+
+
                         // Deserialize it back into your DraggableNodeData object
                         DraggableNodeData? nodeData = System.Text.Json.JsonSerializer.Deserialize<DraggableNodeData>(jsonNodeData);
                         if( nodeData != null )

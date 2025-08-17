@@ -1,5 +1,4 @@
 ﻿using System.Text;
-using UserStoryGenerator.Utilities;
 
 namespace UserStoryGenerator.Model
 {
@@ -90,7 +89,7 @@ namespace UserStoryGenerator.Model
                     foreach( IssueData.SubTask subTask in issue.Subtasks )
                     {
                         string subTaskLine = CreateSubTaskLine(subTask, issue.Key.ToString());
-                        Logger.Info(subTaskLine);
+                        //Logger.Info(subTaskLine);
                         sbFile.AppendLine(subTaskLine);
                     }
                 }

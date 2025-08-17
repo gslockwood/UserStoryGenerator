@@ -1,10 +1,13 @@
 ﻿using System.Text.Json;
+using System.Text.Json.Serialization;
 using UserStoryGenerator.Model;
 using UserStoryGenerator.Utilities;
+using static UserStoryGenerator.Model.Settings;
 namespace UserStoryGenerator.View
 {
     public class TriStateTreeView : System.Windows.Forms.TreeView
     {
+        [JsonConverter(typeof(TreeNodeExConverter))]
         public class TreeNodeEx : TreeNode, Model.IIssue
         {
             public string? Product { get; set; }
@@ -12,16 +15,16 @@ namespace UserStoryGenerator.View
             public string? IssueType { get; set; }
             public string? Description { get; set; }
             public long Key { get; set; }
-            public uint StoryPoints { get; set; }
-            public float OriginalEstimate { get; set; }
+            public uint? StoryPoints { get; set; }
+            public float? OriginalEstimate { get; set; }
 
             public TreeNodeEx(IssueDataBase issue)
             {
                 UserStoryGenerator.Utilities.TreeNodeExExtensions.SetTreeNodeEx(this, issue);
 
                 // for the TreeView
-                Text = Summary;
-                Name = issue.Key.ToString();
+                //Text = Summary;
+                //Name = issue.Key.ToString();
 
             }
 
@@ -37,15 +40,81 @@ namespace UserStoryGenerator.View
             {
                 TreeNodeExExtensions.SetTreeNodeExFromTreeNodeEx(treeNodeExRef, this);
             }
+
+            public TreeNodeEx(TreeNode sourceNode)
+            {
+                TreeNodeEx temp = (TreeNodeEx)sourceNode;
+                this.Text = temp.Summary;
+
+                this.Key = temp.Key;
+                this.Product = temp.Product;
+                this.Summary = temp.Summary;
+                this.Description = temp.Description;
+                this.IssueType = temp.IssueType;
+                this.ImageIndex = temp.ImageIndex;
+                this.StoryPoints = temp.StoryPoints;
+                this.OriginalEstimate = temp.OriginalEstimate;
+                ToolTipText = IssueType;
+
+                ImageIndex = Utilities.IssueUtilities.GetImageIndex(this.IssueType);
+
+            }
+        }
+
+        public class TreeNodeExTest : TreeNodeEx
+        {
+            public TreeNodeExTest()
+            {
+            }
+
+            public TreeNodeExTest(IssueDataBase issue) : base(issue)
+            {
+                //IssueType = "Test";
+                //ToolTipText = IssueType;
+                //ImageIndex = Utilities.IssueUtilities.GetImageIndex(IssueType);
+            }
+
+            public TreeNodeExTest(TreeNode sourceNode) : base(sourceNode)
+            {
+            }
         }
 
         public class TreeNodeExSubTask : TreeNodeEx
         {
+            public TreeNodeExSubTask()
+            {
+            }
+
             public TreeNodeExSubTask(IssueDataBase issue) : base(issue)
             {
-                IssueType = Settings.JiraIssueType.Sub_task;
-                ToolTipText = IssueType;
-                ImageIndex = Utilities.IssueUtilities.GetImageIndex(IssueType);
+                //IssueType = Settings.JiraIssueType.Sub_task;
+                //ToolTipText = IssueType;
+                //ImageIndex = Utilities.IssueUtilities.GetImageIndex(IssueType);
+            }
+
+            public TreeNodeExSubTask(TreeNode sourceNode) : base(sourceNode)
+            {
+            }
+        }
+        public class TreeNodeExTask : TreeNodeEx
+        {
+            public IssueData.Component? Component { get; set; }
+            public TreeNodeExTask(IssueData.TaskIssue issue) : base(issue)
+            {
+                //IssueType = "Task";// Settings.JiraIssueType.Task;
+                //ToolTipText = IssueType;
+                //ImageIndex = Utilities.IssueUtilities.GetImageIndex(IssueType);
+                Component = issue.Component;
+            }
+
+            public TreeNodeExTask(TreeNode sourceNode) : base(sourceNode)
+            {
+                TreeNodeExTask temp = (TreeNodeExTask)sourceNode;
+                this.Component = temp.Component;
+            }
+
+            public TreeNodeExTask()
+            {
             }
         }
 
@@ -56,6 +125,23 @@ namespace UserStoryGenerator.View
 
 
         [Serializable]
+        public class DraggableNodeDataTask : DraggableNodeData
+        {
+            public IssueData.Component? Component { get; set; }
+
+            public DraggableNodeDataTask()
+            {
+            }
+
+            public DraggableNodeDataTask(TreeNodeExTask node) : base(node)
+            {
+                Component = node.Component;
+            }
+
+        }
+
+        [Serializable]
+        //[JsonConverter(typeof(TreeNodeExConverter))]
         public class DraggableNodeData : Model.IIssue
         {
             public string? Text { get; set; }
@@ -67,8 +153,8 @@ namespace UserStoryGenerator.View
             public string? IssueType { get; set; }
             public string? Description { get; set; }
             public long Key { get; set; }
-            public uint StoryPoints { get; set; }
-            public float OriginalEstimate { get; set; }
+            public uint? StoryPoints { get; set; }
+            public float? OriginalEstimate { get; set; }
 
 
             public List<DraggableNodeData> Children { get; set; } = [];
@@ -76,11 +162,6 @@ namespace UserStoryGenerator.View
             public DraggableNodeData() : base()
             {
                 DraggableNodeDataExtensions.ZeroSet(this);
-                //Product = string.Empty;
-                //Description = string.Empty;
-                //Summary = string.Empty;
-                //IssueType = string.Empty;
-                //Key = -1;
             }
 
 
@@ -121,7 +202,7 @@ namespace UserStoryGenerator.View
                 if( Text.Equals(TriStateTreeView.TreeNodeExSubTasks.NodeName) )
                     newNode = new TriStateTreeView.TreeNodeExSubTasks() { ImageIndex = Utilities.IssueUtilities.GetSubTaskImageIndex() };
                 else if( Text.Equals(TriStateTreeView.TreeNodeExLinkedIssues.NodeName) )
-                    newNode = new TriStateTreeView.TreeNodeExLinkedIssues() { ImageIndex = Utilities.IssueUtilities.GetImageIndex("Task") };
+                    newNode = new TriStateTreeView.TreeNodeExLinkedIssues() { ImageIndex = Utilities.IssueUtilities.GetImageIndex(JiraIssueType.Task) };
                 else
                 {
                     if( IssueType == null ) throw new NullReferenceException(nameof(IssueType));
@@ -151,16 +232,6 @@ namespace UserStoryGenerator.View
                 {
                     TreeNodeEx? child = childData.ToTreeNodeEx();
                     if( child == null ) continue;
-
-                    //if( !string.IsNullOrEmpty(child.Description) )
-                    //{
-                    //    TreeNode treeNode = new(child.Description)
-                    //    {
-                    //        ImageIndex = Utilities.IssueUtilities.GetImageIndex("Circle")
-                    //    };
-
-                    //    child.Nodes.Add(treeNode);
-                    //}
 
                     newNode.Nodes.Add(child);
                 }
@@ -360,8 +431,45 @@ namespace UserStoryGenerator.View
 
             if( e.Item is TreeNodeEx node )
             {
-                DraggableNodeData nodeData = new(node);
+                /*
+                DraggableNodeData nodeData;// = new(node);
+
+                if( e.Item is TreeNodeExTask taskNode )
+                {
+                    nodeData = new DraggableNodeDataTask((TreeNodeExTask)node);
+                    ( (DraggableNodeDataTask)nodeData ).Component = taskNode.Component;
+                }
+                else
+                    nodeData = new(node);
                 string jsonNodeData = System.Text.Json.JsonSerializer.Serialize(nodeData);
+                */
+
+
+                //again:
+                ////string jsonNodeData000 = System.Text.Json.JsonSerializer.Serialize(node);
+                //    try
+                //    {
+                //        jsonNodeData000 = System.Text.Json.JsonSerializer.Serialize(node);
+                //        //goto again;
+                //        //Logger.Info(jsonNodeData000);
+                //        TreeNodeEx? treeNodeEx = JsonSerializer.Deserialize<TreeNodeEx>(jsonNodeData000);
+
+                //        if( treeNodeEx != null && treeNodeEx.Nodes[1].Nodes[0] is TreeNodeExTask task )
+                //        {
+                //            Logger.Info(task.Component.Name);
+                //            Logger.Info(task.Component.SubComponent);
+
+                //        }
+
+                //    }
+                //    catch( Exception ex )
+                //    {
+                //        //throw ex;
+                //    }
+                //    goto again;
+
+                string jsonNodeData = JsonSerializer.Serialize(node);
+
 
                 DataObject data = new();
                 data.SetData(TriStateTreeView.TREENODEDATA, jsonNodeData); // Use a unique custom format string
@@ -969,17 +1077,53 @@ namespace UserStoryGenerator.View
 
                         else
                         {
-                            TreeNodeEx treeNodeExRef = (TreeNodeEx)sourceNode;
-                            treeNodeEx = new(treeNodeExRef);
+                            TreeNodeEx treeNodeExRef;// = (TreeNodeEx)sourceNode;
+
+                            if( sourceNode is TreeNodeExSubTask )
+                                treeNodeExRef = new TreeNodeExSubTask(sourceNode);
+                            else if( sourceNode is TreeNodeExTask )
+                                treeNodeExRef = new TreeNodeExTask(sourceNode);
+                            else if( sourceNode is TreeNodeExTest )
+                                treeNodeExRef = new TreeNodeExTest(sourceNode);
+                            else
+                                treeNodeExRef = new TreeNodeEx(sourceNode);
+
+                            if( treeNodeExRef == null )
+                            {
+                            }
+
+                            treeNodeEx = treeNodeExRef;
+
+                            //treeNodeEx = new(treeNodeExRef);
+                            //
                         }
 
                         foreach( TreeNode child in relevantChildren )
                             treeNodeEx.Nodes.Add(child);
+                        /*
+                        foreach( TreeNode child in relevantChildren )
+                        {
+                            if( child == null ) continue;
 
+                            TreeNodeEx treeNodeExRef;
+
+                            if( child is TreeNodeExSubTask )
+                                treeNodeExRef = (TreeNodeExSubTask)child;
+                            else if( child is TreeNodeExTask )
+                                treeNodeExRef = (TreeNodeExTask)child;
+                            else if( child is TreeNodeExTestTask )
+                                treeNodeExRef = (TreeNodeExTestTask)child;
+                            else
+                                treeNodeExRef = (TreeNodeEx)child;
+
+                            treeNodeEx.Nodes.Add(treeNodeExRef);
+
+                        }
+                        */
                     }
 
                     resultNodes.Add(treeNodeEx); // Add the newly created node to the result list
-                                                 //
+                    //
                 }
                 // If the node is not checked and has no checked descendants, it is skipped.
             }
