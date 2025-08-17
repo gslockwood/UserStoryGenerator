@@ -2,7 +2,6 @@
 using System.Text.Json.Serialization;
 using UserStoryGenerator.Utilities;
 using UserStoryGenerator.View;
-using static UserStoryGenerator.Model.IssueData;
 
 namespace UserStoryGenerator.Model
 {
@@ -123,11 +122,7 @@ namespace UserStoryGenerator.Model
 
         internal void SaveDataToFile(string epicText, List<string> storyList, List<TreeNode> checkedHierarchy)
         {
-            List<IssueData.Issue> serializableIssues = TreeSerialization.Convert(checkedHierarchy);
-            //List<IssueData.Issue> serializableIssues0 = TreeSerialization.ConvertXX(checkedHierarchy);
-
-            //List<Issue>? issues = JsonSerializer.Deserialize<List<Issue>>(jsonString, options);
-            //List<IssueData.Issue> serializableIssues1 = JsonSerializer.Deserialize<TreeNode> checkedHierarchy);
+            List<Issue> serializableIssues = TreeSerialization.ConvertTreeNodeExListToIssueList(checkedHierarchy);
 
             userStoryResults = new TreeSerialization.IssueResults()
             {
@@ -470,7 +465,6 @@ namespace UserStoryGenerator.Model
 
             GFSGeminiClientHost.Result result = new(-1, json);
             IssueGeneratorBaseArgs args = new(result);
-        again:
             try
             {
                 TreeSerialization.IssueResults? issueResults = JsonSerializer.Deserialize<TreeSerialization.IssueResults>(json);
@@ -478,7 +472,7 @@ namespace UserStoryGenerator.Model
 
                 //goto again;
 
-                List<IssueData.Issue>? issues = issueResults.Issues;
+                List<Issue>? issues = issueResults.Issues;
 
                 if( issues != null )
                 {
@@ -489,7 +483,7 @@ namespace UserStoryGenerator.Model
                 return issueResults;
 
             }
-            catch( Exception ex )
+            catch( Exception )
             {
                 throw;
             }
@@ -548,30 +542,30 @@ namespace UserStoryGenerator.Model
     {
         [JsonConverter(typeof(IssueConverter))]
         public List<Issue>? Issues { get; set; }
-
-        public class Issue : IssueDataBase
-        {
-            public List<SubTask>? Subtasks { get; set; }
-            public List<Issue>? LinkedIssues { get; set; }
-
-        }
-        public class SubTask : Issue { }
-
-        public class TestTask : Issue { }
-        public class TaskIssue : Issue
-        {
-            public IssueData.Component? Component { get; set; }
-        }
-        public class Component
-        {
-            // Property for the 'Name' string
-            public string? Name { get; set; }
-
-            // Property for the 'SubComponent' string
-            public string? SubComponent { get; set; }
-        }
-        //
     }
+
+    public class Issue : IssueDataBase
+    {
+        public List<SubTask>? Subtasks { get; set; }
+        public List<Issue>? LinkedIssues { get; set; }
+
+    }
+    public class SubTask : Issue { }
+
+    public class TestTask : Issue { }
+    public class TaskIssue : Issue
+    {
+        public Component? Component { get; set; }
+    }
+    public class Component
+    {
+        // Property for the 'Name' string
+        public string? Name { get; set; }
+
+        // Property for the 'SubComponent' string
+        public string? SubComponent { get; set; }
+    }
+    //
 
 
     public static class IssueExtensions

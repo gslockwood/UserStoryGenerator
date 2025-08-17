@@ -1,51 +1,10 @@
-﻿using UserStoryGenerator.Model;
+﻿using System.Reflection;
+using UserStoryGenerator.Model;
 using UserStoryGenerator.View;
 using static UserStoryGenerator.View.TriStateTreeView;
 
 namespace UserStoryGenerator.Utilities
 {
-    public static class DraggableNodeDataExtensions
-    {
-        internal static void ZeroSet(this DraggableNodeData draggableNodeData)
-        {
-            draggableNodeData.Product = string.Empty;
-            draggableNodeData.Summary = string.Empty;
-            draggableNodeData.IssueType = string.Empty;
-            draggableNodeData.Description = string.Empty;
-
-            draggableNodeData.Key = -1;
-            draggableNodeData.StoryPoints = 0;
-            draggableNodeData.OriginalEstimate = 0.0f;
-
-            if( draggableNodeData is DraggableNodeDataTask task )
-            {
-            }
-
-        }
-
-        internal static void SetFromTreeNodeEx(this DraggableNodeData draggableNodeData, TriStateTreeView.TreeNodeEx node)
-        {
-            draggableNodeData.Product = node.Product;
-            draggableNodeData.Summary = node.Summary;
-            draggableNodeData.IssueType = node.IssueType;
-            draggableNodeData.Description = node.Description;
-            draggableNodeData.Key = node.Key;
-            draggableNodeData.StoryPoints = node.StoryPoints;
-            draggableNodeData.OriginalEstimate = node.OriginalEstimate;
-
-            //if( node is TreeNodeExTask task )
-            //{
-            ////( (DraggableNodeDataTask)draggableNodeData ).Component = task.Component;
-            //fuck:
-            //    DraggableNodeDataTask draggableNodeDataTask = draggableNodeData as DraggableNodeDataTask;
-            //    if( draggableNodeDataTask != null )
-            //        draggableNodeDataTask.Component = task.Component;
-
-            //    //goto fuck;
-            //}
-
-        }
-    }
     public static class TreeNodeExExtensions
     {
         public static void SetTreeNodeEx(this TriStateTreeView.TreeNodeEx treeNodeEx, IssueDataBase issue)
@@ -67,29 +26,6 @@ namespace UserStoryGenerator.Utilities
 
         }
 
-        internal static void SetTreeNodeEx2(TreeNodeEx treeNodeEx, DraggableNodeData draggableNodeData)
-        {
-            treeNodeEx.Product = draggableNodeData.Product?.Trim();
-            treeNodeEx.Summary = draggableNodeData.Summary?.Trim();
-            treeNodeEx.IssueType = draggableNodeData.IssueType?.Trim();
-            treeNodeEx.Description = draggableNodeData.Description?.Trim();
-            treeNodeEx.Key = draggableNodeData.Key;
-            treeNodeEx.StoryPoints = draggableNodeData.StoryPoints;
-            treeNodeEx.OriginalEstimate = draggableNodeData.OriginalEstimate;
-
-            treeNodeEx.Text = draggableNodeData.Text;
-
-            if( !string.IsNullOrEmpty(draggableNodeData.Description) )
-            {
-                TreeNode treeNode = new(draggableNodeData.Description)
-                {
-                    ImageIndex = Utilities.IssueUtilities.GetImageIndex("Circle")
-                };
-
-                treeNodeEx.Nodes.Add(treeNode);
-            }
-
-        }
         internal static void SetTreeNodeExFromTreeNodeEx(TreeNodeEx source, TreeNodeEx destination)
         {
             destination.Product = source.Product?.Trim();
@@ -106,11 +42,55 @@ namespace UserStoryGenerator.Utilities
 
     public static class IssueDataBaseExtensions
     {
-        internal static IssueData.Issue CreateIssueFromTreeNodeEx(TriStateTreeView.TreeNodeEx node)
+        internal static Issue CreateIssueFromTreeNodeEx(TriStateTreeView.TreeNodeEx node)
         {
+            Type issueType;
             if( node is TriStateTreeView.TreeNodeExTask )
             {
-                IssueData.TaskIssue task = new()
+                issueType = typeof(TaskIssue);
+            }
+            else if( node is TriStateTreeView.TreeNodeExTest )
+            {
+                // Add other cases here as needed, mapping TreeNodeExTest to its corresponding Issue type.
+                issueType = typeof(Issue); // Placeholder for now
+            }
+            else
+            {
+                issueType = typeof(Issue);
+            }
+
+            Issue issue = (Issue)Activator.CreateInstance(issueType)!;
+
+            PropertyInfo[] sourceProperties = typeof(TriStateTreeView.TreeNodeEx).GetProperties(BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly);
+
+            foreach( PropertyInfo sourceProp in sourceProperties )
+            {
+                // Find the corresponding property in the target Issue object.
+                PropertyInfo? targetProp = issueType.GetProperty(sourceProp.Name, BindingFlags.Public | BindingFlags.Instance);
+
+                // Check if the property exists and is writable.
+                if( targetProp != null && targetProp.CanWrite )
+                {
+                    // Get the value from the source object.
+                    object? value = sourceProp.GetValue(node);
+
+                    // Set the value on the target object.
+                    targetProp.SetValue(issue, value);
+                }
+            }
+
+            if( node is TriStateTreeView.TreeNodeExTask taskNode && issue is TaskIssue taskIssue )
+            {
+                taskIssue.Component = taskNode.Component;
+            }
+
+            return issue;
+            /*
+            Logger.Info("");
+
+            if( node is TriStateTreeView.TreeNodeExTask task1 )
+            {
+                TaskIssue task = new()
                 {
                     Product = node.Product,
                     Summary = node.Summary,
@@ -121,7 +101,7 @@ namespace UserStoryGenerator.Utilities
                     // should Key be set here too?
                     Key = node.Key,
 
-                    Component = ( (TriStateTreeView.TreeNodeExTask)node ).Component,
+                    Component = task1.Component,
                 };
 
                 return task;
@@ -132,7 +112,7 @@ namespace UserStoryGenerator.Utilities
             {
             }
 
-            IssueData.Issue issue = new()
+            Issue issue = new()
             {
                 Product = node.Product,
                 Summary = node.Summary,
@@ -144,16 +124,15 @@ namespace UserStoryGenerator.Utilities
                 Key = node.Key,
             };
 
-
-
             return issue;
+            */
         }
     }
     public static class SubTaskExtensions
     {
-        internal static IssueData.SubTask CreateSubTaskIssueFromTreeNodeEx(TriStateTreeView.TreeNodeEx node)
+        internal static SubTask CreateSubTaskIssueFromTreeNodeEx(TriStateTreeView.TreeNodeEx node)
         {
-            IssueData.SubTask issue = new()
+            SubTask issue = new()
             {
                 Product = node.Product,
                 Summary = node.Summary,

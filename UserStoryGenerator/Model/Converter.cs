@@ -44,7 +44,7 @@ namespace UserStoryGenerator.Model
                     long epicKey0 = new Random().Next() * ( uint.MaxValue / int.MaxValue ) + (uint)new Random().Next(0, 2) * ( uint.MaxValue % int.MaxValue );
                     epicKey = epicKey0.ToString();
 
-                    IssueData.Issue epicIssue = new()
+                    Issue epicIssue = new()
                     {
                         Summary = epicText,
                         IssueType = epicIssueType,// JiraIssueTypes.EPIC,
@@ -70,9 +70,9 @@ namespace UserStoryGenerator.Model
         }
 
 
-        private static void Recursive(List<IssueData.Issue> hierarchyIssueList, string epicKey, long issueKey, StringBuilder sbFile)
+        private static void Recursive(List<Issue> hierarchyIssueList, string epicKey, long issueKey, StringBuilder sbFile)
         {
-            foreach( IssueData.Issue issue in hierarchyIssueList )
+            foreach( Issue issue in hierarchyIssueList )
             {
                 string ultimateParendID;
                 // 
@@ -86,7 +86,7 @@ namespace UserStoryGenerator.Model
 
                 if( issue.Subtasks != null )
                 {
-                    foreach( IssueData.SubTask subTask in issue.Subtasks )
+                    foreach( SubTask subTask in issue.Subtasks )
                     {
                         string subTaskLine = CreateSubTaskLine(subTask, issue.Key.ToString());
                         //Logger.Info(subTaskLine);
@@ -99,7 +99,7 @@ namespace UserStoryGenerator.Model
             }
         }
 
-        private static string CreateSubTaskLine(IssueData.SubTask subTask, string issueKeyStr)
+        private static string CreateSubTaskLine(SubTask subTask, string issueKeyStr)
         {
             StringBuilder sbLine = new();
 
@@ -145,7 +145,7 @@ namespace UserStoryGenerator.Model
             return sbLine.ToString().TrimEnd(',').Trim();
         }
 
-        private static string CreateLine(IssueData.Issue issue, string parentID, string linedToId)
+        private static string CreateLine(Issue issue, string parentID, string linedToId)
         {
             StringBuilder sbLine = new();
 
@@ -158,7 +158,7 @@ namespace UserStoryGenerator.Model
             long issueKey = issue.Key;
             sbLine.Append(issueKey.ToString() + ",");
 
-            //issue is IssueData.SubTask
+            //issue is SubTask
 
             // Parent ID
             if( issue.IssueType != null && issue.IssueType.Equals(SubTaskIssueType) )//JiraIssueTypes.SUBTASK

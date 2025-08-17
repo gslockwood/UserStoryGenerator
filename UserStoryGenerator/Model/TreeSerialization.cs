@@ -4,23 +4,23 @@ namespace UserStoryGenerator.Model
 {
     public partial class TreeSerialization
     {
-        public static List<IssueData.Issue> Convert(List<TreeNode> treeNodes)
+        public static List<Issue> ConvertTreeNodeExListToIssueList(List<TreeNode> treeNodes)
         {
-            List<IssueData.Issue> serializableIssues = [];
+            List<Issue> serializableIssues = [];
             foreach( TreeNode node in treeNodes )
                 serializableIssues = ConvertTreeNodesToJsonStructure(treeNodes);
 
             return serializableIssues;
         }
-        public static List<IssueData.Issue> ConvertTreeNodesToJsonStructure(List<TreeNode> treeNodes)
+        public static List<Issue> ConvertTreeNodesToJsonStructure(List<TreeNode> treeNodes)
         {
-            List<IssueData.Issue> serializableIssues = [];
+            List<Issue> serializableIssues = [];
             //foreach( TriStateTreeView.TreeNodeEx node in treeNodes.Cast<TriStateTreeView.TreeNodeEx>() )
             foreach( TreeNode treeNode in treeNodes )
             {
                 TriStateTreeView.TreeNodeEx node = (TriStateTreeView.TreeNodeEx)treeNode;
 
-                IssueData.Issue issue = Utilities.IssueDataBaseExtensions.CreateIssueFromTreeNodeEx(node);
+                Issue issue = Utilities.IssueDataBaseExtensions.CreateIssueFromTreeNodeEx(node);
 
                 serializableIssues.Add(issue);
 
@@ -32,7 +32,7 @@ namespace UserStoryGenerator.Model
                         {
                             foreach( TriStateTreeView.TreeNodeEx subTaskNode in treeNodeEx.Nodes )
                             {
-                                IssueData.SubTask subIssue = Utilities.SubTaskExtensions.CreateSubTaskIssueFromTreeNodeEx(subTaskNode);
+                                SubTask subIssue = Utilities.SubTaskExtensions.CreateSubTaskIssueFromTreeNodeEx(subTaskNode);
                                 issue.Subtasks ??= [];
                                 issue.Subtasks.Add(subIssue);
                             }
@@ -50,14 +50,14 @@ namespace UserStoryGenerator.Model
             //
         }
 
-        public static List<IssueData.Issue> ConvertTreeNodesToJsonStructure2(List<TreeNode> treeNodes)
+        public static List<Issue> ConvertTreeNodesToJsonStructure2(List<TreeNode> treeNodes)
         {
-            List<IssueData.Issue> serializableIssues = [];
+            List<Issue> serializableIssues = [];
             foreach( TreeNode node in treeNodes )
             {
                 View.TriStateTreeView.TreeNodeEx treeNodeEx = (View.TriStateTreeView.TreeNodeEx)node;
 
-                IssueData.Issue issue = Utilities.IssueDataBaseExtensions.CreateIssueFromTreeNodeEx(treeNodeEx);
+                Issue issue = Utilities.IssueDataBaseExtensions.CreateIssueFromTreeNodeEx(treeNodeEx);
 
                 // Convert TreeNodeCollection to List<TreeNode> before recursive call
                 if( node.Nodes.Count > 0 )

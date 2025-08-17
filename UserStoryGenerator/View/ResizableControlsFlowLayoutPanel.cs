@@ -85,7 +85,7 @@ namespace UserStoryGenerator.View
 
         }
 
-        internal int UpdateCountersByIssues(List<IssueData.Issue> issues)
+        internal int UpdateCountersByIssues(List<Issue> issues)
         {
             Total = 0;
             int count = 0;

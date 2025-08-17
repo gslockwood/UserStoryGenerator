@@ -11,7 +11,7 @@ namespace UserStoryGenerator.Model
             public List<string>? UserStoryList { get; set; }
 
             [JsonConverter(typeof(IssueConverter))]
-            public List<IssueData.Issue>? Issues { get; set; }
+            public List<Issue>? Issues { get; set; }
 
             public string? ProductOrFeature { get; set; }
             public string? EpicNameOrKey { get; set; }

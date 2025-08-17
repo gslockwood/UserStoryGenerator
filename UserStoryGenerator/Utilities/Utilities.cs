@@ -52,9 +52,9 @@ namespace UserStoryGenerator.Utilities
         private static ImageList? ImageList;
         private static Dictionary<string, JiraIssueType>? JiraIssueTypes;
 
-        public static List<Model.IssueData.SubTask> GetAllSubTasks(List<Model.IssueData.Issue> issues)
+        public static List<Model.SubTask> GetAllSubTasks(List<Model.Issue> issues)
         {
-            List<Model.IssueData.SubTask> list = [];
+            List<Model.SubTask> list = [];
             if( issues != null )
             {
                 foreach( var issue in issues )
@@ -70,9 +70,10 @@ namespace UserStoryGenerator.Utilities
             return list;
         }
 
-        internal static int GetImageIndex(string issueType)
+        internal static int GetImageIndex(string? issueType)
         {
             if( ImageList == null ) throw new NullReferenceException(nameof(ImageList));
+            if( issueType == null ) return -1;
 
             return ImageList.Images.IndexOfKey(issueType);
         }

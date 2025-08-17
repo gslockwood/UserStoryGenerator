@@ -1,7 +1,6 @@
 using System.Diagnostics;
 using UserStoryGenerator.Model;
 using UserStoryGenerator.Utilities;
-using static UserStoryGenerator.Model.IssueData;
 using static UserStoryGenerator.Model.Settings;
 using static UserStoryGenerator.View.TriStateTreeView;
 
@@ -371,7 +370,7 @@ namespace UserStoryGenerator.View
 
         }
 
-        private void PopulateUI(List<IssueData.Issue> issues)
+        private void PopulateUI(List<Issue> issues)
         {
             if( issues == null ) return;
 
@@ -405,7 +404,7 @@ namespace UserStoryGenerator.View
             //
         }
 
-        private int UpdateCountersUI(List<IssueData.Issue> issues)
+        private int UpdateCountersUI(List<Issue> issues)
         {
             if( issues == null ) return 0;
             return flowLayoutPanelExTotals.UpdateCountersByIssues(issues);
@@ -785,13 +784,13 @@ namespace UserStoryGenerator.View
                     {
                         TreeNodeEx? treeNodeEx = System.Text.Json.JsonSerializer.Deserialize<TreeNodeEx>(jsonNodeData);
 
+                        /*
                         if( treeNodeEx != null && treeNodeEx.Nodes[1].Nodes[0] is TreeNodeExTask task )
                         {
                             Logger.Info(task.Component.Name);
                             Logger.Info(task.Component.SubComponent);
-
                         }
-
+                        */
 
                         if( treeNodeEx != null )
                         {
@@ -825,54 +824,6 @@ namespace UserStoryGenerator.View
                                 droppedUponNodeEx.ExpandAll();
                             }
 
-                        }
-
-                        return;
-
-
-
-
-                        // Deserialize it back into your DraggableNodeData object
-                        DraggableNodeData? nodeData = System.Text.Json.JsonSerializer.Deserialize<DraggableNodeData>(jsonNodeData);
-                        if( nodeData != null )
-                        {
-                            // Convert DraggableNodeData back to TreeNodeEx
-                            TreeNodeEx? droppedNode = nodeData.ToTreeNodeEx();
-                            if( droppedNode != null )
-                            {
-                                //Logger.Info("DragDrop: Successfully deserialized custom node data.");
-                                // Convert the screen coordinates of the drop to client coordinates
-                                Point clientPoint = treeView.PointToClient(new Point(e.X, e.Y));
-
-                                // Get the node at the drop location
-                                TreeNode droppedUponNode = treeView.GetNodeAt(clientPoint);
-
-                                TreeNodeEx droppedUponNodeEx = (TreeNodeEx)droppedUponNode;
-
-                                TreeNodeEx? nodeToUse = null;
-                                if( droppedUponNode == treeView.Nodes[0] )
-                                {
-                                    nodeToUse = (TreeNodeEx?)this.treeView.Nodes[0];
-                                }
-                                else
-                                {
-                                    // check that it is a story then put them into the LinkedIssues collection
-                                    if( droppedUponNodeEx.Level == 1 )
-                                    {
-                                        TreeNode[] linkedIssueNode = droppedUponNodeEx.Nodes.Find(TreeNodeExLinkedIssues.NodeName, false);
-                                        if( linkedIssueNode.Length > 0 )
-                                        {
-                                            nodeToUse = (TreeNodeEx?)linkedIssueNode.First();
-                                        }
-                                    }
-
-                                }
-                                if( nodeToUse != null )
-                                {
-                                    nodeToUse.Nodes.Add(droppedNode);
-                                    droppedUponNodeEx.Expand();
-                                }
-                            }
                         }
 
                     }

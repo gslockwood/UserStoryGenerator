@@ -2,7 +2,6 @@
 using System.Text.Json.Serialization;
 using UserStoryGenerator.Model;
 using UserStoryGenerator.Utilities;
-using static UserStoryGenerator.Model.Settings;
 namespace UserStoryGenerator.View
 {
     public class TriStateTreeView : System.Windows.Forms.TreeView
@@ -98,8 +97,8 @@ namespace UserStoryGenerator.View
         }
         public class TreeNodeExTask : TreeNodeEx
         {
-            public IssueData.Component? Component { get; set; }
-            public TreeNodeExTask(IssueData.TaskIssue issue) : base(issue)
+            public Component? Component { get; set; }
+            public TreeNodeExTask(TaskIssue issue) : base(issue)
             {
                 //IssueType = "Task";// Settings.JiraIssueType.Task;
                 //ToolTipText = IssueType;
@@ -123,121 +122,6 @@ namespace UserStoryGenerator.View
 
         public class TreeNodeExLinkedIssues() : TreeNodeEx("LinkedIssues") { public static readonly string NodeName = "LinkedIssues"; }
 
-
-        [Serializable]
-        public class DraggableNodeDataTask : DraggableNodeData
-        {
-            public IssueData.Component? Component { get; set; }
-
-            public DraggableNodeDataTask()
-            {
-            }
-
-            public DraggableNodeDataTask(TreeNodeExTask node) : base(node)
-            {
-                Component = node.Component;
-            }
-
-        }
-
-        [Serializable]
-        //[JsonConverter(typeof(TreeNodeExConverter))]
-        public class DraggableNodeData : Model.IIssue
-        {
-            public string? Text { get; set; }
-            public string? TagJson { get; set; } // Store Tag as JSON string
-
-            // Add any other custom properties from TreeNodeEx you need to transfer                                                 
-            public string? Product { get; set; }
-            public string? Summary { get; set; }
-            public string? IssueType { get; set; }
-            public string? Description { get; set; }
-            public long Key { get; set; }
-            public uint? StoryPoints { get; set; }
-            public float? OriginalEstimate { get; set; }
-
-
-            public List<DraggableNodeData> Children { get; set; } = [];
-
-            public DraggableNodeData() : base()
-            {
-                DraggableNodeDataExtensions.ZeroSet(this);
-            }
-
-
-            // Constructor to convert TreeNodeEx to DraggableNodeData
-            public DraggableNodeData(TreeNodeEx node)
-            {
-                Text = node.Text;
-                if( node.Tag != null )
-                {
-                    try
-                    {
-                        // Attempt to serialize Tag to JSON
-                        TagJson = JsonSerializer.Serialize(node.Tag);
-                    }
-                    catch( Exception ex )
-                    {
-                        // Handle cases where Tag is not serializable
-                        Console.WriteLine($"Warning: Tag '{node.Tag.GetType().Name}' is not JSON serializable. {ex.Message}");
-                        TagJson = null; // Or some error indicator
-                    }
-                }
-
-                // Copy custom properties
-                UserStoryGenerator.Utilities.DraggableNodeDataExtensions.SetFromTreeNodeEx(this, node);
-
-                foreach( TreeNode childNode in node.Nodes )
-                    if( childNode is TreeNodeEx childEx )
-                        Children.Add(new DraggableNodeData(childEx));
-                // Decide how to handle non-TreeNodeEx children if they exist
-            }
-
-            // Method to convert DraggableNodeData back to TreeNodeEx
-            public TreeNodeEx? ToTreeNodeEx()
-            {
-                if( Text == null ) return null;
-
-                TreeNodeEx? newNode;
-                if( Text.Equals(TriStateTreeView.TreeNodeExSubTasks.NodeName) )
-                    newNode = new TriStateTreeView.TreeNodeExSubTasks() { ImageIndex = Utilities.IssueUtilities.GetSubTaskImageIndex() };
-                else if( Text.Equals(TriStateTreeView.TreeNodeExLinkedIssues.NodeName) )
-                    newNode = new TriStateTreeView.TreeNodeExLinkedIssues() { ImageIndex = Utilities.IssueUtilities.GetImageIndex(JiraIssueType.Task) };
-                else
-                {
-                    if( IssueType == null ) throw new NullReferenceException(nameof(IssueType));
-                    newNode = new(Text);
-                    TreeNodeExExtensions.SetTreeNodeEx2(newNode, this);
-
-                    newNode.ImageIndex = UserStoryGenerator.Utilities.IssueUtilities.GetImageIndex(IssueType);
-
-                }
-
-                if( TagJson != null )
-                {
-                    try
-                    {
-                        // Assuming Tag was a simple string or primitive type for demonstration
-                        // You might need to know the original type of Tag or use a generic deserialize
-                        newNode.Tag = JsonSerializer.Deserialize<string>(TagJson); // Adjust based on your actual Tag type
-                    }
-                    catch( Exception ex )
-                    {
-                        Console.WriteLine($"Warning: Could not deserialize Tag JSON: {ex.Message}");
-                        newNode.Tag = null;
-                    }
-                }
-
-                foreach( var childData in Children )
-                {
-                    TreeNodeEx? child = childData.ToTreeNodeEx();
-                    if( child == null ) continue;
-
-                    newNode.Nodes.Add(child);
-                }
-                return newNode;
-            }
-        }
 
 
         // // // // // // // // // // // // // // // // // // // // 
@@ -1088,9 +972,9 @@ namespace UserStoryGenerator.View
                             else
                                 treeNodeExRef = new TreeNodeEx(sourceNode);
 
-                            if( treeNodeExRef == null )
-                            {
-                            }
+                            //if( treeNodeExRef == null )
+                            //{
+                            //}
 
                             treeNodeEx = treeNodeExRef;
 

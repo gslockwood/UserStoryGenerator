@@ -28,7 +28,7 @@ namespace UserStoryGenerator.Model
     public class IssueGeneratorBaseArgs(Result result)
     {
         public Result Result { get; } = result;
-        public List<IssueData.Issue>? Issues { get; internal set; }
+        public List<Issue>? Issues { get; internal set; }
         public string? ErrorMsg { get; internal set; }
         public int ErrorCode { get; internal set; } = 0;
 
